@@ -1,0 +1,23 @@
+
+#search_form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+
+.custom-search-box {
+  --mapbox-searchbox-background: #f0f0f0;
+  --mapbox-searchbox-border-radius: 8px;
+  --mapbox-searchbox-border-color: #888;
+  --mapbox-searchbox-focus-border-color: #007bff;
+  --mapbox-searchbox-color: #222;
+  --mapbox-searchbox-font-size: 15px;
+  --mapbox-searchbox-placeholder-color: #aaa;
+  --mapbox-searchbox-icon-color: #444;
+
+  input {
+    background-color: yellow;
+  }
+}
