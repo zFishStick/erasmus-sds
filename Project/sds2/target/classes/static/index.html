@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Travel Planner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <script id="search-js" defer src="https://api.mapbox.com/search-js/v1.5.0/web.js"></script>
+    <script defer src="../api/MAP_api.js"></script>
+    <script src="scripts/main.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="gui/style/style.css" />
+  </head>
+  <body>
+    <header class="site-header" role="banner">
+      <div class="container">
+        <h1 class="site-title">Travel Planner</h1>
+        <p class="site-tagline">Plan your visit quickly and easily</p>
+      </div>
+    </header>
+
+    <main id="main" class="container" role="main">
+      <section aria-labelledby="trip-planner-title" class="card">
+        <h2 id="trip-planner-title">Plan your next trip</h2>
+        <p class="muted">
+          Enter a destination and a date range. Click
+          <strong>Search</strong> to continue.
+        </p>
+
+        <form id="planner-form" class="form" autocomplete="on">
+          <div class="form-row">
+            <label for="destination">Destination</label>
+            <mapbox-address-autofill id="autofill">
+            <input
+              id="destination"
+              name="destination"
+              type="text"
+              placeholder="e.g., Paris, France"
+              aria-describedby="destination-help"
+              autocomplete="address-line1"
+              required
+            />
+            </mapbox-address-autofill>
+            <small id="destination-help" class="muted">City or location you want to visit</small>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-row">
+              <label for="start-date">Start date</label>
+              <input id="start-date" name="startDate" type="date" required />
+            </div>
+            <div class="form-row">
+              <label for="end-date">End date</label>
+              <input id="end-date" name="endDate" type="date" required />
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn btn-primary" id="submit-form">Search</button>
+            <button type="reset" class="btn btn-ghost">Reset</button>
+          </div>
+        </form>
+      </section>
+
+      <section aria-live="polite" class="card" id="preview" hidden>
+        <h2>Preview</h2>
+        <div class="preview-content">
+          <p>
+            <strong>Destination:</strong>
+            <span data-preview="destination">—</span>
+          </p>
+          <p>
+            <strong>From:</strong>
+            <span data-preview="startDate">—</span>
+            <strong>to</strong>
+            <span data-preview="endDate">—</span>
+          </p>
+          <p class="muted">
+            This is a local preview only. API submission will be handled by the
+            Java backend in a separate task.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p class="muted">SDS2 • Erasmus Tourist Assistant</p>
+      </div>
+    </footer>
+
+    <script src="../scripts/main.js"></script>
+  </body>
+  </html>
