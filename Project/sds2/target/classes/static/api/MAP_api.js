@@ -1,83 +1,102 @@
 
 let mapBoxKey;
+
 fetch("/api-key")
   .then(res => res.json())
   .then(data => {
     mapBoxKey = data.key;
-    initMapboxSearch();
+    initInputAutocomplete();
   })
   .catch(err => console.error("❌ Error loading API key:", err));
 
-function initMapboxSearch() {
-      const script = document.getElementById('search-js');
+function initInputAutocomplete() {
+  const autofillElement = document.getElementById('autofill');
+  const the_input = document.getElementById('destination');
+  const the_form = document.getElementById('planner-form');
 
-      if (!script) {
-        return;
+  autofillElement.accessToken = mapBoxKey;
+  autofillElement.options = {
+    limit: 10,
+    language: 'en',
+    country: 'pl'
+  };
+
+  autofillElement.componentOptions = {
+    flipCoordinates: true
+  };
+
+  autofillElement.interceptSearch = (val) => val?.length > 1 ? val : null;
+
+  autofillElement.addEventListener('suggest', (event) => {
+    console.log('Suggestions:', event.detail.suggestions);
+  });
+
+  autofillElement.addEventListener('retrieve', (event) => {
+    console.log('Retrieved features:', event.detail);
+  });
+
+  the_input.addEventListener('retrieve', (event) => {
+    console.log("Retrieved location:", event.detail);
+  });
+
+  the_form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const query = the_input.value.trim();
+    if (!query) {
+      alert("Please enter a location.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${mapBoxKey}&limit=1`
+      );
+      const data = await response.json();
+      if (data.features?.length) {
+        const coordinates = data.features[0].geometry.coordinates;
+        fetchTravelInfo(coordinates);
       } else {
-        const searchBoxElement = new MapboxSearchBox()
-        searchBoxElement.id = "city"
-        searchBoxElement.placeholder = "Enter a city to travel to"
-        searchBoxElement.accessToken = mapBoxKey;
-        searchBoxElement.classList.add('custom-search-box');
-        searchBoxElement.options = {
-          language: 'en',
-          limit: 5,
-        }
-        document.getElementById("search_form").appendChild(searchBoxElement);
-
-        const startDateElement = document.createElement('input');
-        startDateElement.type = 'date';
-        startDateElement.id = 'start_date';
-        startDateElement.required = true;
-        document.getElementById("search_form").appendChild(startDateElement);
-
-        const endDateElement = document.createElement('input');
-        endDateElement.type = 'date';
-        endDateElement.id = 'end_date';
-        endDateElement.required = true;
-        document.getElementById("search_form").appendChild(endDateElement);
-
-        const submitButton = document.createElement('button');
-        submitButton.type = 'submit';
-        submitButton.textContent = 'Search';
-        document.getElementById("search_form").appendChild(submitButton);
-        submitButton.onclick = function(event) {
-          event.preventDefault();
-          // if (!searchBoxElement.value) {
-          //   alert("Please enter a city.");
-          //   return false;
-          // }
-          fetchTravelInfo();
-        }
-
+        console.log("No results found");
       }
+    } catch (error) {
+      console.error("Error fetching coordinates:", error);
+    }
+  });
 }
 
-function fetchTravelInfo() {
-    const city = document.getElementById("city").value;
+function fetchTravelInfo(coordinates) {
+    // const city = document.getElementById("city").value;
+    // const startDate = document.getElementById("start_date").value;
+    // const endDate = document.getElementById("end_date").value;
 
-    console.log("Coordinates lat: " + city.coordinates.latitude);
-    console.log("Coordinates lon: " + city.coordinates.longitude);
-
-
-    const startDate = document.getElementById("start_date").value;
-    const endDate = document.getElementById("end_date").value;
-
-    fetch('/travel-info', {
+    fetch('/amadeus/pois', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            city: city,
-            start_date: startDate,
-            end_date: endDate
+            longitude: coordinates[0],
+            latitude: coordinates[1],
+            // city: city,
+            // startDate: startDate,
+            // endDate: endDate
         })
     })
     .then(res => res.json())
     .then(data => {
-        console.log("Travel info:", data);
-        // TODO: show place in the map
+        showPointsOfInterest(data);
     })
     .catch(err => console.error("❌ Error fetching travel info:", err));
+}
+
+function showPointsOfInterest(data) {
+  sessionStorage.setItem("poiData", JSON.stringify(data));
+  // Change page to pointOfInterests.html or update the DOM to show POIs
+  window.location.href = "/gui/pages/pointInterests.html";
+  let list = document.getElementById("poi-list");
+  for (let poi of data.pois) {
+    let listItem = document.createElement("li");
+    listItem.textContent = poi.name + " - " + poi.category;
+    list.appendChild(listItem);
+  }
 }

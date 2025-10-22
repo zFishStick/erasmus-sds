@@ -1,9 +1,9 @@
 com\sds2\api\AmadeusAPI.class
-com\sds2\Server$3.class
 com\sds2\classes\InputData.class
-com\sds2\Server$2.class
-com\sds2\Server$1.class
 com\sds2\Server$4.class
 com\sds2\classes\PlaceInfo.class
+com\sds2\Server$3.class
+com\sds2\Server$2.class
+com\sds2\Server$1.class
 com\sds2\op\InputValidator.class
 com\sds2\Server.class

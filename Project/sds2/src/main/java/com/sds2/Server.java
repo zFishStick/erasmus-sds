@@ -4,6 +4,7 @@ package com.sds2;
 import com.sun.net.httpserver.HttpServer;
 
 import com.sun.net.httpserver.HttpHandler;
+import com.amadeus.exceptions.ResponseException;
 import com.sds2.api.AmadeusAPI;
 import com.sds2.classes.InputData;
 import com.sun.net.httpserver.HttpExchange;
@@ -18,7 +19,7 @@ import java.nio.file.Paths;
 import java.util.Properties;
 
 public class Server {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ResponseException {
         int port = 8000;
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 
@@ -29,6 +30,7 @@ public class Server {
                 props.getProperty("AMADEUS_API_KEY"),
                 props.getProperty("AMADEUS_API_SECRET")
             );
+            amadeusAPI.registerAmadeusEndpoints(server);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -47,22 +49,6 @@ public class Server {
             }
         });
 
-        
-
-        // Endpoint to serve Amadeus API credentials
-        server.createContext("/amadeus-credentials", new HttpHandler() {
-            @Override
-            public void handle(HttpExchange exchange) throws IOException {
-                String clientId = props.getProperty("AMADEUS_API_KEY");
-                String clientSecret = props.getProperty("AMADEUS_API_SECRET");
-                String response = "{\"client_id\": \"" + clientId + "\", \"client_secret\": \"" + clientSecret + "\"}";
-                exchange.getResponseHeaders().add("Content-Type", "application/json");
-                exchange.sendResponseHeaders(200, response.length());
-                OutputStream os = exchange.getResponseBody();
-                os.write(response.getBytes());
-                os.close();
-            }
-        });
         
         server.createContext("/travel-info", new HttpHandler() {
             @Override

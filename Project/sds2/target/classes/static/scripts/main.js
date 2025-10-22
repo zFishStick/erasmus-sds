@@ -53,7 +53,6 @@
     };
 
     // Local preview for now; integration with backend will replace this.
-    console.log("UI payload", payload);
     renderPreview(payload);
   });
 

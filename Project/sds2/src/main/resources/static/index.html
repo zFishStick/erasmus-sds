@@ -24,9 +24,6 @@
       </div>
     </header>
 
-        <!-- Form containing place, beginning and ending date of the travel -->
-    <!-- <form id="search_form"></form> -->
-
     <main id="main" class="container" role="main">
       <section aria-labelledby="trip-planner-title" class="card">
         <h2 id="trip-planner-title">Plan your next trip</h2>
@@ -38,17 +35,18 @@
         <form id="planner-form" class="form" autocomplete="on">
           <div class="form-row">
             <label for="destination">Destination</label>
+            <mapbox-address-autofill id="autofill">
             <input
               id="destination"
               name="destination"
               type="text"
               placeholder="e.g., Paris, France"
               aria-describedby="destination-help"
+              autocomplete="address-line1"
               required
             />
-            <small id="destination-help" class="muted"
-              >City or location you want to visit</small
-            >
+            </mapbox-address-autofill>
+            <small id="destination-help" class="muted">City or location you want to visit</small>
           </div>
 
           <div class="form-grid">
@@ -63,7 +61,7 @@
           </div>
 
           <div class="actions">
-            <button type="submit" class="btn btn-primary">Search</button>
+            <button type="submit" class="btn btn-primary" id="submit-form">Search</button>
             <button type="reset" class="btn btn-ghost">Reset</button>
           </div>
         </form>

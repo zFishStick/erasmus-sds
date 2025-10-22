@@ -19,6 +19,25 @@
     <maven.compiler.release>21</maven.compiler.release>
   </properties>
 
+<repositories>
+    <repository>
+        <id>google</id>
+        <name>Google</name>
+        <url>https://maven.google.com</url>
+    </repository>
+
+    <repository>
+        <id>mapbox-repo</id>
+        <url>https://api.mapbox.com/downloads/v2/releases/maven</url>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </repository>
+</repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -36,6 +55,47 @@
       <artifactId>amadeus-java</artifactId>
       <version>10.0.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.10.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.10.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.github.cdimascio</groupId>
+      <artifactId>dotenv-java</artifactId>
+      <version>3.0.0</version>
+    </dependency>
+
+		<dependency>
+			<groupId>com.mapbox.mapboxsdk</groupId>
+			<artifactId>mapbox-sdk-geojson</artifactId>
+			<version>7.8.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.mapbox.mapboxsdk</groupId>
+			<artifactId>mapbox-sdk-services</artifactId>
+			<version>7.8.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.mapbox.mapboxsdk</groupId>
+			<artifactId>mapbox-sdk-turf</artifactId>
+			<version>7.8.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.mapbox.mapboxsdk</groupId>
+			<artifactId>mapbox-sdk-core</artifactId>
+			<version>7.8.0</version>
+		</dependency>
   </dependencies>
 
   <build>
