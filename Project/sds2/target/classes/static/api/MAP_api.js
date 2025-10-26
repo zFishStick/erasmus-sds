@@ -58,34 +58,100 @@ function initInputAutocomplete() {
       return;
     }
 
+    // If current value matches an existing option, resolve immediately
+    const immediate = (function () {
+      const label = value;
+      if (labelMap.has(label)) return labelMap.get(label);
+      const normLabel = normalizeText(label);
+      for (const [k, v] of labelMap.entries()) {
+        if (normalizeText(k) === normLabel) return v;
+      }
+      const cityOnly = label.split(',')[0].trim();
+      const normCity = normalizeText(cityOnly);
+      const byNameEq = lastItems.find(it => normalizeText(it.name || '') === normCity);
+      if (byNameEq) return byNameEq;
+      return lastItems.find(it => normalizeText(it.name || '').startsWith(normCity)) || null;
+    })();
+    if (immediate) {
+      selectedCity = immediate;
+      // When user picked a full suggestion like "City, Country", skip refetch
+      if (value.includes(',')) {
+        return;
+      }
+    }
+
     debounceTimer = setTimeout(() => {
-      fetch(`/amadeus/api/city/${encodeURIComponent(value)}`)
+      const queryForAPI = value.includes(',') ? value.split(',')[0].trim() : value;
+      fetch(`/amadeus/api/city/${encodeURIComponent(queryForAPI)}`)
         .then(res => res.json())
         .then(data => {
           const items = (data && data.data) ? data.data : [];
           updateDatalist(items, value);
-          selectedCity = items.length > 0 ? items[0] : null;
+          // Try to match selected city to typed value after refresh
+          const label = the_input.value.trim();
+          const cityOnly = label.split(',')[0].trim();
+          const normCity = normalizeText(cityOnly);
+          const eq = items.find(it => normalizeText(it.name || '') === normCity);
+          if (eq) {
+            selectedCity = eq;
+          } else if (items.length > 0) {
+            selectedCity = items[0];
+          }
         })
         .catch(err => {
           console.error("Error fetching location data:", err);
           while (datalist.firstChild) datalist.removeChild(datalist.firstChild);
-          selectedCity = null;
+          // keep previous selectedCity if any
         });
     }, 300);
   });
 
-  the_input.addEventListener('change', function () {
+  function resolveFromInputValue() {
     const label = the_input.value.trim();
-    if (labelMap.has(label)) {
-      selectedCity = labelMap.get(label);
+    if (!label) return null;
+    if (labelMap.has(label)) return labelMap.get(label);
+
+    // try case/diacritics-insensitive label match
+    const normLabel = normalizeText(label);
+    for (const [k, v] of labelMap.entries()) {
+      if (normalizeText(k) === normLabel) return v;
     }
+
+    // Use only the city portion before comma
+    const cityOnly = label.split(',')[0].trim();
+    const normCity = normalizeText(cityOnly);
+    const byEq = lastItems.find(it => normalizeText(it.name || '') === normCity);
+    if (byEq) return byEq;
+    const byPrefix = lastItems.find(it => normalizeText(it.name || '').startsWith(normCity));
+    return byPrefix || null;
+  }
+
+  the_input.addEventListener('change', function () {
+    const match = resolveFromInputValue();
+    if (match) selectedCity = match;
   });
 
-  the_form.addEventListener('submit', function (event) {
+  the_form.addEventListener('submit', async function (event) {
     event.preventDefault();
 
-    if (!selectedCity && lastItems.length > 0) {
-      selectedCity = lastItems[0];
+    if (!selectedCity) {
+      const match = resolveFromInputValue();
+      if (match) {
+        selectedCity = match;
+      } else {
+        // final attempt: fetch with current input and take first result
+        const value = the_input.value.trim();
+        if (value.length >= 2) {
+          try {
+            const res = await fetch(`/amadeus/api/city/${encodeURIComponent(value)}`);
+            const data = await res.json();
+            const items = (data && data.data) ? data.data : [];
+            selectedCity = items.length > 0 ? items[0] : null;
+          } catch (e) {
+            console.error('Erreur lors de la récupération finale:', e);
+          }
+        }
+      }
     }
 
     if (!selectedCity) {
@@ -103,11 +169,12 @@ function initInputAutocomplete() {
 }
 
 function fetchTravelInfo(coordinates) {
-  fetch(`/amadeus/pois/${selectedCity.name}`, {
+  fetch(`/amadeus/pois/${encodeURIComponent(selectedCity.name)}`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
           city: selectedCity.name,
+          country: (selectedCity.address && (selectedCity.address.countryName || selectedCity.address.countryCode)) || "",
           longitude: coordinates[0],
           latitude: coordinates[1],
       })
