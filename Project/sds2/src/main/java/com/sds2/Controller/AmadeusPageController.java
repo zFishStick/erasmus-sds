@@ -76,7 +76,10 @@ public class AmadeusPageController {
 
         try {
             JsonNode data = getPointOfInterests(request.latitude, request.longitude);
-            model.addAttribute("cityName", request.city != null && !request.city.isBlank() ? request.city : city);
+            String cityName = (request.city != null && !request.city.isBlank()) ? request.city : city;
+            String countryName = (request.country != null) ? request.country : "";
+            model.addAttribute("cityName", cityName);
+            model.addAttribute("countryName", countryName);
             model.addAttribute("citiesData", data);
             return "pois_results";
 

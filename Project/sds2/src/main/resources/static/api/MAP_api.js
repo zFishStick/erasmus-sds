@@ -169,11 +169,12 @@ function initInputAutocomplete() {
 }
 
 function fetchTravelInfo(coordinates) {
-  fetch(`/amadeus/pois/${selectedCity.name}`, {
+  fetch(`/amadeus/pois/${encodeURIComponent(selectedCity.name)}`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
           city: selectedCity.name,
+          country: (selectedCity.address && (selectedCity.address.countryName || selectedCity.address.countryCode)) || "",
           longitude: coordinates[0],
           latitude: coordinates[1],
       })
