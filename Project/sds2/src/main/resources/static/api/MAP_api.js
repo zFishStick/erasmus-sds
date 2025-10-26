@@ -72,10 +72,17 @@ function initInputAutocomplete() {
       if (byNameEq) return byNameEq;
       return lastItems.find(it => normalizeText(it.name || '').startsWith(normCity)) || null;
     })();
-    if (immediate) selectedCity = immediate;
+    if (immediate) {
+      selectedCity = immediate;
+      // When user picked a full suggestion like "City, Country", skip refetch
+      if (value.includes(',')) {
+        return;
+      }
+    }
 
     debounceTimer = setTimeout(() => {
-      fetch(`/amadeus/api/city/${encodeURIComponent(value)}`)
+      const queryForAPI = value.includes(',') ? value.split(',')[0].trim() : value;
+      fetch(`/amadeus/api/city/${encodeURIComponent(queryForAPI)}`)
         .then(res => res.json())
         .then(data => {
           const items = (data && data.data) ? data.data : [];
@@ -85,12 +92,16 @@ function initInputAutocomplete() {
           const cityOnly = label.split(',')[0].trim();
           const normCity = normalizeText(cityOnly);
           const eq = items.find(it => normalizeText(it.name || '') === normCity);
-          selectedCity = eq || (items.length > 0 ? items[0] : null);
+          if (eq) {
+            selectedCity = eq;
+          } else if (items.length > 0) {
+            selectedCity = items[0];
+          }
         })
         .catch(err => {
           console.error("Error fetching location data:", err);
           while (datalist.firstChild) datalist.removeChild(datalist.firstChild);
-          selectedCity = null;
+          // keep previous selectedCity if any
         });
     }, 300);
   });
