@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Point of interests in <span th:text="${cityName}"></span></title>
+    <meta charset="UTF-8" />
+    <title th:text="${'Point of interests in ' + #strings.toUpperCase(cityName) + (countryName != null and !#strings.isEmpty(countryName) ? ', ' + #strings.toUpperCase(countryName) : '')}">POIs</title>
 </head>
 <body>
-<h1>Point of interests in <span th:text="${cityName}"></span></h1>
+<h1 th:text="${'Point of interests in ' + #strings.toUpperCase(cityName) + (countryName != null and !#strings.isEmpty(countryName) ? ', ' + #strings.toUpperCase(countryName) : '')}">Point of interests in CITY</h1>
 <!-- TODO: Display the list of points of interest -->
 <a href="/">Torna indietro</a>
 </body>
