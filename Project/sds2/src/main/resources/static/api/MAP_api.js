@@ -74,18 +74,48 @@ function initInputAutocomplete() {
     }, 300);
   });
 
-  the_input.addEventListener('change', function () {
+  function resolveFromInputValue() {
     const label = the_input.value.trim();
-    if (labelMap.has(label)) {
-      selectedCity = labelMap.get(label);
+    if (!label) return null;
+    if (labelMap.has(label)) return labelMap.get(label);
+
+    // try case/diacritics-insensitive label match
+    const normLabel = normalizeText(label);
+    for (const [k, v] of labelMap.entries()) {
+      if (normalizeText(k) === normLabel) return v;
     }
+
+    // fallback: pick first lastItems whose name starts with the typed prefix
+    const byPrefix = lastItems.find(it => normalizeText(it.name || '').startsWith(normLabel));
+    return byPrefix || null;
+  }
+
+  the_input.addEventListener('change', function () {
+    const match = resolveFromInputValue();
+    if (match) selectedCity = match;
   });
 
-  the_form.addEventListener('submit', function (event) {
+  the_form.addEventListener('submit', async function (event) {
     event.preventDefault();
 
-    if (!selectedCity && lastItems.length > 0) {
-      selectedCity = lastItems[0];
+    if (!selectedCity) {
+      const match = resolveFromInputValue();
+      if (match) {
+        selectedCity = match;
+      } else {
+        // final attempt: fetch with current input and take first result
+        const value = the_input.value.trim();
+        if (value.length >= 2) {
+          try {
+            const res = await fetch(`/amadeus/api/city/${encodeURIComponent(value)}`);
+            const data = await res.json();
+            const items = (data && data.data) ? data.data : [];
+            selectedCity = items.length > 0 ? items[0] : null;
+          } catch (e) {
+            console.error('Erreur lors de la récupération finale:', e);
+          }
+        }
+      }
     }
 
     if (!selectedCity) {

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -70,11 +71,12 @@ public class AmadeusPageController {
 
     // Search POIs by city coordinates and display results into pois_results.html (check template folder)
     @PostMapping("/pois/{city}")
-    public String searchCityByCoordinates(@RequestBody CoordinatesRequest request, Model model) throws IOException, InterruptedException {
+    public String searchCityByCoordinates(@PathVariable("city") String city,
+                                          @RequestBody CoordinatesRequest request, Model model) throws IOException, InterruptedException {
 
         try {
             JsonNode data = getPointOfInterests(request.latitude, request.longitude);
-            model.addAttribute("cityName", request.city);
+            model.addAttribute("cityName", request.city != null && !request.city.isBlank() ? request.city : city);
             model.addAttribute("citiesData", data);
             return "pois_results";
 
