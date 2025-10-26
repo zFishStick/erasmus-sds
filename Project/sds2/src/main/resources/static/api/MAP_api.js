@@ -58,13 +58,34 @@ function initInputAutocomplete() {
       return;
     }
 
+    // If current value matches an existing option, resolve immediately
+    const immediate = (function () {
+      const label = value;
+      if (labelMap.has(label)) return labelMap.get(label);
+      const normLabel = normalizeText(label);
+      for (const [k, v] of labelMap.entries()) {
+        if (normalizeText(k) === normLabel) return v;
+      }
+      const cityOnly = label.split(',')[0].trim();
+      const normCity = normalizeText(cityOnly);
+      const byNameEq = lastItems.find(it => normalizeText(it.name || '') === normCity);
+      if (byNameEq) return byNameEq;
+      return lastItems.find(it => normalizeText(it.name || '').startsWith(normCity)) || null;
+    })();
+    if (immediate) selectedCity = immediate;
+
     debounceTimer = setTimeout(() => {
       fetch(`/amadeus/api/city/${encodeURIComponent(value)}`)
         .then(res => res.json())
         .then(data => {
           const items = (data && data.data) ? data.data : [];
           updateDatalist(items, value);
-          selectedCity = items.length > 0 ? items[0] : null;
+          // Try to match selected city to typed value after refresh
+          const label = the_input.value.trim();
+          const cityOnly = label.split(',')[0].trim();
+          const normCity = normalizeText(cityOnly);
+          const eq = items.find(it => normalizeText(it.name || '') === normCity);
+          selectedCity = eq || (items.length > 0 ? items[0] : null);
         })
         .catch(err => {
           console.error("Error fetching location data:", err);
@@ -85,8 +106,12 @@ function initInputAutocomplete() {
       if (normalizeText(k) === normLabel) return v;
     }
 
-    // fallback: pick first lastItems whose name starts with the typed prefix
-    const byPrefix = lastItems.find(it => normalizeText(it.name || '').startsWith(normLabel));
+    // Use only the city portion before comma
+    const cityOnly = label.split(',')[0].trim();
+    const normCity = normalizeText(cityOnly);
+    const byEq = lastItems.find(it => normalizeText(it.name || '') === normCity);
+    if (byEq) return byEq;
+    const byPrefix = lastItems.find(it => normalizeText(it.name || '').startsWith(normCity));
     return byPrefix || null;
   }
 
