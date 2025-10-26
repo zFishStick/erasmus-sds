@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <script id="search-js" defer src="https://api.mapbox.com/search-js/v1.5.0/web.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script> 
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script defer src="../api/MAP_api.js"></script>
     <script src="scripts/main.js"></script>
     <link
@@ -35,7 +37,6 @@
         <form id="planner-form" class="form" autocomplete="on">
           <div class="form-row">
             <label for="destination">Destination</label>
-            <mapbox-address-autofill id="autofill">
             <input
               id="destination"
               name="destination"
@@ -45,7 +46,6 @@
               autocomplete="address-line1"
               required
             />
-            </mapbox-address-autofill>
             <small id="destination-help" class="muted">City or location you want to visit</small>
           </div>
 

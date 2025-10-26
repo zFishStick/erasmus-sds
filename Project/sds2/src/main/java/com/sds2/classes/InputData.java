@@ -12,8 +12,6 @@ public class InputData {
 		this.city = obj.getString("city");
 		this.initialDate = obj.getString("start_date");
 		this.finalDate = obj.getString("end_date");
-
-		System.out.println("InputData created with city: " + city + ", initialDate: " + initialDate + ", finalDate: " + finalDate);
 	}
 
 	public String getCity() {
