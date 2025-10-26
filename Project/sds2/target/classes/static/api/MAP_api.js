@@ -2,46 +2,94 @@
 let access_token;
 
 fetch("/amadeus/api/access-token")
-  .then(data => {
-    access_token = data;
+  .then(res => res.text())
+  .then(token => {
+    access_token = token;
     initInputAutocomplete();
-  }).catch(err => console.error("❌ Error fetching Amadeus access token:", err));
+  })
+  .catch(err => console.error("Error fetching Amadeus access token:", err));
 
 let selectedCity = null;
+
+function normalizeText(s) {
+  try {
+    return s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+  } catch (_) {
+    return s.toLowerCase();
+  }
+}
 
 function initInputAutocomplete() {
   const the_input = document.getElementById('destination');
   const the_form = document.getElementById('planner-form');
+  const datalist = document.getElementById('city-suggestions');
   let debounceTimer;
+  let lastItems = [];
+  let labelMap = new Map();
+
+  function updateDatalist(items, query) {
+    while (datalist.firstChild) datalist.removeChild(datalist.firstChild);
+    labelMap.clear();
+
+    const q = normalizeText(query);
+    const filtered = (items || []).filter(it => {
+      const name = it && it.name ? it.name : '';
+      return normalizeText(name).startsWith(q);
+    }).slice(0, 8);
+
+    filtered.forEach(it => {
+      const country = (it.address && (it.address.countryName || it.address.countryCode)) || '';
+      const label = country ? `${it.name}, ${country}` : it.name;
+      const opt = document.createElement('option');
+      opt.value = label;
+      datalist.appendChild(opt);
+      labelMap.set(label, it);
+    });
+    lastItems = filtered;
+  }
 
   the_input.addEventListener('input', function () {
     clearTimeout(debounceTimer);
 
     const value = the_input.value.trim();
-    if (value.length < 3) return;
+    if (value.length < 2) {
+      while (datalist.firstChild) datalist.removeChild(datalist.firstChild);
+      selectedCity = null;
+      return;
+    }
 
     debounceTimer = setTimeout(() => {
-      console.log("🔎 Cercando città per:", value);
-
       fetch(`/amadeus/api/city/${encodeURIComponent(value)}`)
         .then(res => res.json())
         .then(data => {
-          console.log("Auto-fill data:", data);
-          if (data.data && data.data.length > 0) {
-            selectedCity = data.data[0];
-          } else {
-            selectedCity = null;
-          }
+          const items = (data && data.data) ? data.data : [];
+          updateDatalist(items, value);
+          selectedCity = items.length > 0 ? items[0] : null;
         })
-        .catch(err => console.error("❌ Error fetching location data:", err));
-    }, 500);
+        .catch(err => {
+          console.error("Error fetching location data:", err);
+          while (datalist.firstChild) datalist.removeChild(datalist.firstChild);
+          selectedCity = null;
+        });
+    }, 300);
+  });
+
+  the_input.addEventListener('change', function () {
+    const label = the_input.value.trim();
+    if (labelMap.has(label)) {
+      selectedCity = labelMap.get(label);
+    }
   });
 
   the_form.addEventListener('submit', function (event) {
     event.preventDefault();
 
+    if (!selectedCity && lastItems.length > 0) {
+      selectedCity = lastItems[0];
+    }
+
     if (!selectedCity) {
-      console.error("❌ Nessuna città selezionata!");
+      console.error("Aucune ville sélectionnée ou trouvée.");
       return;
     }
 
@@ -53,7 +101,6 @@ function initInputAutocomplete() {
     fetchTravelInfo(coordinates);
   });
 }
-
 
 function fetchTravelInfo(coordinates) {
   fetch(`/amadeus/pois/${selectedCity.name}`, {
@@ -67,16 +114,16 @@ function fetchTravelInfo(coordinates) {
   })
   .then(res => {
       if (!res.ok) {
-          throw new Error(`Errore dal server: ${res.status}`);
+          throw new Error(`Erreur serveur: ${res.status}`);
       }
       return res.text();
   })
   .then(html => {
       document.documentElement.innerHTML = html;
-      
       window.history.pushState({}, '', `/amadeus/pois/${encodeURIComponent(selectedCity.name)}`);
   })
   .catch(err => {
-      console.error('Fetch fallita:', err);
+      console.error('Fetch des POIs échouée:', err);
   });
 }
+
