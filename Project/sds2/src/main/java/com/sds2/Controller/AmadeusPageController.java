@@ -5,6 +5,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sds2.classes.CoordinatesRequest;
+import com.sds2.classes.CustomActivity;
 
 @Controller
 @RequestMapping("/amadeus")
@@ -66,6 +69,7 @@ public class AmadeusPageController {
                 .build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         ObjectMapper mapper = new ObjectMapper();
+
         return mapper.readTree(response.body()).path("data");
     }
 
@@ -80,7 +84,19 @@ public class AmadeusPageController {
             String countryName = (request.country != null) ? request.country : "";
             model.addAttribute("cityName", cityName);
             model.addAttribute("countryName", countryName);
-            model.addAttribute("citiesData", data);
+            model.addAttribute("citiesData", data);         
+            
+            System.out.println("Data received from Amadeus API: " + data.toString());
+            
+            List<CustomActivity> activities = new ArrayList<>();
+
+            if (data.isArray()) {
+                for (JsonNode node : data) {
+                    activities.add(new CustomActivity(node));
+                }
+            }
+
+            model.addAttribute("citiesData", activities);
             return "pois_results";
 
         } catch (Exception e) {
