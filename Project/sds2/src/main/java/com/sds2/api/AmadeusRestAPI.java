@@ -60,7 +60,7 @@ public class AmadeusRestAPI {
 
     // Endpoint autocomplete città
     @GetMapping("/city/{name}")
-    public JsonNode getCity(@PathVariable String name) throws IOException, InterruptedException {
+    public JsonNode getCity(@PathVariable("name") String name) throws IOException, InterruptedException {
         String token = getAccessToken();
         String url = "https://api.amadeus.com/v1/reference-data/locations?subType=CITY&keyword=" + URLEncoder.encode(name, StandardCharsets.UTF_8);
         HttpClient httpClient = HttpClient.newHttpClient();
