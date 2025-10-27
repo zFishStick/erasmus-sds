@@ -6,7 +6,6 @@
 </head>
 <body>
 <h1 th:text="${'Point of interests in ' + #strings.toUpperCase(cityName) + (countryName != null and !#strings.isEmpty(countryName) ? ', ' + #strings.toUpperCase(countryName) : '')}">Point of interests in CITY</h1>
-<!-- TODO: Display the list of points of interest -->
 
 <h2>Activities</h2>
 <ul th:each="activity : ${citiesData}">

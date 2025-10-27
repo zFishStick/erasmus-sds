@@ -83,10 +83,7 @@ public class AmadeusPageController {
             String cityName = (request.city != null && !request.city.isBlank()) ? request.city : city;
             String countryName = (request.country != null) ? request.country : "";
             model.addAttribute("cityName", cityName);
-            model.addAttribute("countryName", countryName);
-            model.addAttribute("citiesData", data);         
-            
-            System.out.println("Data received from Amadeus API: " + data.toString());
+            model.addAttribute("countryName", countryName);    
             
             List<CustomActivity> activities = new ArrayList<>();
 
