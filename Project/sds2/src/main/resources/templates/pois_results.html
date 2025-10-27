@@ -1,11 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Point of interests in <span th:text="${cityName}"></span></title>
+    <title>Point of interests in <span th:utext="${cityName}"></span></title>
 </head>
 <body>
 <h1>Point of interests in <span th:text="${cityName}"></span></h1>
 <!-- TODO: Display the list of points of interest -->
+
+<h2>Activities</h2>
+<ul th:each="activity : ${citiesData}">
+    <li><strong th:text="${activity.name}"></strong></li>
+    <li><span th:utext="${activity.description}"></span></li>
+    <li><span th:text="${activity.price}"></span></li>
+    <li><img th:src="${activity.imageUrl}" alt="Activity Image"/></li>
+    <li><a th:href="${activity.bookingLink}">Book Now</a></li>
+    <li><span th:text="${activity.minimumDuration}"></span></li>
+</ul>
+
 <a href="/">Torna indietro</a>
 </body>
 </html>
