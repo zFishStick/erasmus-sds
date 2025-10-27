@@ -58,7 +58,6 @@ public class AmadeusRestAPI {
         return accessToken;
     }
 
-    // Endpoint autocomplete città
     @GetMapping("/city/{name}")
     public JsonNode getCity(@PathVariable("name") String name) throws IOException, InterruptedException {
         String token = getAccessToken();
