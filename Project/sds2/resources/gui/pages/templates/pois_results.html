@@ -6,10 +6,13 @@
 </head>
 <body>
 <h1 th:text="${'Point of interests in ' + #strings.toUpperCase(cityName) + (countryName != null and !#strings.isEmpty(countryName) ? ', ' + #strings.toUpperCase(countryName) : '')}">Point of interests in CITY</h1>
-<!-- TODO: Display the list of points of interest -->
 
 <h2>Activities</h2>
-<ul th:each="activity : ${citiesData}">
+<div th:if="${citiesData == null or #lists.isEmpty(citiesData)}">
+    <p>No activities found.</p>
+</div>
+
+<ul th:if="${citiesData != null and !#lists.isEmpty(citiesData)}" th:each="activity : ${citiesData}">
     <li><strong th:text="${activity.name}"></strong></li>
     <li><span th:utext="${activity.description}"></span></li>
     <li><span th:text="${activity.price}"></span></li>
