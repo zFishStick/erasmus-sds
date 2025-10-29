@@ -10,6 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="../style/style.css" />
   </head>
   <body>
@@ -28,20 +29,28 @@
           <strong>Search</strong> to continue.
         </p>
 
-        <form id="planner-form" class="form" autocomplete="on">
+        <form id="planner-form" class="form" autocomplete="off">
           <div class="form-row">
             <label for="destination">Destination</label>
-            <input
-              id="destination"
-              name="destination"
-              type="text"
-              placeholder="e.g., Paris, France"
-              aria-describedby="destination-help"
-              required
-            />
-            <small id="destination-help" class="muted"
-              >City or location you want to visit</small
-            >
+            <div class="form-filter">
+              <input
+                id="destination"
+                name="destination"
+                type="text"
+                placeholder="e.g., Paris, France"
+                aria-describedby="destination-help"
+                required
+              />
+            <i class="fa fa-filter" style="font-size:24px" id="filter-btn"></i>
+            </div>
+            <small id="destination-help" class="muted">City or location you want to visit</small>
+            <div class="filters-div" id="filters-div">
+              <!-- Test -->
+              <label><input type="checkbox" name="filter" value="museum" /> Museums</label>
+              <label><input type="checkbox" name="filter" value="park" /> Parks</label>
+              <label><input type="checkbox" name="filter" value="historical" /> Historical Sites</label>
+              <label><input type="checkbox" name="filter" value="shopping" /> Shopping</label>
+            </div>
           </div>
 
           <div class="form-grid">
@@ -60,6 +69,7 @@
             <button type="reset" class="btn btn-ghost">Reset</button>
           </div>
         </form>
+        
       </section>
 
       <section aria-live="polite" class="card" id="preview" hidden>
