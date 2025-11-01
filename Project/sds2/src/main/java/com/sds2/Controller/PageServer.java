@@ -1,4 +1,4 @@
-package com.sds2.classes;
+package com.sds2.Controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,10 +10,5 @@ public class PageServer {
     public String index() {
         return "index";
     }
-
-    // @GetMapping("/travel-info")
-    // public String travelInfo() {
-    //     return "travel-info";
-    // }
     
 }

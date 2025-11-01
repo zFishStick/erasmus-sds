@@ -12,7 +12,7 @@ import java.awt.Desktop;
 public class Server {
     public static void main(String[] args) throws IOException {
         SpringApplication.run(Server.class, args);
-        System.out.println("Server in esecuzione su http://localhost:8080");
+        System.out.println("Server executing at http://localhost:8080");
         System.setProperty("java.awt.headless", "false");
         
         try {
