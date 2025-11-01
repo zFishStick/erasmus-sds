@@ -190,7 +190,7 @@ function fetchTravelInfo(coordinates) {
       window.history.pushState({}, '', `/amadeus/pois/${encodeURIComponent(selectedCity.name)}`);
   })
   .catch(err => {
-      console.error('Fetch des POIs échouée:', err);
+      console.error('POIs fetch failed:', err);
   });
 }
 

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,12 +7,16 @@
     <title>Travel Planner</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <script id="search-js" defer src="https://api.mapbox.com/search-js/v1.5.0/web.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script> 
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script defer src="./scripts/MAP_api.js"></script>
+    <script src="./scripts/main.js"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="../style/style.css" />
+    <link rel="stylesheet" href="./style/style.css" />
   </head>
   <body>
     <header class="site-header" role="banner">
@@ -29,28 +34,21 @@
           <strong>Search</strong> to continue.
         </p>
 
-        <form id="planner-form" class="form" autocomplete="off">
+        <form id="planner-form" class="form" autocomplete="on">
           <div class="form-row">
             <label for="destination">Destination</label>
-            <div class="form-filter">
-              <input
-                id="destination"
-                name="destination"
-                type="text"
-                placeholder="e.g., Paris, France"
-                aria-describedby="destination-help"
-                required
-              />
-            <i class="fa fa-filter" style="font-size:24px" id="filter-btn"></i>
-            </div>
+            <input
+              id="destination"
+              name="destination"
+              type="text"
+              placeholder="e.g., Paris, France"
+              aria-describedby="destination-help"
+              list="city-suggestions"
+              autocomplete="address-line1"
+              required
+            />
+            <datalist id="city-suggestions"></datalist>
             <small id="destination-help" class="muted">City or location you want to visit</small>
-            <div class="filters-div" id="filters-div">
-              <!-- Test -->
-              <label><input type="checkbox" name="filter" value="museum" /> Museums</label>
-              <label><input type="checkbox" name="filter" value="park" /> Parks</label>
-              <label><input type="checkbox" name="filter" value="historical" /> Historical Sites</label>
-              <label><input type="checkbox" name="filter" value="shopping" /> Shopping</label>
-            </div>
           </div>
 
           <div class="form-grid">
@@ -65,11 +63,10 @@
           </div>
 
           <div class="actions">
-            <button type="submit" class="btn btn-primary">Search</button>
+            <button type="submit" class="btn btn-primary" id="submit-form">Search</button>
             <button type="reset" class="btn btn-ghost">Reset</button>
           </div>
         </form>
-        
       </section>
 
       <section aria-live="polite" class="card" id="preview" hidden>
@@ -99,6 +96,5 @@
       </div>
     </footer>
 
-    <script src="../scripts/main.js"></script>
   </body>
   </html>
