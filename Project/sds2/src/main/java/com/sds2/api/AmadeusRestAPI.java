@@ -29,6 +29,9 @@ public class AmadeusRestAPI {
     @Value("${amadeus.apiSecret}")
     private String apiSecret;
 
+    @Value("${amadeus.baseUrl:https://test.api.amadeus.com}")
+    private String baseUrl;
+
     private String accessToken;
     private long tokenExpiryTime;
 
@@ -42,7 +45,7 @@ public class AmadeusRestAPI {
         HttpClient httpClient = HttpClient.newHttpClient();
         String body = "client_id=" + apiKey + "&client_secret=" + apiSecret + "&grant_type=client_credentials";
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.amadeus.com/v1/security/oauth2/token"))
+                .uri(URI.create(baseUrl + "/v1/security/oauth2/token"))
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .POST(HttpRequest.BodyPublishers.ofString(body))
                 .build();
@@ -61,7 +64,7 @@ public class AmadeusRestAPI {
     @GetMapping("/city/{name}")
     public JsonNode getCity(@PathVariable("name") String name) throws IOException, InterruptedException {
         String token = getAccessToken();
-        String url = "https://api.amadeus.com/v1/reference-data/locations?subType=CITY&keyword=" + URLEncoder.encode(name, StandardCharsets.UTF_8);
+        String url = baseUrl + "/v1/reference-data/locations?subType=CITY&keyword=" + URLEncoder.encode(name, StandardCharsets.UTF_8);
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
