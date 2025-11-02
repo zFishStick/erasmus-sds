@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <title th:text="${'Point of interests in ' + #strings.toUpperCase(cityName) + (countryName != null and !#strings.isEmpty(countryName) ? ', ' + #strings.toUpperCase(countryName) : '')}">POIs</title>
-</head>
+    <script src="../static/scripts/filter_places.js"></script>
+  </head>
 <body>
 <h1 th:text="${'Point of interests in ' + #strings.toUpperCase(cityName) + (countryName != null and !#strings.isEmpty(countryName) ? ', ' + #strings.toUpperCase(countryName) : '')}">Point of interests in CITY</h1>
 

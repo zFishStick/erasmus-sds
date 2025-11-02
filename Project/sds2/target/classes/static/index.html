@@ -11,11 +11,8 @@
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script> 
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script defer src="./scripts/MAP_api.js"></script>
-    <script src="./scripts/main.js"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="./style/style.css" />
   </head>
   <body>
@@ -37,18 +34,28 @@
         <form id="planner-form" class="form" autocomplete="on">
           <div class="form-row">
             <label for="destination">Destination</label>
-            <input
-              id="destination"
-              name="destination"
-              type="text"
-              placeholder="e.g., Paris, France"
-              aria-describedby="destination-help"
-              list="city-suggestions"
-              autocomplete="address-line1"
-              required
-            />
+            <div class="form-filter">
+              <input
+                id="destination"
+                name="destination"
+                type="text"
+                placeholder="e.g., Paris, France"
+                aria-describedby="destination-help"
+                list="city-suggestions"
+                autocomplete="address-line1"
+                required
+              />
+            <i class="fa fa-filter" style="font-size:24px" id="filter-btn"></i>
+            </div>
             <datalist id="city-suggestions"></datalist>
             <small id="destination-help" class="muted">City or location you want to visit</small>
+            <div class="filters-div" id="filters-div">
+              <!-- TODO: Implement filtering logic into Javascript -->
+              <label><input type="checkbox" name="filter" value="museum" /> Museums</label>
+              <label><input type="checkbox" name="filter" value="park" /> Parks</label>
+              <label><input type="checkbox" name="filter" value="historical" /> Historical Sites</label>
+              <label><input type="checkbox" name="filter" value="shopping" /> Shopping</label>
+            </div>
           </div>
 
           <div class="form-grid">
@@ -83,8 +90,7 @@
             <span data-preview="endDate">—</span>
           </p>
           <p class="muted">
-            This is a local preview only. API submission will be handled by the
-            Java backend in a separate task.
+            Loading available activities, wait a moment please...
           </p>
         </div>
       </section>
@@ -95,6 +101,8 @@
         <p class="muted">SDS2 • Erasmus Tourist Assistant</p>
       </div>
     </footer>
+
+        <script src="./scripts/main.js"></script>
 
   </body>
   </html>
