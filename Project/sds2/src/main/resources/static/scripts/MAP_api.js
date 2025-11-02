@@ -58,7 +58,6 @@ function initInputAutocomplete() {
       return;
     }
 
-    // If current value matches an existing option, resolve immediately
     const immediate = (function () {
       const label = value;
       if (labelMap.has(label)) return labelMap.get(label);
@@ -74,7 +73,6 @@ function initInputAutocomplete() {
     })();
     if (immediate) {
       selectedCity = immediate;
-      // When user picked a full suggestion like "City, Country", skip refetch
       if (value.includes(',')) {
         return;
       }
@@ -87,7 +85,6 @@ function initInputAutocomplete() {
         .then(data => {
           const items = (data && data.data) ? data.data : [];
           updateDatalist(items, value);
-          // Try to match selected city to typed value after refresh
           const label = the_input.value.trim();
           const cityOnly = label.split(',')[0].trim();
           const normCity = normalizeText(cityOnly);
@@ -117,7 +114,6 @@ function initInputAutocomplete() {
       if (normalizeText(k) === normLabel) return v;
     }
 
-    // Use only the city portion before comma
     const cityOnly = label.split(',')[0].trim();
     const normCity = normalizeText(cityOnly);
     const byEq = lastItems.find(it => normalizeText(it.name || '') === normCity);
@@ -139,7 +135,6 @@ function initInputAutocomplete() {
       if (match) {
         selectedCity = match;
       } else {
-        // final attempt: fetch with current input and take first result
         const value = the_input.value.trim();
         if (value.length >= 2) {
           try {
