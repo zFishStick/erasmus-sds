@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${hotel != null && hotel.name != null ? hotel.name : 'Hotel details'}">Hotel details</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.45; }
+        header { margin-bottom: 16px; }
+        .section { margin: 16px 0; }
+        .meta { color: #555; font-size: 0.95em; }
+        .card { border: 1px solid #ddd; border-radius: 6px; padding: 12px; }
+        ul { margin: 6px 0 0 18px; }
+        .back { margin-top: 12px; display: inline-block; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; }
+        th { background: #f9f9f9; }
+    </style>
+</head>
+<body>
+<header>
+    <h1 th:text="${hotel != null && hotel.name != null ? hotel.name : 'Hotel'}">Hotel</h1>
+    <p class="meta">
+        <span th:if="${hotel != null && hotel.address != null}" th:text="${hotel.address}">Address</span>
+        <span th:if="${hotel != null && hotel.rating != null && !#strings.isEmpty(hotel.rating)}"> • Rating: <span th:text="${hotel.rating}">N/A</span></span>
+        <span th:if="${checkInDate != null && checkOutDate != null}"> • Dates: <span th:text="${checkInDate}"></span> → <span th:text="${checkOutDate}"></span></span>
+    </p>
+    <p>
+        <a class="back" href="/">Back to home</a>
+        <span th:if="${hotel != null && hotel.latitude != null && hotel.longitude != null}"> | 
+            <a th:href="${'https://www.google.com/maps/search/?api=1&query=' + hotel.latitude + ',' + hotel.longitude}" target="_blank" rel="noopener">Open in Maps</a>
+        </span>
+    </p>
+</header>
+
+
+<section class="section card" th:if="${amenities != null && !#lists.isEmpty(amenities)}">
+    <h2>Amenities</h2>
+    <ul>
+        <li th:each="a : ${amenities}" th:text="${a}">Amenity</li>
+    </ul>
+</section>
+
+<section class="section card" th:if="${offers != null && offers.size() > 0}">
+    <h2>
+        <span th:if="${checkInDate != null && checkOutDate != null}"
+              th:text="${'Offers from ' + checkInDate + ' to ' + checkOutDate}">Offers</span>
+        <span th:if="${checkInDate == null or checkOutDate == null}">Offers</span>
+    </h2>
+    <div th:each="item : ${offers}">
+        <div th:if="${item.path('offers') != null && item.path('offers').isArray()}">
+            <table>
+                <thead>
+                <tr>
+                    <th>Room</th>
+                    <th>Guests</th>
+                    <th>Board</th>
+                    <th>Price</th>
+                    <th>Currency</th>
+                    <th>Cancelable</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="off : ${item.path('offers')}">
+                    <td th:text="${off.path('room').path('type').asText('N/A')}">N/A</td>
+                    <td th:text="${off.path('guests').path('adults').asText('N/A')}">N/A</td>
+                    <td th:text="${off.path('boardType').asText('N/A')}">N/A</td>
+                    <td th:text="${off.path('price').path('total').asText('N/A')}">N/A</td>
+                    <td th:text="${off.path('price').path('currency').asText('N/A')}">N/A</td>
+                    <td th:text="${off.path('policies').path('cancellation').isMissingNode() ? 'Unknown' : 'See policy'}">Unknown</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section class="section card" th:if="${(checkInDate != null and checkOutDate != null) and (offers == null or offers.size() == 0)}">
+    <h2 th:text="${'Offers from ' + checkInDate + ' to ' + checkOutDate}">Offers</h2>
+    <p>No availability for the selected dates.</p>
+    <p class="meta">Try different dates or adjust your criteria.</p>
+    
+</section>
+
+</body>
+</html>

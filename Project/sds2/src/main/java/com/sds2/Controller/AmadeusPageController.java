@@ -84,6 +84,12 @@ public class AmadeusPageController {
             String countryName = (request.country != null) ? request.country : "";
             model.addAttribute("cityName", cityName);
             model.addAttribute("countryName", countryName);    
+            // Pass coordinates to view so we can link to hotels page
+            model.addAttribute("latitude", request.latitude);
+            model.addAttribute("longitude", request.longitude);
+            // Pass optional stay dates if provided
+            model.addAttribute("checkInDate", request.checkInDate);
+            model.addAttribute("checkOutDate", request.checkOutDate);
             
             List<CustomActivity> activities = new ArrayList<>();
 
