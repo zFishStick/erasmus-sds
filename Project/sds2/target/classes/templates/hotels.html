@@ -29,7 +29,7 @@
     </p>
     <p><a class="back" href="/">Back to home</a></p>
     <div>
-        <form th:action="@{'/amadeus/pois/' + ${cityName}}" method="post" style="margin-top: 10px;">
+        <form th:action="@{'/amadeus/pois/' + ${cityName}}" method="get" style="margin-top: 10px;">
             <input type="hidden" name="latitude" th:value="${latitude}" />
             <input type="hidden" name="longitude" th:value="${longitude}" />
             <input type="hidden" name="city" th:value="${cityName}" />

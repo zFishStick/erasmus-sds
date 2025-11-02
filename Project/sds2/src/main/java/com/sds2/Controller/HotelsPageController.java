@@ -14,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -245,7 +244,6 @@ public class HotelsPageController {
                     String hid = h.hotelId;
                     if (hid == null || hid.isBlank()) continue;
                     boolean hasPrice = priceMap.containsKey(hid);
-                    boolean wasChecked = checkedIds.contains(hid);
                     if (!hasPrice) {
                         if (performed >= maxFallbackChecks) break;
                         try {
