@@ -100,7 +100,6 @@ public class AmadeusPageController {
         session.setAttribute("checkInDate", request.checkInDate);
         session.setAttribute("checkOutDate", request.checkOutDate);
 
-        // Usa metodo comune
         populateModel(model, session);
 
         return "pois_results";
