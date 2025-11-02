@@ -22,6 +22,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sds2.classes.CoordinatesRequest;
 import com.sds2.classes.CustomActivity;
 
+import jakarta.servlet.http.HttpSession;
+
+import org.springframework.web.bind.annotation.GetMapping;
+
+
 @Controller
 @RequestMapping("/amadeus")
 public class AmadeusPageController {
@@ -73,41 +78,50 @@ public class AmadeusPageController {
         return mapper.readTree(response.body()).path("data");
     }
 
-    // Search POIs by city coordinates and display results into pois_results.html (check template folder)
     @PostMapping("/pois/{city}")
     public String searchCityByCoordinates(@PathVariable("city") String city,
-                                          @RequestBody CoordinatesRequest request, Model model) throws IOException, InterruptedException {
+                                        @RequestBody CoordinatesRequest request, 
+                                        Model model,
+                                        HttpSession session) throws IOException, InterruptedException {
 
-        try {
-            JsonNode data = getPointOfInterests(request.latitude, request.longitude);
-            String cityName = (request.city != null && !request.city.isBlank()) ? request.city : city;
-            String countryName = (request.country != null) ? request.country : "";
-            model.addAttribute("cityName", cityName);
-            model.addAttribute("countryName", countryName);    
-            // Pass coordinates to view so we can link to hotels page
-            model.addAttribute("latitude", request.latitude);
-            model.addAttribute("longitude", request.longitude);
-            // Pass optional stay dates if provided
-            model.addAttribute("checkInDate", request.checkInDate);
-            model.addAttribute("checkOutDate", request.checkOutDate);
-            
-            List<CustomActivity> activities = new ArrayList<>();
-
-            if (data.isArray()) {
-                for (JsonNode node : data) {
-                    activities.add(new CustomActivity(node));
-                }
+        JsonNode data = getPointOfInterests(request.latitude, request.longitude);
+        List<CustomActivity> activities = new ArrayList<>();
+        if (data.isArray()) {
+            for (JsonNode node : data) {
+                activities.add(new CustomActivity(node));
             }
-
-            model.addAttribute("citiesData", activities);
-            return "pois_results";
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("error", "Cannot retrieve data from the API.");
-            return "error_page";
         }
+
+        session.setAttribute("poisData", activities);
+        session.setAttribute("cityName", request.city);
+        session.setAttribute("countryName", request.country);
+        session.setAttribute("latitude", request.latitude);
+        session.setAttribute("longitude", request.longitude);
+        session.setAttribute("checkInDate", request.checkInDate);
+        session.setAttribute("checkOutDate", request.checkOutDate);
+
+        // Usa metodo comune
+        populateModel(model, session);
+
+        return "pois_results";
     }
+
+    @GetMapping("/pois/{city}")
+    public String showPoisPage(@PathVariable("city") String city, Model model, HttpSession session) {
+        populateModel(model, session);
+        return "pois_results";
+    }
+
+    private void populateModel(Model model, HttpSession session) {
+        model.addAttribute("cityName", session.getAttribute("cityName"));
+        model.addAttribute("countryName", session.getAttribute("countryName"));
+        model.addAttribute("citiesData", session.getAttribute("poisData"));
+        model.addAttribute("latitude", session.getAttribute("latitude"));
+        model.addAttribute("longitude", session.getAttribute("longitude"));
+        model.addAttribute("checkInDate", session.getAttribute("checkInDate"));
+        model.addAttribute("checkOutDate", session.getAttribute("checkOutDate"));
+    }
+    
 
 }
 
