@@ -5,4 +5,6 @@ public class CoordinatesRequest {
     public String country;
     public double latitude;
     public double longitude;
+    public String checkInDate;  // ISO yyyy-MM-dd, optional
+    public String checkOutDate; // ISO yyyy-MM-dd, optional
 }

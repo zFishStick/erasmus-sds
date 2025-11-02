@@ -169,6 +169,10 @@ function initInputAutocomplete() {
 }
 
 function fetchTravelInfo(coordinates) {
+  const startEl = document.getElementById('start-date');
+  const endEl = document.getElementById('end-date');
+  const checkInDate = startEl && startEl.value ? startEl.value : null;
+  const checkOutDate = endEl && endEl.value ? endEl.value : null;
   fetch(`/amadeus/pois/${encodeURIComponent(selectedCity.name)}`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -177,6 +181,8 @@ function fetchTravelInfo(coordinates) {
           country: (selectedCity.address && (selectedCity.address.countryName || selectedCity.address.countryCode)) || "",
           longitude: coordinates[0],
           latitude: coordinates[1],
+          checkInDate: checkInDate,
+          checkOutDate: checkOutDate,
       })
   })
   .then(res => {
