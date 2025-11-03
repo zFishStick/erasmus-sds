@@ -4,12 +4,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import com.amadeus.Amadeus;
-import com.amadeus.resources.City;
+import com.amadeus.Params;
+import com.amadeus.resources.FlightDestination;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
 public class ApiTest {
-    ApiTest apiTest = new ApiTest();
 
     @BeforeAll
     public static void init() {
@@ -23,25 +23,30 @@ public class ApiTest {
     }
 
     @Test
-    public City[] testGetCities() throws Exception {
+    public void testFlies() {
         Dotenv dotenv = Dotenv.load();
 
         String apiKey = dotenv.get("AMADEUS_API_KEY");
         String apiSecret = dotenv.get("AMADEUS_API_SECRET");
 
+        try{
         Amadeus amadeus = Amadeus.builder(apiKey, apiSecret).build();
 
-        City[] cities = amadeus.referenceData.locations.cities.get(
-            com.amadeus.Params
-                .with("keyword", "Madrid")
-                .and("subType", "CITY")
-        );
+        Params params = Params.with("origin", "MAD");
 
-        for (City city : cities) {
-            System.out.println("City: " + city.getName() + ", Country: " + city.getAddress().getCountryCode());
+        FlightDestination[] flightDestinations = amadeus.shopping.flightDestinations.get(params);
+
+        if (flightDestinations[0].getResponse().getStatusCode() != 200) {
+            System.out.println("Wrong status code for Flight Inspiration Search: " + flightDestinations[0].getResponse().getStatusCode());
+            System.exit(-1);
         }
 
-        return cities;
+        System.out.println(flightDestinations[0]);
+        }
+        catch (Exception e) {
+            System.out.println(e.toString());
+        }
+
     }
 
 }
