@@ -1,4 +1,4 @@
-﻿package com.sds2.Controller;
+﻿package com.sds2.controller;
 
 import java.io.IOException;
 import java.net.URI;

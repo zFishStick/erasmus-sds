@@ -1,9 +1,0 @@
-com\sds2\classes\CoordinatesRequest.class
-com\sds2\classes\InputData.class
-com\sds2\classes\PageServer.class
-com\sds2\classes\PlaceInfo.class
-com\sds2\api\MapBoxAPI.class
-com\sds2\api\AmadeusRestAPI.class
-com\sds2\Controller\AmadeusPageController.class
-com\sds2\op\InputValidator.class
-com\sds2\Server.class
