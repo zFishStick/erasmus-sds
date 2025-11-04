@@ -168,7 +168,7 @@ function fetchTravelInfo(coordinates) {
   const endEl = document.getElementById('end-date');
   const checkInDate = startEl && startEl.value ? startEl.value : null;
   const checkOutDate = endEl && endEl.value ? endEl.value : null;
-  fetch(`/amadeus/pois/${encodeURIComponent(selectedCity.name)}`, {
+  fetch(`/pois/${encodeURIComponent(selectedCity.name)}`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -188,7 +188,7 @@ function fetchTravelInfo(coordinates) {
   })
   .then(html => {
       document.documentElement.innerHTML = html;
-      window.history.pushState({}, '', `/amadeus/pois/${encodeURIComponent(selectedCity.name)}`);
+      window.history.pushState({}, '', `/pois/${encodeURIComponent(selectedCity.name)}`);
   })
   .catch(err => {
       console.error('POIs fetch failed:', err);
