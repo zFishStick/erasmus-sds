@@ -14,6 +14,7 @@ import com.sds2.classes.Coordinates;
 import com.sds2.classes.POI;
 import com.sds2.service.POIService;
 
+
 @Controller
 @RequestMapping("/pois")
 public class POISController {
@@ -25,7 +26,7 @@ public class POISController {
     }
 
     @GetMapping("/{city}")
-    public String showPoisPage(@PathVariable("city") String city, Model model) {
+    public String showPoisPage(@PathVariable String city, Model model) {
         return "pois_results";
     }
 

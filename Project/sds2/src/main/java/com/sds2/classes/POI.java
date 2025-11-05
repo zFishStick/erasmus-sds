@@ -1,23 +1,29 @@
 package com.sds2.classes;
 
-import java.io.Serializable;
-
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
-public class POI implements Serializable {
+@Table(name = "point_of_interest")
+public class POI {
 
-    private static final long serialVersionUID = 2405172041950251807L;
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String cityName;
     private String country;
     private String description;
     private String type;
-    private transient Price price;
+    private double amount;
+    private String currency;
     private String pictures;
     private int duration;
     private String bookingLink;
+
+    protected POI() {}
 
     public Long getId() {
         return id;
@@ -59,12 +65,12 @@ public class POI implements Serializable {
         this.type = type;
     }
 
-    public void setPrice(double amount, String currency) {
-        this.price = new Price(amount, currency);
+    public double getAmount() {
+        return amount;
     }
 
-    public Price getPrice() {
-        return price;
+    public String getCurrency() {
+        return currency;
     }
 
     public int getDuration() {

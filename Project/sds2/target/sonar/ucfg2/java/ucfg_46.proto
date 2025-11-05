@@ -1,0 +1,14 @@
+
+wcom.sds2.classes.WebClientConfig#webClientBuilder()Lorg/springframework/web/reactive/function/client/WebClient$Builder;g
+]C:/Projects/Java/erasmus-sds/Project/sds2/src/main/java/com/sds2/classes/WebClientConfig.java (-"1*¦
+1 (¾
+»
+ ("H
+%0Borg.springframework.web.reactive.function.client.WebClient$Builder"ˆorg.springframework.web.reactive.function.client.WebClient#builder()Lorg/springframework/web/reactive/function/client/WebClient$Builder;*Z
+
+__unknown_file (>"<
+:org.springframework.web.reactive.function.client.WebClient"V
+ (#J
+H
+%0Borg.springframework.web.reactive.function.client.WebClient$BuilderB$"
+ com.sds2.classes.WebClientConfigH

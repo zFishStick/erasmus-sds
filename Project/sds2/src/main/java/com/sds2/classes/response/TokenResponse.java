@@ -1,10 +1,13 @@
 package com.sds2.classes.response;
 
-import jakarta.persistence.Entity;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Entity
 public class TokenResponse {
+
+    @JsonProperty("access_token")
     private String accessToken;
+
+    @JsonProperty("expires_in")
     private int expiresIn;
 
     public String getAccessToken() { return accessToken; }

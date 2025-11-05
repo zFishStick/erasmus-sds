@@ -1,0 +1,16 @@
+
+?com.sds2.database.Database#getConnection()Ljava/sql/Connection;a
+WC:/Projects/Java/erasmus-sds/Project/sds2/src/main/java/com/sds2/database/Database.java (#"1*±
+1 (y
+w
+ (
+%0java.sql.Connection"__id*J
+
+__unknown_file (.*,
+com.sds2.database.Database"
+
+connection"'
+ (
+
+%0java.sql.ConnectionB
+com.sds2.database.DatabaseH

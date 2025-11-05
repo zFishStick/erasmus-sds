@@ -1,0 +1,15 @@
+
+@com.sds2.classes.response.POISResponse#getData()Ljava/util/List;m
+cC:/Projects/Java/erasmus-sds/Project/sds2/src/main/java/com/sds2/classes/response/POISResponse.java ("1*­
+1 (z
+x
+ (
+%0java.util.List"__id*P
+
+__unknown_file (4*2(
+&com.sds2.classes.response.POISResponse"
+data""
+ (
+
+%0java.util.ListB*(
+&com.sds2.classes.response.POISResponseH

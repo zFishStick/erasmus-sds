@@ -4,22 +4,27 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "city")
 public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
     private String country;
-    private Coordinates coordinates;
+    private double latitude;
+    private double longitude;
 
     public City() {}
 
-    public City(String name, String country, Coordinates coordinates) {
+    public City(String name, String country, double latitude, double longitude) {
         this.name = name;
         this.country = country;
-        this.coordinates = coordinates;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public String getName() {
@@ -39,11 +44,18 @@ public class City {
     }
 
     public void setCoordinates(double latitude, double longitude) {
-        this.coordinates = new Coordinates(latitude, longitude);
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+    
+    public double[] getCoordinates() {
+        return new double[] { latitude, longitude };
     }
 
-    public double[] getCoordinates() {
-        return new double[] { coordinates.getCoordinates()[0], coordinates.getCoordinates()[1] };
+    @Override
+    public String toString() {
+        return "City{name='%s', country='%s', latitude=%f, longitude=%f}".formatted(
+            name, country, latitude, longitude);
     }
    
 }
