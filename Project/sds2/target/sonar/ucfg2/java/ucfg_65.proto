@@ -1,0 +1,58 @@
+
+scom.sds2.controller.POISController#showPoisPage(Ljava/lang/String;Lorg/springframework/ui/Model;)Ljava/lang/String;i
+_C:/Projects/Java/erasmus-sds/Project/sds2/src/main/java/com/sds2/controller/POISController.java ("startingBlock*
+startingBlock (N≠
+™
+ (4
+%2"
+__annotate*T
+
+__unknown_file (86
+4org.springframework.web.bind.annotation.PathVariable*6
+
+__unknown_file (
+
+cityjava.lang.StringX
+V
+< (@
+cityjava.lang.String"__annotation*"
+
+__unknown_file (
+
+%2FD
+B (M%
+modelorg.springframework.ui.Model"java.util.HashMap*
+1*Ô
+1 (Ø
+¨
+ (
+%0"Horg.springframework.web.servlet.ModelAndView#<init>(Ljava/lang/String;)V*"
+
+__unknown_file (
+""*,
+
+__unknown_file (
+pois_resultsè
+å
+ (
+%1"template!pois_results*B
+
+__unknown_file (&"$
+"com.sds2.controller.POISController*C
+
+__unknown_file ('
+%
+modelorg.springframework.ui.Model*,
+
+__unknown_file (
+/pois/{city}*,
+
+__unknown_file (
+/pois/{city}"
+ (
+pois_results:$
+ (A
+cityjava.lang.String:1
+B (M%
+modelorg.springframework.ui.ModelB&$
+"com.sds2.controller.POISControllerH

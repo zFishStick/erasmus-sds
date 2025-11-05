@@ -1,0 +1,168 @@
+
+1.0com.sds2:sds2JavaFrontend"1762291037603*java2.B˜
+'
+"src/main/java/com/sds2/Server.java2
+	
+type3
+	
+MAIN4
+
+
+module-key5
+	
+sds26
+
+package8
+
+sds2:com.sds29
+
+com.sds2.Server11
+
+class12
+
+access13
+
+public14
+
+simple-name15
+
+Server16
+B
+<org.springframework.boot.autoconfigure.SpringBootApplication18
+
+unknown19
+
+annotated by20
+
+
+uses21
+
+com.sds2.Server.LOCALHOST23
+
+field24
+
+	LOCALHOST25
+0
+*com.sds2.Server#main([Ljava/lang/String;)V27
+
+method28
+
+
+main29
+@
+:org.springframework.context.ConfigurableApplicationContext31
+
+returns32
+0
+*org.springframework.boot.SpringApplication34
+
+
+references35
+—
+org.springframework.boot.SpringApplication#run(Ljava/lang/Class;[Ljava/lang/String;)Lorg/springframework/context/ConfigurableApplicationContext;37
+
+calls38J#
+!
+1
+12
+
+3
+4
+
+5
+6Z
+
+7
+7982
+
+
+5
+6j˜
+>
+108
+101112 *
+1 (:7B
+
+
+13
+14
+
+
+15
+16
+
+36
+363719
+
+33
+333419
+
+17
+171819
+B
+22<
+222324 *
+1 (210:7B
+
+
+13
+14
+
+
+15
+25
+B
+26<
+262728 *
+1 (210:7B
+
+
+13
+14
+
+
+15
+29
+
+30
+303119rÄ
+
+101720*
+1
+ 
+(
+
+101721*
+1
+ 
+(
+
+263032*
+1	 (
+
+263335*
+1	 (
+
+263638*
+1 (
+
+263321*
+1	 (
+
+261021*
+1 (%
+
+262235*
+1 ((
+
+261021*
+1" ((
+
+262235*
+1l (u
+
+261021*
+1 ( 
+
+262235*
+1P (Y

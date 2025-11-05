@@ -1,0 +1,198 @@
+
+1.0com.sds2:sds2JavaFrontend"1762291036522*java2.Bñ
+2
+-src/main/java/com/sds2/database/Database.java2
+	
+type3
+	
+MAIN4
+
+
+module-key5
+	
+sds26
+
+package8
+
+sds2:com.sds2.database9
+ 
+com.sds2.database.Database11
+
+class12
+
+access13
+
+public14
+
+simple-name15
+
+Database16
+.
+(org.springframework.stereotype.Component18
+
+unknown19
+
+annotated by20
+
+
+uses21
++
+%com.sds2.database.Database.connection23
+
+field24
+
+private25
+
+
+connection26
+'
+!com.sds2.database.Database.logger28
+
+logger29
+*
+$com.sds2.database.Database#<init>()V31
+
+method32
+
+calls33
+
+
+references34
+E
+?com.sds2.database.Database#getConnection()Ljava/sql/Connection;36
+
+getConnection37
+3
+-com.sds2.database.Database#closeConnection()V39
+
+closeConnection40J#
+!
+1
+12
+
+3
+4
+
+5
+6Z
+
+7
+7982
+
+
+5
+6j¨
+B
+22<
+222324 *
+1 (210:7B
+
+
+13
+25
+
+
+15
+26
+
+17
+171819
+B
+30<
+303132 *
+1 (210:7B
+
+
+13
+14
+
+
+15
+16
+B
+35<
+353632 *
+1 (210:7B
+
+
+13
+14
+
+
+15
+37
+B
+27<
+272824 *
+1 (210:7B
+
+
+13
+25
+
+
+15
+29
+>
+108
+101112 *
+1	 	(:7B
+
+
+13
+14
+
+
+15
+16
+B
+38<
+383932 *
+1 (210:7B
+
+
+13
+14
+
+
+15
+40rß
+
+101720*
+1 (
+
+101721*
+1 (
+
+271021*
+1; (C
+
+301033*
+1 (
+
+302234*
+1 (
+
+302734*
+1 (
+
+302734*
+1 (
+
+352234*
+1 (
+
+382234*
+1 (
+
+382234*
+1( (2
+
+382234*
+1( (2
+
+382234*
+1 (
+
+382234*
+1 (

@@ -1,0 +1,447 @@
+
+1.0com.sds2:sds2JavaFrontend"1762291037843*java2.B†
+(
+#src/test/java/com/sds2/ApiTest.java2
+	
+type3
+	
+TEST4
+
+
+module-key5
+	
+sds26
+
+package8
+
+sds2:com.sds29
+
+com.sds2.ApiTest11
+
+class12
+
+access13
+
+public14
+
+simple-name15
+
+ApiTest16
+
+com.sds2.ApiTest.apiTest18
+
+field19
+
+	protected20
+
+apiTest21
+
+is type22
+
+
+uses23
+
+calls24
+
+com.sds2.ApiTest#init()V26
+
+method27
+
+
+init28
+%
+org.junit.jupiter.api.BeforeAll30
+
+unknown31
+
+annotated by32
+'
+!io.github.cdimascio.dotenv.Dotenv34
+
+returns35
+
+
+references36
+Q
+Kio.github.cdimascio.dotenv.Dotenv#load()Lio/github/cdimascio/dotenv/Dotenv;38
+Q
+Kio.github.cdimascio.dotenv.Dotenv#get(Ljava/lang/String;)Ljava/lang/String;40
+C
+=com.sds2.ApiTest#testGetCities()[Lcom/amadeus/resources/City;42
+
+testGetCities43
+ 
+com.amadeus.resources.City45
+ 
+org.junit.jupiter.api.Test47
+
+com.amadeus.Amadeus49
+
+com.amadeus.Configuration51
+<
+6com.amadeus.Configuration#build()Lcom/amadeus/Amadeus;53
+b
+\com.amadeus.Amadeus#builder(Ljava/lang/String;Ljava/lang/String;)Lcom/amadeus/Configuration;55
+0
+*com.amadeus.referencedata.locations.Cities57
+g
+acom.amadeus.referencedata.locations.Cities#get(Lcom/amadeus/Params;)[Lcom/amadeus/resources/City;59
+
+com.amadeus.ReferenceData61
+'
+!com.amadeus.Amadeus.referenceData63
+)
+#com.amadeus.referencedata.Locations65
+)
+#com.amadeus.ReferenceData.locations67
+0
+*com.amadeus.referencedata.Locations.cities69
+
+com.amadeus.Params71
+V
+Pcom.amadeus.Params#and(Ljava/lang/String;Ljava/lang/Object;)Lcom/amadeus/Params;73
+W
+Qcom.amadeus.Params#with(Ljava/lang/String;Ljava/lang/Object;)Lcom/amadeus/Params;75
+<
+6com.amadeus.resources.City#getName()Ljava/lang/String;77
+(
+"com.amadeus.resources.City$Address79
+K
+Ecom.amadeus.resources.City$Address#getCountryCode()Ljava/lang/String;81
+Q
+Kcom.amadeus.resources.City#getAddress()Lcom/amadeus/resources/City$Address;83J#
+!
+1
+12
+
+3
+4
+
+5
+6Z
+
+7
+7982
+
+
+5
+6jì
+
+58
+585931
+B
+25<
+252627 *
+1 (210:7B
+
+
+13
+14
+
+
+15
+28
+B
+41<
+414227 *
+1 (210:7B
+
+
+13
+14
+
+
+15
+43
+
+74
+747531
+>
+108
+101112 *
+1 (:7B
+
+
+13
+14
+
+
+15
+16
+
+76
+767731
+
+52
+525331
+
+78
+787931
+
+56
+565731
+
+33
+333431
+
+54
+545531
+
+29
+293031
+
+50
+505131
+
+70
+707131
+
+62
+626331
+
+48
+484931
+
+60
+606131
+
+68
+686931
+B
+17<
+171819 *
+1 (210:7B
+
+
+13
+20
+
+
+15
+21
+
+46
+464731
+
+37
+373831
+
+66
+666731
+
+64
+646531
+
+72
+727331
+
+39
+394031
+
+44
+444531
+
+80
+808131
+
+82
+828331rö
+
+171022*
+1 (
+
+171023*
+1 (
+
+171023*
+1 (
+
+171024*
+1 ("
+
+252932*
+1 (
+
+252923*
+1 (
+
+253322*
+1 (
+
+253323*
+1	 (
+
+253335*
+1 (
+
+253336*
+1 (
+
+253724*
+1  ($
+
+253323*
+1 (
+
+253336*
+1 (
+
+253924*
+1  (#
+
+253336*
+1 ("
+
+253924*
+1# (&
+
+414435*
+1 (
+
+414632*
+1 (
+
+414623*
+1 (
+
+
+414423*
+1 (
+
+413322*
+1 (
+
+413323*
+1	 (
+
+413335*
+1 (
+
+413336*
+1 (
+
+413724*
+1  ($
+
+413323*
+1 (
+
+413336*
+1 (
+
+413924*
+1  (#
+
+413336*
+1 ("
+
+413924*
+1# (&
+
+414822*
+1   (
+
+414823*
+1 	  (
+
+414835*
+1   ("
+
+415036*
+1   ("
+
+415224*
+1 >  (C
+
+415035*
+1   ("
+
+414836*
+1   ("
+
+415424*
+1 #  (*
+
+414823*
+1   ("
+
+414422*
+1" "(
+
+414423*
+1"	 "(
+
+414435*
+1" "( 
+
+415636*
+1" "( 
+
+415824*
+1"@ "(C
+
+416023*
+1"! "(.
+
+416236*
+1"! "(.
+
+416423*
+1"/ "(8
+
+416636*
+1"/ "(8
+
+415623*
+1"9 "(?
+
+416836*
+1"9 "(?
+
+417035*
+1# #(
+
+417036*
+1# #(
+
+417224*
+1% %(
+
+417035*
+1# #(
+
+417036*
+1# #(
+
+417424*
+1$ $(
+
+417023*
+1# #(
+
+414422*
+1( ((
+
+414423*
+1( ((
+
+414436*
+1)+ )(/
+
+417624*
+1)0 )(7
+
+417836*
+1)L )(P
+
+418024*
+1)^ )(l
+
+417835*
+1)L )(P
+
+414436*
+1)L )(P
+
+418224*
+1)Q )([
