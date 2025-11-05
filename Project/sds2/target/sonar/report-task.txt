@@ -1,0 +1,7 @@
+organization=20pesca03
+projectKey=com.sds2:sds2
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.69498
+dashboardUrl=https://sonarcloud.io/dashboard?id=com.sds2%3Asds2
+ceTaskId=AZpQu3mYVb_hErohAsVC
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZpQu3mYVb_hErohAsVC

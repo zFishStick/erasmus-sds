@@ -1,14 +1,4 @@
 
-let access_token;
-
-fetch("/amadeus/api/access-token")
-  .then(res => res.text())
-  .then(token => {
-    access_token = token;
-    initInputAutocomplete();
-  })
-  .catch(err => console.error("Error fetching Amadeus access token:", err));
-
 let selectedCity = null;
 
 function normalizeText(s) {
@@ -19,7 +9,7 @@ function normalizeText(s) {
   }
 }
 
-function initInputAutocomplete() {
+window.addEventListener('DOMContentLoaded', () => {
   const the_input = document.getElementById('destination');
   const the_form = document.getElementById('planner-form');
   const datalist = document.getElementById('city-suggestions');
@@ -80,9 +70,11 @@ function initInputAutocomplete() {
 
     debounceTimer = setTimeout(() => {
       const queryForAPI = value.includes(',') ? value.split(',')[0].trim() : value;
-      fetch(`/amadeus/api/city/${encodeURIComponent(queryForAPI)}`)
+      if (queryForAPI.length < 2) { return ; }
+      fetch(`/city/${encodeURIComponent(queryForAPI)}`)
         .then(res => res.json())
         .then(data => {
+          console.log("data from /city/:", data);
           const items = (data && data.data) ? data.data : [];
           updateDatalist(items, value);
           const label = the_input.value.trim();
@@ -98,7 +90,6 @@ function initInputAutocomplete() {
         .catch(err => {
           console.error("Error fetching location data:", err);
           while (datalist.firstChild) datalist.removeChild(datalist.firstChild);
-          // keep previous selectedCity if any
         });
     }, 300);
   });
@@ -138,12 +129,12 @@ function initInputAutocomplete() {
         const value = the_input.value.trim();
         if (value.length >= 2) {
           try {
-            const res = await fetch(`/amadeus/api/city/${encodeURIComponent(value)}`);
+            const res = await fetch(`/city/${encodeURIComponent(value)}`);
             const data = await res.json();
             const items = (data && data.data) ? data.data : [];
             selectedCity = items.length > 0 ? items[0] : null;
           } catch (e) {
-            console.error('Erreur lors de la récupération finale:', e);
+            console.error("Error fetching city data:", e);
           }
         }
       }
@@ -161,14 +152,14 @@ function initInputAutocomplete() {
 
     fetchTravelInfo(coordinates);
   });
-}
+});
 
 function fetchTravelInfo(coordinates) {
   const startEl = document.getElementById('start-date');
   const endEl = document.getElementById('end-date');
   const checkInDate = startEl && startEl.value ? startEl.value : null;
   const checkOutDate = endEl && endEl.value ? endEl.value : null;
-  fetch(`/amadeus/pois/${encodeURIComponent(selectedCity.name)}`, {
+  fetch(`/pois/${encodeURIComponent(selectedCity.name)}`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -182,13 +173,13 @@ function fetchTravelInfo(coordinates) {
   })
   .then(res => {
       if (!res.ok) {
-          throw new Error(`Erreur serveur: ${res.status}`);
+          throw new Error(`Server error: ${res.status}`);
       }
       return res.text();
   })
   .then(html => {
       document.documentElement.innerHTML = html;
-      window.history.pushState({}, '', `/amadeus/pois/${encodeURIComponent(selectedCity.name)}`);
+      window.history.pushState({}, '', `/pois/${encodeURIComponent(selectedCity.name)}`);
   })
   .catch(err => {
       console.error('POIs fetch failed:', err);

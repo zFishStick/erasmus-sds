@@ -1,30 +1,30 @@
 package com.sds2;
 
-import java.io.IOException;
+import java.awt.Desktop;
 import java.net.URI;
+import java.util.logging.Logger;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.awt.Desktop;
-
 @SpringBootApplication
 public class Server {
-    public static void main(String[] args) throws IOException {
+    public static final String LOCALHOST = "http://localhost:8080";
+
+    public static void main(String[] args) {
         SpringApplication.run(Server.class, args);
-        System.out.println("Server executing at http://localhost:8080");
-        System.setProperty("java.awt.headless", "false");
-        
+        System.setProperty("java.awt.headless", "false");            
         try {
-            URI uri = new URI("http://localhost:8080");
+            URI uri = new URI(LOCALHOST);
             if (Desktop.isDesktopSupported()) {
                 Desktop.getDesktop().browse(uri);
             } else {
-                System.out.println("Apertura automatica del browser non supportata.");
+                Logger.getLogger(Server.class.getName()).severe("Desktop is not supported. Please open " + LOCALHOST + " manually.");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Logger.getLogger(Server.class.getName()).info("Server executing at " + LOCALHOST);
     }
 }
 

@@ -1,0 +1,61 @@
+package com.sds2.classes;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "city")
+public class City {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    private String country;
+    private double latitude;
+    private double longitude;
+
+    public City() {}
+
+    public City(String name, String country, double latitude, double longitude) {
+        this.name = name;
+        this.country = country;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public void setCoordinates(double latitude, double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+    
+    public double[] getCoordinates() {
+        return new double[] { latitude, longitude };
+    }
+
+    @Override
+    public String toString() {
+        return "City{name='%s', country='%s', latitude=%f, longitude=%f}".formatted(
+            name, country, latitude, longitude);
+    }
+   
+}

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8" />
     <title th:text="${'Point of interests in ' + #strings.toUpperCase(cityName) + (countryName != null and !#strings.isEmpty(countryName) ? ', ' + #strings.toUpperCase(countryName) : '')}">POIs</title>
@@ -17,7 +17,7 @@
     <li><strong th:text="${activity.name}"></strong></li>
     <li><span th:utext="${activity.description}"></span></li>
     <li><span th:text="${activity.price}"></span></li>
-    <li><img th:src="${activity.imageUrl}" alt="Activity Image"/></li>
+    <li><img th:src="${activity.imageUrl}" alt="Activity Img"/></li>
     <li><a th:href="${activity.bookingLink}">Book Now</a></li>
     <li><span th:text="${activity.minimumDuration}"></span></li>
 </ul>
