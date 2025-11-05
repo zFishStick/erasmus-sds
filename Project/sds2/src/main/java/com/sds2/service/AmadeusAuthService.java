@@ -1,5 +1,7 @@
 package com.sds2.service;
 
+import java.util.logging.Logger;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -10,6 +12,7 @@ import com.sds2.classes.response.TokenResponse;
 @Service
 public class AmadeusAuthService {
 
+    Logger logger = Logger.getLogger(AmadeusAuthService.class.getName());
     private static final String ENDPOINT = "https://api.amadeus.com/v1/security/oauth2/token";
     private final WebClient webClient;
 
@@ -29,9 +32,10 @@ public class AmadeusAuthService {
     public String getAccessToken() {
 
         if (accessToken != null && System.currentTimeMillis() < tokenExpiryTime) {
+            Logger.getLogger(AmadeusAuthService.class.getName()).info("Using cached Amadeus access token");
             return accessToken;
         }
-
+        
         TokenResponse response = webClient
             .post()
             .uri(ENDPOINT)

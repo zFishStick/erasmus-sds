@@ -1,0 +1,233 @@
+
+`com.sds2.api.AmadeusRestAPI#getCity(Ljava/lang/String;)Lcom/fasterxml/jackson/databind/JsonNode;b
+XC:/Projects/Java/erasmus-sds/Project/sds2/src/main/java/com/sds2/api/AmadeusRestAPI.javaA A("startingBlock*™
+startingBlockA A(>Æ
+´
+A A(1
+%20"
+__annotate*T
+
+__unknown_file (86
+4org.springframework.web.bind.annotation.PathVariable*6
+
+__unknown_file (
+
+namejava.lang.StringY
+W
+A9 A(=
+namejava.lang.String"__annotation*#
+
+__unknown_file (
+
+%20*
+1*¨'
+1B B(%¥±
+B B('
+%0java.lang.String">com.sds2.api.AmadeusRestAPI#getAccessToken()Ljava/lang/String;*;
+
+__unknown_file (
+com.sds2.api.AmadeusRestAPI2getAccessToken()c
+a
+B B((
+tokenjava.lang.String"__id*4
+
+__unknown_file (
+
+%0java.lang.Stringt
+r
+C C(
+%1java.lang.String"__id*H
+
+__unknown_file (,**
+com.sds2.api.AmadeusRestAPI"	
+baseUrlô
+ñ
+C C(S
+%2java.lang.String"__concat*$
+C C(
+
+%1java.lang.String*B
+C C(S64
+2/v1/reference-data/locations?subType=CITY&keyword=W
+U
+	Cn C(Ñ
+%3java.nio.charset.Charset"__id*"
+
+__unknown_file (
+""≠
+™
+	CV C(Ö
+%4java.lang.String"Zjava.net.URLEncoder#encode(Ljava/lang/String;Ljava/nio/charset/Charset;)Ljava/lang/String;*3
+
+__unknown_file ("
+java.net.URLEncoder*6
+
+__unknown_file (
+
+namejava.lang.String*<
+
+__unknown_file ( 
+
+%3java.nio.charset.Charset|
+z
+	C C(Ö
+%5java.lang.String"__concat*$
+C C(S
+
+%2java.lang.String*%
+	CV C(Ö
+
+%4java.lang.Stringb
+`
+	C C(Ü
+urljava.lang.String"__id*4
+
+__unknown_file (
+
+%5java.lang.String´
+®
+D  D(:
+%6java.net.http.HttpClient"Bjava.net.http.HttpClient#newHttpClient()Ljava/net/http/HttpClient;*8
+
+__unknown_file ("
+java.net.http.HttpClientx
+v
+D D(;&
+
+httpClientjava.net.http.HttpClient"__id*<
+
+__unknown_file ( 
+
+%6java.net.http.HttpClientº
+π
+E E(6'
+%7!java.net.http.HttpRequest$Builder"Ijava.net.http.HttpRequest#newBuilder()Ljava/net/http/HttpRequest$Builder;*9
+
+__unknown_file ("
+java.net.http.HttpRequestΩ
+∫
+F F($
+%8java.net.URI"5java.net.URI#create(Ljava/lang/String;)Ljava/net/URI;*,
+
+__unknown_file ("
+java.net.URI*5
+
+__unknown_file (
+
+urljava.lang.Stringûõ
+E F(%'
+%9!java.net.http.HttpRequest$Builder"Xjava.net.http.HttpRequest$Builder#uri(Ljava/net/URI;)Ljava/net/http/HttpRequest$Builder;*E
+
+__unknown_file ()
+'
+%7!java.net.http.HttpRequest$Builder*0
+
+__unknown_file (
+
+%8java.net.URI2uri(Ljava/net/URI;)q
+o
+G) G(:
+%10java.lang.String"__concat*
+G) G(2	
+Bearer *'
+G5 G(:
+
+tokenjava.lang.StringÖÇ
+E G(;(
+%11!java.net.http.HttpRequest$Builder"qjava.net.http.HttpRequest$Builder#header(Ljava/lang/String;Ljava/lang/String;)Ljava/net/http/HttpRequest$Builder;*E
+
+__unknown_file ()
+'
+%9!java.net.http.HttpRequest$Builder*-
+
+__unknown_file (
+Authorization*5
+
+__unknown_file (
+
+%10java.lang.String2,header(Ljava/lang/String;Ljava/lang/String;)“œ
+E H((
+%12!java.net.http.HttpRequest$Builder"Jjava.net.http.HttpRequest$Builder#GET()Ljava/net/http/HttpRequest$Builder;*F
+
+__unknown_file (*
+(
+%11!java.net.http.HttpRequest$Builder2GET()∆√
+E I( 
+%13java.net.http.HttpRequest"Djava.net.http.HttpRequest$Builder#build()Ljava/net/http/HttpRequest;*F
+
+__unknown_file (*
+(
+%12!java.net.http.HttpRequest$Builder2build()x
+v
+E I($
+requestjava.net.http.HttpRequest"__id*>
+
+__unknown_file ("
+ 
+%13java.net.http.HttpRequest·
+ﬁ
+JA J(e-
+%14&java.net.http.HttpResponse$BodyHandler"Zjava.net.http.HttpResponse$BodyHandlers#ofString()Ljava/net/http/HttpResponse$BodyHandler;*G
+
+__unknown_file (+")
+'java.net.http.HttpResponse$BodyHandlers“œ
+J( J(f!
+%15java.net.http.HttpResponse"~java.net.http.HttpClient#send(Ljava/net/http/HttpRequest;Ljava/net/http/HttpResponse$BodyHandler;)Ljava/net/http/HttpResponse;*D
+
+__unknown_file ((
+&
+
+httpClientjava.net.http.HttpClient*B
+
+__unknown_file (&
+$
+requestjava.net.http.HttpRequest*K
+
+__unknown_file (/
+-
+%14&java.net.http.HttpResponse$BodyHandler2Isend(Ljava/net/http/HttpRequest;Ljava/net/http/HttpResponse$BodyHandler;){
+y
+J J(g&
+responsejava.net.http.HttpResponse"__id*?
+
+__unknown_file (#
+!
+%15java.net.http.HttpResponsemk
+K" K(.2
+%16+com.fasterxml.jackson.databind.ObjectMapper"+com.fasterxml.jackson.databind.ObjectMapperù
+ö
+K K(0
+%17"5com.fasterxml.jackson.databind.ObjectMapper#<init>()V*P
+
+__unknown_file (4
+2
+%16+com.fasterxml.jackson.databind.ObjectMapperú
+ô
+K K(15
+mapper+com.fasterxml.jackson.databind.ObjectMapper"__id*P
+
+__unknown_file (4
+2
+%16+com.fasterxml.jackson.databind.ObjectMapper©¶
+L L(.
+%18java.lang.String"3java.net.http.HttpResponse#body()Ljava/lang/Object;*D
+
+__unknown_file ((
+&
+responsejava.net.http.HttpResponse2body()⁄◊
+L L(/.
+%19'com.fasterxml.jackson.databind.JsonNode"qcom.fasterxml.jackson.databind.ObjectMapper#readTree(Ljava/lang/String;)Lcom/fasterxml/jackson/databind/JsonNode;*S
+
+__unknown_file (7
+5
+mapper+com.fasterxml.jackson.databind.ObjectMapper*5
+
+__unknown_file (
+
+%18java.lang.String2readTree(Ljava/lang/String;)"<
+L L(00
+.
+%19'com.fasterxml.jackson.databind.JsonNode:$
+A A(=
+namejava.lang.StringB
+com.sds2.api.AmadeusRestAPIH

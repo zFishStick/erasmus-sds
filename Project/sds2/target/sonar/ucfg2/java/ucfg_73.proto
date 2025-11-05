@@ -1,0 +1,15 @@
+
+ƒcom.sds2.controller.AmadeusPageController#getWebClientBuilder()Lorg/springframework/web/reactive/function/client/WebClient$Builder;p
+fC:/Projects/Java/erasmus-sds/Project/sds2/src/main/java/com/sds2/controller/AmadeusPageController.java4 4(0"1*¦
+15 5(¾
+»
+5 5(H
+%0Borg.springframework.web.reactive.function.client.WebClient$Builder"__id*_
+
+__unknown_file (C*A+
+)com.sds2.controller.AmadeusPageController"
+webClientBuilder"V
+5 5( J
+H
+%0Borg.springframework.web.reactive.function.client.WebClient$BuilderB-+
+)com.sds2.controller.AmadeusPageControllerH
