@@ -1,105 +1,0 @@
-
-1.0com.sds2:sds2JavaFrontend"1762291034015*java2.B€
-6
-1src/main/java/com/sds2/controller/PageServer.java2
-	
-type3
-	
-MAIN4
-
-
-module-key5
-	
-sds26
-
-package8
-
-sds2:com.sds2.controller9
-$
-com.sds2.controller.PageServer11
-
-class12
-
-access13
-
-public14
-
-simple-name15
-
-
-PageServer16
-/
-)org.springframework.stereotype.Controller18
-
-unknown19
-
-annotated by20
-
-
-uses21
->
-8com.sds2.controller.PageServer#index()Ljava/lang/String;23
-
-method24
-
-index25
-8
-2org.springframework.web.bind.annotation.GetMapping27J#
-!
-1
-12
-
-3
-4
-
-5
-6Z
-
-7
-7982
-
-
-5
-6j¬
-B
-22<
-222324 *
-1	 	(210:7B
-
-
-13
-14
-
-
-15
-25
->
-108
-101112 *
-1 (:7B
-
-
-13
-14
-
-
-15
-16
-
-26
-262719
-
-17
-171819rl
-
-101720*
-1 (
-
-101721*
-1 (
-
-222620*
-1	 	(
-
-222621*
-1	 	(

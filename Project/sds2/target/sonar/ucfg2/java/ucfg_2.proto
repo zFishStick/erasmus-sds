@@ -1,18 +1,0 @@
-
-8com.sds2.controller.PageServer#index()Ljava/lang/String;e
-[C:/Projects/Java/erasmus-sds/Project/sds2/src/main/java/com/sds2/controller/PageServer.java
- 
-("1*Ï
-1 (¨
-¥
- (
-%0"Horg.springframework.web.servlet.ModelAndView#<init>(Ljava/lang/String;)V*"
-
-__unknown_file (
-""*%
-
-__unknown_file (	
-index"
- (	
-indexB" 
-com.sds2.controller.PageServerH
