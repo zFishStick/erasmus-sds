@@ -2,22 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title th:text="${'Point of interests in ' + #strings.toUpperCase(cityName) + (countryName != null and !#strings.isEmpty(countryName) ? ', ' + #strings.toUpperCase(countryName) : '')}">POIs</title>
+    <title th:text="${'Point of interests in ' + #strings.toUpperCase(cityName) + (cityName != null and !#strings.isEmpty(cityName) ? ', ' + #strings.toUpperCase(cityName) : '')}">POIs</title>
     <script src="../static/scripts/filter_places.js"></script>
   </head>
 <body>
-<h1 th:text="${'Point of interests in ' + #strings.toUpperCase(cityName) + (countryName != null and !#strings.isEmpty(countryName) ? ', ' + #strings.toUpperCase(countryName) : '')}">Point of interests in CITY</h1>
+<h1 th:text="${'Point of interests in ' + #strings.toUpperCase(cityName) + (cityName != null and !#strings.isEmpty(cityName) ? ', ' + #strings.toUpperCase(cityName) : '')}">Point of interests in CITY</h1>
 
 <h2>Activities</h2>
-<div th:if="${citiesData == null or #lists.isEmpty(citiesData)}">
+<div th:if="${poisData == null or #lists.isEmpty(poisData)}">
     <p>No activities found.</p>
 </div>
 
-<ul th:if="${citiesData != null and !#lists.isEmpty(citiesData)}" th:each="activity : ${citiesData}">
+<ul th:if="${poisData != null and !#lists.isEmpty(poisData)}" th:each="activity : ${poisData}">
     <li><strong th:text="${activity.name}"></strong></li>
     <li><span th:utext="${activity.description}"></span></li>
     <li><span th:text="${activity.price}"></span></li>
-    <li><img th:src="${activity.imageUrl}" alt="Activity Img"/></li>
+    <li><img th:src="${activity.pictures}" alt="Activity Img"/></li>
     <li><a th:href="${activity.bookingLink}">Book Now</a></li>
     <li><span th:text="${activity.minimumDuration}"></span></li>
 </ul>
