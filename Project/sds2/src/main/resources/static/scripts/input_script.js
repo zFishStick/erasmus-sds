@@ -1,7 +1,4 @@
 
-
-alert("input_script.js loaded");
-
 let selectedCity = null;
 
 function normalizeText(s) {
@@ -34,7 +31,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }).slice(0, 8);
 
     filtered.forEach(it => {
-      const country = it.countryCode || '';
+      const country = it.country || '';
       const label = country ? `${it.name}, ${country}` : it.name;
       const opt = document.createElement('option');
       opt.value = label;
@@ -83,7 +80,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
           console.log("data: " + data);
 
-          const items = Array.isArray(data.data) ? data.data : [];
+          var jsonArrayData = JSON.stringify(data);
+
+          const items = Array.isArray(data) ? data : [];
 
           console.log("items: " + items);
           
@@ -154,32 +153,31 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     if (!selectedCity) {
-      console.error("Aucune ville sélectionnée ou trouvée.");
+      console.error("No city selected or resolved.");
       return;
     }
 
-    const coordinates = [
-      selectedCity.geoCode.longitude,
-      selectedCity.geoCode.latitude
-    ];
 
-    fetchTravelInfo(coordinates);
+    fetchTravelInfo();
   });
 });
 
-function fetchTravelInfo(coordinates) {
+function fetchTravelInfo() {
   const startEl = document.getElementById('start-date');
   const endEl = document.getElementById('end-date');
   const checkInDate = startEl && startEl.value ? startEl.value : null;
   const checkOutDate = endEl && endEl.value ? endEl.value : null;
+
   fetch(`/pois/${encodeURIComponent(selectedCity.name)}`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-          city: selectedCity.name,
-          country: (selectedCity.address && (selectedCity.address.countryName || selectedCity.address.countryCode)) || "",
-          longitude: coordinates[0],
-          latitude: coordinates[1],
+          city: selectedCity.name || '',
+          country: selectedCity.country || '',
+          geoCode: {
+              latitude: selectedCity.latitude,
+              longitude: selectedCity.longitude,
+          },
           checkInDate: checkInDate,
           checkOutDate: checkOutDate,
       })

@@ -56,15 +56,31 @@ public class CityService {
             throw new IOException("Failed to retrieve city data from Amadeus API");
         }
 
+        return mapToDTOs(response);
+    }
+
+    private List<CityDTO> mapToDTOs(CityResponse response) {
         return response.getData().stream()
-                    .map(c -> new CityDTO(
+                .filter(c -> {
+                    if (c.getGeoCode() == null) return false;
+                    Double lat = c.getGeoCode().getLatitude();
+                    Double lon = c.getGeoCode().getLongitude();
+                    return lat != null && lon != null && (Double.compare(lat, 0.0) != 0 || Double.compare(lon, 0.0) != 0);
+                })
+                .map(c -> new CityDTO(
                         c.getName(),
-                        c.getAddress() != null ? c.getAddress().getCountryCode() : "N/A")).toList();
+                        c.getAddress() != null ? c.getAddress().getCountryCode() : "N/A",
+                        c.getGeoCode().getLatitude(),
+                        c.getGeoCode().getLongitude()
+                ))
+                .toList();
     }
 
     private CityDTO mapToDTO(City city) {
         String country = (city.getCountry() != null) ? city.getCountry() : "N/A";
-        return new CityDTO(city.getName(), country);
+        double latitude = city.getCoordinates().getLatitude();
+        double longitude = city.getCoordinates().getLongitude();
+        return new CityDTO(city.getName(), country, latitude, longitude);
     }
 
 }
