@@ -1,4 +1,7 @@
 
+
+alert("input_script.js loaded");
+
 let selectedCity = null;
 
 function normalizeText(s) {
@@ -10,6 +13,8 @@ function normalizeText(s) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+  
+
   const the_input = document.getElementById('destination');
   const the_form = document.getElementById('planner-form');
   const datalist = document.getElementById('city-suggestions');
@@ -18,6 +23,7 @@ window.addEventListener('DOMContentLoaded', () => {
   let labelMap = new Map();
 
   function updateDatalist(items, query) {
+    console.log("Updating datalist for query:", query, "with items:", items);
     while (datalist.firstChild) datalist.removeChild(datalist.firstChild);
     labelMap.clear();
 
@@ -28,7 +34,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }).slice(0, 8);
 
     filtered.forEach(it => {
-      const country = (it.address && (it.address.countryName || it.address.countryCode)) || '';
+      const country = it.countryCode || '';
       const label = country ? `${it.name}, ${country}` : it.name;
       const opt = document.createElement('option');
       opt.value = label;
@@ -74,12 +80,19 @@ window.addEventListener('DOMContentLoaded', () => {
       fetch(`/city/${encodeURIComponent(queryForAPI)}`)
         .then(res => res.json())
         .then(data => {
-          console.log("data from /city/:", data);
-          const items = (data && data.data) ? data.data : [];
+
+          console.log("data: " + data);
+
+          const items = Array.isArray(data.data) ? data.data : [];
+
+          console.log("items: " + items);
+          
           updateDatalist(items, value);
+
           const label = the_input.value.trim();
           const cityOnly = label.split(',')[0].trim();
           const normCity = normalizeText(cityOnly);
+
           const eq = items.find(it => normalizeText(it.name || '') === normCity);
           if (eq) {
             selectedCity = eq;
