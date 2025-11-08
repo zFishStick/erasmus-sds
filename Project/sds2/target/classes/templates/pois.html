@@ -13,17 +13,19 @@
     <p>No activities found.</p>
 </div>
 
-<ul th:if="${poisData != null and !#lists.isEmpty(poisData)}" th:each="activity : ${poisData}">
-    <li><strong th:text="${activity.name}"></strong></li>
+<div th:if="${poisData != null and !#lists.isEmpty(poisData)}" th:each="activity : ${poisData}">
+  <h2 th:text="${activity.name}">Activity name</h2>
+  <ul>
     <li><span th:utext="${activity.description}"></span></li>
-    <li><span th:text="${activity.price}"></span></li>
-    <li><img th:src="${activity.pictures}" alt="Activity Img"/></li>
+    <li><span th:text="'Price: ' + ${activity.price.amount} + ' ' + ${activity.price.currencyCode}"></span></li>
+    <li th:if="${activity.pictures != null}"><img th:src="${activity.pictures}" alt="Activity Img"/></li>
+    <li><span th:text="'Minimum Duration: ' + ${activity.minimumDuration}"></span></li>
     <li><a th:href="${activity.bookingLink}">Book Now</a></li>
-    <li><span th:text="${activity.minimumDuration}"></span></li>
-</ul>
+  </ul>
+</div>
 
 <p>
-  <a href="/">Torna indietro</a>
+  <a href="/">Back</a>
 </p>
 
 <div th:if="${cityName != null}">

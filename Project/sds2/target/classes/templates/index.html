@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script> 
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script defer src="./scripts/input_script.js?id=1"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="./style/style.css" />
@@ -29,8 +28,7 @@
           Enter a destination and a date range. Click
           <strong>Search</strong> to continue.
         </p>
-
-        <form id="planner-form" class="form" autocomplete="off">
+        <form id="planner-form" class="form" autocomplete="off" th:action="@{/pois}" method="post">
           <div class="form-row">
             <label for="destination">Destination</label>
             <div class="form-filter">
@@ -44,12 +42,15 @@
                 autocomplete="address-line1"
                 required
               />
+              <input type="hidden" id="country-code" name="countryCode" />
+              <input type="hidden" id="geo-latitude" name="geoLatitude" />
+              <input type="hidden" id="geo-longitude" name="geoLongitude" />
+
             <i class="fa fa-filter" style="font-size:24px" id="filter-btn"></i>
             </div>
             <datalist id="city-suggestions"></datalist>
             <small id="destination-help" class="muted">City or location you want to visit</small>
             <div class="filters-div" id="filters-div">
-              <!-- TODO: Implement filtering logic into Javascript -->
               <label><input type="checkbox" name="filter" value="museum" /> Museums</label>
               <label><input type="checkbox" name="filter" value="park" /> Parks</label>
               <label><input type="checkbox" name="filter" value="historical" /> Historical Sites</label>
@@ -101,7 +102,8 @@
       </div>
     </footer>
 
-        <script src="./scripts/main.js"></script>
+    <script src="./scripts/input_script.js?id=1"></script>
+    <script src="./scripts/main.js"></script>
 
   </body>
   </html>

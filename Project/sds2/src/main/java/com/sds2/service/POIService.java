@@ -42,30 +42,24 @@ public class POIService {
         return poiRepository.findById(id);
     }
 
-    public List<POIDTO> getPoisByCoordinates(GeoCode coordinates) {
+    public List<POIDTO> getPointOfInterests(GeoCode coordinates, String cityName, String countryCode) {
         // Retrieve from database if exists
-        List<POI> activities =  poiRepository.findByCoordinates_LatitudeAndCoordinates_Longitude(
-            coordinates.getLatitude(), coordinates.getLongitude());
-            if (!activities.isEmpty()) {
-                Logger.getLogger(POIService.class.getName()).info("Retrieved POIs from database.");
-                return activities.stream()
-                    .map(this::mapToDTO)
+        List<POI> activities =  poiRepository.findByCityNameOrCountryCode(cityName, countryCode);
+        if (!activities.isEmpty()) {
+            Logger.getLogger(POIService.class.getName()).info("Retrieved POIs from database.");
+            return activities.stream()
+                .map(this::mapToDTO)
                     .toList();
+            } else {
+                Logger.getLogger(POIService.class.getName()).info("No POIs found in database for given coordinates.");
             }
 
-            return getPointOfInterests(coordinates);
+            return getPointOfInterestsByAPI(coordinates, cityName, countryCode);
     }
 
-    private List<POIDTO> getPointOfInterests(GeoCode coordinates) {
-        double latitude = coordinates.getLatitude();    
+    private List<POIDTO> getPointOfInterestsByAPI(GeoCode coordinates, String cityName, String countryCode) {
+        double latitude = coordinates.getLatitude();
         double longitude = coordinates.getLongitude();
-
-        List<POI> existingPOIs = poiRepository.findByCoordinates_LatitudeAndCoordinates_Longitude(latitude, longitude);
-        if (!existingPOIs.isEmpty()) {
-            return existingPOIs.stream()
-                .map(this::mapToDTO)
-                .toList();
-        }
 
         String uri = "https://api.amadeus.com/v1/shopping/activities?latitude=%f&longitude=%f".formatted(
                 latitude, longitude
@@ -84,26 +78,24 @@ public class POIService {
             throw new IllegalStateException("Failed to retrieve activities from Amadeus API");
         }
 
-        return mapToDTOs(response);
+        return mapToDTOs(response, cityName, countryCode);
     }
 
-    private List<POIDTO> mapToDTOs(POISResponse response) {
+    private List<POIDTO> mapToDTOs(POISResponse response, String cityName, String countryCode) {
         return response.getData().stream()
             .map(data -> {
                 POI poi = new POI(
-                    new POIInfo(data.getName(), data.getDescription()),
-                    data.getType(),
+                    cityName,
+                    countryCode,
+                    new POIInfo(data.getName(), data.getType(), data.getDescription(), data.getPictures().get(0), data.getMinimumDuration(), data.getBookingLink()),
                     data.getPrice(),
-                    data.getPictures().get(0),
-                    data.getMinimumDuration(),
-                    data.getBookingLink(),
                     data.getGeoCode()
                 );
 
-                poi.setBookingLink(data.getBookingLink());
+                poi.getInfo().setBookingLink(data.getBookingLink());
                 if (data.getPictures() != null && !data.getPictures().isEmpty()) {
-                    poi.setPicture(data.getPictures().get(0));
-                    }
+                    poi.getInfo().setPictures(data.getPictures().get(0));
+                }
                 poiRepository.save(poi);
                 return mapToDTO(poi);
             })
@@ -111,14 +103,15 @@ public class POIService {
     }
 
     private POIDTO mapToDTO(POI poi) {
+        String cityName = poi.getCityName();
         String name = poi.getName();
         String description = poi.getDescription();
         String type = poi.getType();
         Price price = poi.getPrice();
-        String minimumDuration = poi.getMinimumDuration();
-        String bookingLink = poi.getBookingLink();
-        String pictures = poi.getPictures();
-        return new POIDTO(name, description, type, price, pictures, minimumDuration, bookingLink);
+        String minimumDuration = poi.getInfo().getMinimumDuration();
+        String bookingLink = poi.getInfo().getBookingLink();
+        String pictures = poi.getInfo().getPictures();
+        return new POIDTO(cityName, name, description, type, price, pictures, minimumDuration, bookingLink);
     }
     
 }
