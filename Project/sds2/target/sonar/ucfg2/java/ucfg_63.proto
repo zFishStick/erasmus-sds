@@ -1,33 +1,0 @@
-
-(com.sds2.classes.City#getCoordinates()[D\
-RC:/Projects/Java/erasmus-sds/Project/sds2/src/main/java/com/sds2/classes/City.java- -(""1*ë
-1. .()~
-|
-. .()"
-%0com.sds2.classes.Coordinates"__id*F
-
-__unknown_file (**(
-com.sds2.classes.City"
-coordinates¢Ÿ
-. .(:
-%1double[]"/com.sds2.classes.Coordinates#getCoordinates()[D*@
-
-__unknown_file ($
-"
-%0com.sds2.classes.Coordinates2getCoordinates()~
-|
-.? .(J"
-%2com.sds2.classes.Coordinates"__id*F
-
-__unknown_file (**(
-com.sds2.classes.City"
-coordinates¢Ÿ
-.? .([
-%3double[]"/com.sds2.classes.Coordinates#getCoordinates()[D*@
-
-__unknown_file ($
-"
-%2com.sds2.classes.Coordinates2getCoordinates()"
-. .(a
-""B
-com.sds2.classes.CityH

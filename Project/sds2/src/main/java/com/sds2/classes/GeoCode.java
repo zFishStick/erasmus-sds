@@ -1,12 +1,16 @@
 package com.sds2.classes;
 
-public class Coordinates {
+import jakarta.persistence.Embeddable;
+
+@Embeddable
+public class GeoCode {
+    
     private double latitude;
     private double longitude;
 
-    public Coordinates() {}
+    public GeoCode() {}
 
-    public Coordinates(double latitude, double longitude) {
+    public GeoCode(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -16,4 +20,5 @@ public class Coordinates {
 
     public double getLongitude() { return longitude; }
     public void setLongitude(double longitude) { this.longitude = longitude; }
+    
 }
