@@ -54,7 +54,6 @@
       endDate: end.value,
     };
 
-    console.log("UI payload", payload);
     renderPreview(payload);
   });
 

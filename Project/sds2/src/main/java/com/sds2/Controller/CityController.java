@@ -21,9 +21,9 @@ public class CityController {
         this.cityService = cityService;
     }
 
-    @GetMapping("/{pattern}")
-    public List<CityDTO> getCityByPattern(@PathVariable String pattern) throws IOException {
-        return cityService.getCity(pattern);
+    @GetMapping("/{destination}")
+    public List<CityDTO> getCityByPattern(@PathVariable String destination) throws IOException {
+        return cityService.getCity(destination);
     }
     
 }

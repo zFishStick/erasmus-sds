@@ -1,157 +1,0 @@
-
-1.0com.sds2:sds2JavaFrontend"1762291036385*java2.B 
-8
-3src/main/java/com/sds2/classes/WebClientConfig.java2
-	
-type3
-	
-MAIN4
-
-
-module-key5
-	
-sds26
-
-package8
-
-sds2:com.sds2.classes9
-&
- com.sds2.classes.WebClientConfig11
-
-class12
-
-access13
-
-public14
-
-simple-name15
-
-WebClientConfig16
-:
-4org.springframework.context.annotation.Configuration18
-
-unknown19
-
-annotated by20
-
-
-uses21
-}
-wcom.sds2.classes.WebClientConfig#webClientBuilder()Lorg/springframework/web/reactive/function/client/WebClient$Builder;23
-
-method24
-
-webClientBuilder25
-H
-Borg.springframework.web.reactive.function.client.WebClient$Builder27
-
-returns28
-1
-+org.springframework.context.annotation.Bean30
-@
-:org.springframework.web.reactive.function.client.WebClient32
-
-
-references33
-
-ˆorg.springframework.web.reactive.function.client.WebClient#builder()Lorg/springframework/web/reactive/function/client/WebClient$Builder;35
-
-calls36J#
-!
-1
-12
-
-3
-4
-
-5
-6Z
-
-7
-7982
-
-
-5
-6jè
-
-17
-171819
-
-34
-343519
->
-108
-101112 *
-1 (:7B
-
-
-13
-14
-
-
-15
-16
-B
-22<
-222324 *
-1
- 
-(210:7B
-
-
-13
-14
-
-
-15
-25
-
-26
-262719
-
-31
-313219
-
-29
-293019rÄ
-
-101720*
-1 (
-
-101721*
-1 (
-
-222628*
-1 (
-
-222920*
-1
- 
-(
-
-222921*
-1
- 
-(
-
-
-223121*
-1 (
-
-222621*
-1 (
-
-222633*
-1 (
-
-222628*
-1 (
-
-223133*
-1 (
-
-223436*
-1 (!
-
-223121*
-1 (

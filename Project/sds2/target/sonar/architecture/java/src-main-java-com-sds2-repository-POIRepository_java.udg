@@ -1,158 +1,0 @@
-
-1.0com.sds2:sds2JavaFrontend"1762291036646*java2.Bü
-9
-4src/main/java/com/sds2/repository/POIRepository.java2
-	
-type3
-	
-MAIN4
-
-
-module-key5
-	
-sds26
-
-package8
-
-sds2:com.sds2.repository9
-'
-!com.sds2.repository.POIRepository11
-
-	interface12
-
-access13
-
-public14
-
-simple-name15
-
-POIRepository16
-/
-)org.springframework.stereotype.Repository18
-
-unknown19
-
-annotated by20
-
-
-uses21
-X
-Rcom.sds2.repository.POIRepository#findById(Ljava/lang/Long;)Lcom/sds2/classes/POI;23
-
-method24
-
-findById25
-
-com.sds2.classes.POI27
-
-returns28
-V
-Pcom.sds2.repository.POIRepository#findByCity(Ljava/lang/String;)Ljava/util/List;30
-
-
-findByCity31
-G
-Acom.sds2.repository.POIRepository#addPOI(Lcom/sds2/classes/POI;)V33
-
-addPOI34
-
-	has param35
-
-is type36J#
-!
-1
-12
-
-3
-4
-
-5
-6Z
-
-7
-7982
-
-
-5
-6j´
-B
-29<
-293024 *
-1 (	210:7B
-
-
-13
-14
-
-
-15
-31
-B
-32<
-323324 *
-1 (	210:7B
-
-
-13
-14
-
-
-15
-34
-B
-22<
-222324 *
-1 (210:7B
-
-
-13
-14
-
-
-15
-25
->
-108
-101112 *
-1
- 
-(:7B
-
-
-13
-14
-
-
-15
-16
-
-17
-171819
-
-26
-262719rØ
-
-101720*
-1	 	(
-
-101721*
-1	 	(
-
-222628*
-1 (
-
-222621*
-1 (
-
-292621*
-1
- (
-
-322635*
-1 (
-
-322636*
-1 (
-
-322621*
-1 (
