@@ -10,6 +10,6 @@ import com.sds2.classes.poi.POI;
 @Repository
 public interface POIRepository extends JpaRepository<POI, Long> {
     POI findById(long id);
-    //List<POI> findByName(String name);
+    List<POI> findByCityNameOrCountryCode(String cityName, String countryCode);
     List<POI> findByCoordinates_LatitudeAndCoordinates_Longitude(double latitude, double longitude);
 }

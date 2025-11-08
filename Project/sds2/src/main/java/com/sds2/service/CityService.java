@@ -39,7 +39,6 @@ public class CityService {
                     .toList();
         }
 
-
         String uri = "https://api.amadeus.com/v1/reference-data/locations/cities?keyword=%s&max=5".formatted(
                 URLEncoder.encode(name, StandardCharsets.UTF_8));
 

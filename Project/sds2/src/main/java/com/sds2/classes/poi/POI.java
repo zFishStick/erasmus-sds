@@ -19,32 +19,26 @@ public class POI {
     private Long id;
     @Embedded
     private POIInfo info;
-    private String type;
+    private String cityName;
+    private String countryCode;
     @Embedded
     private Price price = new Price();
-    private String pictures;
-    private String minimumDuration;
-    private String bookingLink;
     @Embedded
     private GeoCode coordinates = new GeoCode();
 
     protected POI() {}
 
     public POI(
+        String cityName,
+        String countryCode,
         POIInfo info,
-        String type,
         Price price,
-        String pictures,
-        String minimumDuration,
-        String bookingLink,
         GeoCode coordinates
     ) {
+        this.cityName = cityName;
+        this.countryCode = countryCode;
         this.info = info;
-        this.type = type;
         this.price = price;
-        this.pictures = pictures;
-        this.minimumDuration = minimumDuration;
-        this.bookingLink = bookingLink;
         this.coordinates = coordinates;
     }
 
@@ -56,17 +50,28 @@ public class POI {
         this.id = id;
     }
 
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+
+    public String getCountryCode() { return countryCode; }
+    public void setCountryCode(String countryCode) { this.countryCode = countryCode; }
+
     public POIInfo getInfo() { return info; }
     public void setInfo(POIInfo info) { this.info = info; }
 
     public String getName() { return info.getName(); }
-    public void setName(String name) { this.info = new POIInfo(name, info.getDescription()); }
+    public void setName(String name) { this.info = new POIInfo(name, info.getType(), info.getDescription(), info.getPictures(), info.getMinimumDuration(), info.getBookingLink()); }
 
     public String getDescription() { return info.getDescription(); }
-    public void setDescription(String description) { this.info = new POIInfo(info.getName(), description); }
+    public void setDescription(String description) { this.info = new POIInfo(info.getName(), info.getType(), description, info.getPictures(), info.getMinimumDuration(), info.getBookingLink()); }
 
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
+    public String getType() { return info.getType(); }
+    public void setType(String type) { this.info = new POIInfo(info.getName(), type, info.getDescription(), info.getPictures(), info.getMinimumDuration(), info.getBookingLink()); }
 
     public Price getPrice() { return price; }
     public void setPrice(Price price) { this.price = price; }
@@ -79,28 +84,6 @@ public class POI {
 
     public void setCurrencyCode(String currencyCode) {
         this.price.setCurrencyCode(currencyCode);
-    }
-
-    public String getMinimumDuration() { return minimumDuration; }
-
-    public void setMinimumDuration(String minimumDuration) {
-        this.minimumDuration = minimumDuration;
-    }
-
-    public String getBookingLink() {
-        return bookingLink;
-    }
-
-    public void setBookingLink(String bookingLink) {
-        this.bookingLink = bookingLink;
-    }
-
-    public String getPictures() {
-        return pictures;
-    }
-
-    public void setPicture(String picture) {
-        this.pictures = picture;
     }
 
     public GeoCode getCoordinates() {
