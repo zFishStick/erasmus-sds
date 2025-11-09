@@ -2,29 +2,37 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title th:text="${'Point of interests in ' + #strings.toUpperCase(cityName) + (cityName != null and !#strings.isEmpty(cityName) ? ', ' + #strings.toUpperCase(cityName) : '')}">POIs</title>
-    <script src="../static/scripts/filter_places.js"></script>
+    <title th:text="${'Point of interests in ' + (cityName != null and !#strings.isEmpty(cityName) ? cityName + ', ' + countryCode : '')}">POIs</title>
+
+    <script src="/./scripts/filter_places.js"></script>
+    <link rel="stylesheet" href="/./style/style.css"/>
+    <link rel="stylesheet" href="/./style/pois.css"/>
   </head>
 <body>
-<h1 th:text="${'Point of interests in ' + #strings.toUpperCase(cityName) + (cityName != null and !#strings.isEmpty(cityName) ? ', ' + #strings.toUpperCase(cityName) : '')}">Point of interests in CITY</h1>
 
-<h2>Activities</h2>
-<div th:if="${poisData == null or #lists.isEmpty(poisData)}">
-    <p>No activities found.</p>
-</div>
+<header class="pois-header" role="banner">
+    <div class="container">
+        <h1 th:text="${'Point of interests in ' + (cityName != null and !#strings.isEmpty(cityName) ? cityName + ', ' + countryCode : '')}">Point of interests in CITY</h1>
+        <h2>Activities</h2>
+        <div th:if="${poisData == null or #lists.isEmpty(poisData)}">
+            <p>No activities found.</p>
+    </div>
+</header>
 
-<div th:if="${poisData != null and !#lists.isEmpty(poisData)}" th:each="activity : ${poisData}">
+<div class="pois-container" th:if="${poisData != null and !#lists.isEmpty(poisData)}" th:each="activity : ${poisData}">
   <h2 th:text="${activity.name}">Activity name</h2>
-  <ul>
-    <li><span th:utext="${activity.description}"></span></li>
-    <li><span th:text="'Price: ' + ${activity.price.amount} + ' ' + ${activity.price.currencyCode}"></span></li>
-    <li th:if="${activity.pictures != null}"><img th:src="${activity.pictures}" alt="Activity Img"/></li>
-    <li><span th:text="'Minimum Duration: ' + ${activity.minimumDuration}"></span></li>
-    <li><a th:href="${activity.bookingLink}">Book Now</a></li>
-  </ul>
+  <div class="row">
+    <img th:if="${activity.pictures != null}" th:src="${activity.pictures}" alt="Activity Img"/>
+    <div th:utext="${activity.description}">Activity Description</div>
+  </div>
+  <div class="row details">
+    <p th:text="'Price: ' + ${activity.price.amount} + ' ' + ${activity.price.currencyCode}">Price</p>
+    <p th:text="'Minimum Duration: ' + ${activity.minimumDuration}">Minimum Duration</p>
+  </div>
+  <a th:href="${activity.bookingLink}">Book Now</a>
 </div>
 
-<p>
+<p class="pois-back">
   <a href="/">Back</a>
 </p>
 

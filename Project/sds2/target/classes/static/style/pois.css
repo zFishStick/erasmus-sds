@@ -1,0 +1,55 @@
+
+html,body {
+    overflow: auto;
+}
+
+.pois-header {
+    text-align: center;
+}
+
+.pois-container {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+
+    ul {
+        margin-top: 0;
+    }
+
+    img {
+        max-width: 50%;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    .row {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+    }
+
+    .details {
+        font-size: large;
+    }
+
+    a {
+        text-decoration: underline;
+        color: white;
+        font-size: xx-large;
+    }
+}
+
+.pois-back {
+    color: white;
+    font-size: xx-large;
+    cursor: pointer;
+    text-align: center;
+
+    a {
+        color: white;
+
+        ::after {
+            color: white;
+        }
+    }
+}
