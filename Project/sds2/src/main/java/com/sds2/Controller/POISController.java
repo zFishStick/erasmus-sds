@@ -36,6 +36,7 @@ public class POISController {
         GeoCode geoCode = new GeoCode(poiRequest.getGeoLatitude(), poiRequest.getGeoLongitude());
         List<POIDTO> activities = poiService.getPointOfInterests(geoCode, poiRequest.getDestination(), poiRequest.getCountryCode());
         session.setAttribute("cityName", poiRequest.getDestination());
+        session.setAttribute("countryCode", poiRequest.getCountryCode());
         session.setAttribute(POISDATA, activities);
         return "redirect:/pois/" + poiRequest.getCountryCode() + "/" + poiRequest.getDestination();
     }

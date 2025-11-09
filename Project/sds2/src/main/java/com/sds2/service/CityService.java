@@ -66,12 +66,16 @@ public class CityService {
                     Double lon = c.getGeoCode().getLongitude();
                     return lat != null && lon != null && (Double.compare(lat, 0.0) != 0 || Double.compare(lon, 0.0) != 0);
                 })
-                .map(c -> new CityDTO(
-                        c.getName(),
-                        c.getAddress() != null ? c.getAddress().getCountryCode() : "N/A",
-                        c.getGeoCode().getLatitude(),
-                        c.getGeoCode().getLongitude()
-                ))
+                .map(c -> {
+                    City city = new City(
+                            c.getName(),
+                            c.getAddress() != null ? c.getAddress().getCountryCode() : "N/A",
+                            c.getGeoCode().getLatitude(),
+                            c.getGeoCode().getLongitude()
+                    );
+                    city = cityRepository.save(city);
+                    return mapToDTO(city);
+                })
                 .toList();
     }
 

@@ -151,75 +151,24 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   the_form.addEventListener('submit', function(event) {
-    alert("Submitting form...");
       if (!selectedCity) {
           alert('Please select a valid city.');
           event.preventDefault();
           return;
       }
 
+      document.getElementById('destination').value = selectedCity.name;
       document.getElementById('geo-latitude').value = selectedCity.latitude;
       document.getElementById('geo-longitude').value = selectedCity.longitude;
-      document.getElementById('country-code').value = selectedCity.country;
+      document.getElementById('country-code').value = codeToCountryName(selectedCity.country);
 
       console.log("Info: " + selectedCity.name, selectedCity.latitude, selectedCity.longitude, selectedCity.country);
       the_form.submit()
   });
 
-
 });
 
-// the_form.addEventListener('submit', function(event) {
-//     if (!selectedCity) {
-//         alert('Please select a valid city.');
-//         event.preventDefault();
-//         return;
-//     }
-
-//     document.getElementById('geo-latitude').value = selectedCity.latitude;
-//     document.getElementById('geo-longitude').value = selectedCity.longitude;
-//     document.getElementById('country-code').value = selectedCity.country;
-
-//     // Imposta l'action corretta sul form
-//     the_form.action = `/pois/${encodeURIComponent(selectedCity.country)}/${encodeURIComponent(selectedCity.name)}`;
-//     // submit naturale -> farà POST e poi redirect dal controller
-// });
-
-
-// function fetchTravelInfo() {
-//   const startEl = document.getElementById('start-date');
-//   const endEl = document.getElementById('end-date');
-//   const checkInDate = startEl && startEl.value ? startEl.value : null;
-//   const checkOutDate = endEl && endEl.value ? endEl.value : null;
-
-//   fetch(`/pois/${encodeURIComponent(selectedCity.country)}/${encodeURIComponent(selectedCity.name)}`, {
-//       method: 'POST',
-//       headers: {'Content-Type': 'application/json'},
-//       body: JSON.stringify({
-//           city: selectedCity.name || '',
-//           country: selectedCity.country || '',
-//           geoCode: {
-//               latitude: selectedCity.latitude,
-//               longitude: selectedCity.longitude,
-//           },
-//           checkInDate: checkInDate,
-//           checkOutDate: checkOutDate,
-//       })
-//   })
-//   .then(res => {
-//       if (!res.ok) {
-//           throw new Error(`Server error: ${res.status}`);
-//       }
-//       return res.text();
-//   })
-//   .then(html => {
-//       console.log("Received POIs page HTML.");
-//       // document.documentElement.innerHTML = html;
-//       // let path = `/pois/${encodeURIComponent(selectedCity.country)}/${encodeURIComponent(selectedCity.name)}`;
-//       // window.history.pushState({}, '', path);
-//   })
-//   .catch(err => {
-//       console.error('POIs fetch failed:', err);
-//   });
-// }
-
+function codeToCountryName(code) {
+  const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
+  return regionNames.of(code);
+}

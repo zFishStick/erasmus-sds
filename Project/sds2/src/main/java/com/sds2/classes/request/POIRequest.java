@@ -1,8 +1,8 @@
 package com.sds2.classes.request;
 
 public class POIRequest {
-    private String countryCode;
     private String destination;
+    private String countryCode;
     private double geoLatitude;
     private double geoLongitude;
     private String startDate;
@@ -10,21 +10,13 @@ public class POIRequest {
 
     public POIRequest() {}
 
-    public POIRequest(String countryCode, String destination, double geoLatitude, double geoLongitude, String startDate, String endDate) {
-        this.countryCode = countryCode;
+    public POIRequest(String destination, String countryCode, double geoLatitude, double geoLongitude, String startDate, String endDate) {
         this.destination = destination;
+        this.countryCode = countryCode;
         this.geoLatitude = geoLatitude;
         this.geoLongitude = geoLongitude;
         this.startDate = startDate;
         this.endDate = endDate;
-    }
-
-    public String getCountryCode() {
-        return  countryCode;
-    }
-
-    public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
     }
 
     public String getDestination() {
@@ -33,6 +25,14 @@ public class POIRequest {
 
     public void setDestination(String destination) {
         this.destination = destination;
+    }
+
+    public String getCountryCode() {
+        return  countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
     }
 
     public double getGeoLatitude() {
