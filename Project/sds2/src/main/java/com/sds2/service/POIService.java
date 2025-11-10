@@ -1,6 +1,10 @@
 package com.sds2.service;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.springframework.stereotype.Service;
@@ -43,7 +47,6 @@ public class POIService {
     }
 
     public List<POIDTO> getPointOfInterests(GeoCode coordinates, String cityName, String countryCode) {
-        // Retrieve from database if exists
         List<POI> activities =  poiRepository.findByCityNameOrCountryCode(cityName, countryCode);
         if (!activities.isEmpty()) {
             Logger.getLogger(POIService.class.getName()).info("Retrieved POIs from database.");
@@ -58,13 +61,21 @@ public class POIService {
     }
 
     private List<POIDTO> getPointOfInterestsByAPI(GeoCode coordinates, String cityName, String countryCode) {
-        double latitude = coordinates.getLatitude();
-        double longitude = coordinates.getLongitude();
+        // double latitude = coordinates.getLatitude();
+        // double longitude = coordinates.getLongitude();
 
-        String uri = "https://api.amadeus.com/v1/shopping/activities?latitude=%f&longitude=%f".formatted(
-                latitude, longitude
-        );
+        Map<String, Double> bbox = calculateBoundingBox(coordinates, 0.005);
 
+        String uriString = String.format(Locale.US,"https://api.amadeus.com/v1/shopping/activities/by-square?north=%f&west=%f&south=%f&east=%f",
+        bbox.get("north"), bbox.get("west"), bbox.get("south"), bbox.get("east"));
+
+        URI uri;
+        try {
+            uri = new URI(uriString);
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException("Invalid URI syntax: " + uriString, e);
+        }
+        
         POISResponse response = webClientBuilder
             .build()
             .get()
@@ -113,5 +124,22 @@ public class POIService {
         String pictures = poi.getInfo().getPictures();
         return new POIDTO(cityName, name, description, type, price, pictures, minimumDuration, bookingLink);
     }
-    
+
+    public Map<String, Double> calculateBoundingBox(GeoCode center, double distanceKm) {
+        final double EARTH_RADIUS_KM = 6371.0;
+        double deltaLat = Math.toDegrees(distanceKm / EARTH_RADIUS_KM);
+        double deltaLon = Math.toDegrees(distanceKm / (EARTH_RADIUS_KM * Math.cos(Math.toRadians(center.getLatitude()))));
+
+        double north = center.getLatitude() + deltaLat;
+        double south = center.getLatitude() - deltaLat;
+        double east = center.getLongitude() + deltaLon;
+        double west = center.getLongitude() - deltaLon;
+        
+        return Map.of(
+            "north", north,
+            "south", south,
+            "east", east,
+            "west", west
+        );
+    }
 }
