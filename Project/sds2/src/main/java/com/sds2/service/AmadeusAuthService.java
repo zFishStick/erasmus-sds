@@ -36,7 +36,9 @@ public class AmadeusAuthService {
             return accessToken;
         }
         
-        TokenResponse response = webClient
+        TokenResponse response;       
+        try { 
+            response = webClient
             .post()
             .uri(ENDPOINT)
             .body(BodyInserters.fromFormData("client_id", apiKey)
@@ -45,6 +47,9 @@ public class AmadeusAuthService {
             .retrieve()
             .bodyToMono(TokenResponse.class)
             .block();
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to retrieve token from Amadeus authentication endpoint", e);
+        }
 
         if (response == null) {
             throw new IllegalStateException("Failed to retrieve token from Amadeus authentication endpoint");
