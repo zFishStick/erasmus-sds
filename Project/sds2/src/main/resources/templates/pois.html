@@ -6,7 +6,11 @@
 
     <script src="/./scripts/filter_places.js"></script>
     <link rel="stylesheet" href="/./style/style.css"/>
-    <link rel="stylesheet" href="/./style/pois.css"/>
+    <link rel="stylesheet" href="/../style/pois.css"/>
+
+    <!-- <link rel="stylesheet" href="../static/style/style.css"/>
+    <link rel="stylesheet" href="../static/style/pois.css"/> -->
+
   </head>
 <body>
 
@@ -23,7 +27,7 @@
   <h2 th:text="${activity.name}">Activity name</h2>
   <div class="row">
     <img th:if="${activity.pictures != null}" th:src="${activity.pictures}" alt="Activity Img"/>
-    <div th:utext="${activity.description}">Activity Description</div>
+    <div class="pois-description" th:utext="${activity.description}">Activity Description</div>
   </div>
   <div class="row details">
     <p th:text="'Price: ' + ${activity.price.amount} + ' ' + ${activity.price.currencyCode}">Price</p>
@@ -32,14 +36,31 @@
   <a th:href="${activity.bookingLink}">Book Now</a>
 </div>
 
+<div th:if="${poisData != null and !#lists.isEmpty(poisData)}" class="pagination">
+    <a th:if="${currentPage > 0}" 
+       th:href="@{'/pois/' + ${countryCode} + '/' + ${cityName} + '?page=' + (${currentPage} - 1) + '&size=' + ${pageSize}}">
+       Previous
+    </a>
+
+    <span>Page <span th:text="${currentPage + 1}">1</span> of <span th:text="${totalPages}">1</span></span>
+
+    <a th:if="${currentPage + 1 < totalPages}" 
+       th:href="@{'/pois/' + ${countryCode} + '/' + ${cityName} + '?page=' + (${currentPage} + 1) + '&size=' + ${pageSize}}">
+       Next
+    </a>
+</div>
+
+
 <p class="pois-back">
   <a href="/">Back</a>
 </p>
 
 <div th:if="${cityName != null}">
-  <form th:action="@{'/amadeus/hotels/' + ${cityName}}" method="get" style="margin-top: 14px;">
+  <form th:action="@{'/hotels/' + ${cityName}}" method="get" style="margin-top: 14px;">
+    <input type="hidden" name="city" th:value="${cityName}" />
+    <!-- <input type="hidden" name="countryCode" th:value="${countryCode}" />
     <input type="hidden" name="lat" th:value="${latitude}" />
-    <input type="hidden" name="lon" th:value="${longitude}" />
+    <input type="hidden" name="lon" th:value="${longitude}" /> -->
     <input type="hidden" name="checkInDate" th:if="${checkInDate != null}" th:value="${checkInDate}" />
     <input type="hidden" name="checkOutDate" th:if="${checkOutDate != null}" th:value="${checkOutDate}" />
     <button type="submit">Want to book a hotel?</button>

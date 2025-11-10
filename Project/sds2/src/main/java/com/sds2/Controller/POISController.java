@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.sds2.classes.GeoCode;
 import com.sds2.classes.request.POIRequest;
@@ -42,15 +43,35 @@ public class POISController {
     }
 
     @GetMapping("/{countryCode}/{destination}")
-    public String showPoisPage(@PathVariable String destination,
-    @PathVariable String countryCode,
-    Model model,
-    HttpSession session) {
+    public String showPoisPage(
+            @PathVariable String destination,
+            @PathVariable String countryCode,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            Model model,
+            HttpSession session) {
+
         model.addAttribute("cityName", destination);
+
         List<POIDTO> activities = (List<POIDTO>) session.getAttribute(POISDATA);
-        if (activities == null) { return List.of().toString(); }
-        model.addAttribute(POISDATA, activities);
-        
+        if (activities == null) {
+            model.addAttribute(POISDATA, List.of());
+            model.addAttribute("currentPage", 0);
+            model.addAttribute("totalPages", 0);
+            model.addAttribute("pageSize", size);
+            return "pois";
+        }
+
+        int start = page * size;
+        int end = Math.min(start + size, activities.size());
+        List<POIDTO> pageActivities = (start > activities.size()) ? List.of() : activities.subList(start, end);
+
+        model.addAttribute(POISDATA, pageActivities);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", (int) Math.ceil((double) activities.size() / size));
+        model.addAttribute("pageSize", size);
+
         return "pois";
     }
+
 }
