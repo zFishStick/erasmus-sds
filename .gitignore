@@ -2,3 +2,11 @@
 .env
 *.log
 .properties
+node_modules/
+.vscode/
+.sonarlint/
+.project
+docker-compose.yml
+package-lock.json
+package.json
+airports.json

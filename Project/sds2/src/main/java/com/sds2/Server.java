@@ -1,7 +1,9 @@
 package com.sds2;
 
 import java.awt.Desktop;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
 import org.springframework.boot.SpringApplication;
@@ -11,7 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class Server {
     public static final String LOCALHOST = "http://localhost:8080";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws URISyntaxException, IOException {
         SpringApplication.run(Server.class, args);
         System.setProperty("java.awt.headless", "false");            
         try {
@@ -21,8 +23,10 @@ public class Server {
             } else {
                 Logger.getLogger(Server.class.getName()).severe("Desktop is not supported. Please open " + LOCALHOST + " manually.");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            throw new IOException(e);
+        } catch (URISyntaxException e) {
+            throw new URISyntaxException(LOCALHOST, "Invalid URI syntax");
         }
         Logger.getLogger(Server.class.getName()).info("Server executing at " + LOCALHOST);
     }

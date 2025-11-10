@@ -3,13 +3,13 @@ let selectedCity = null;
 
 function normalizeText(s) {
   try {
-    return s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    return s.normalize('NFD').replaceAll(/\p{Diacritic}/gu, '').toLowerCase();
   } catch (_) {
     return s.toLowerCase();
   }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+globalThis.addEventListener('DOMContentLoaded', () => {
   const the_input = document.getElementById('destination');
   const the_form = document.getElementById('planner-form');
   const datalist = document.getElementById('city-suggestions');
@@ -18,23 +18,23 @@ window.addEventListener('DOMContentLoaded', () => {
   let labelMap = new Map();
 
   function updateDatalist(items, query) {
-    while (datalist.firstChild) datalist.removeChild(datalist.firstChild);
+    while (datalist.firstChild) datalist.firstChild.remove();
     labelMap.clear();
 
     const q = normalizeText(query);
     const filtered = (items || []).filter(it => {
-      const name = it && it.name ? it.name : '';
+      const name = it?.name || '';
       return normalizeText(name).startsWith(q);
     }).slice(0, 8);
 
-    filtered.forEach(it => {
+    for (const it of filtered) {
       const country = it.country || '';
       const label = country ? `${it.name}, ${country}` : it.name;
       const opt = document.createElement('option');
       opt.value = label;
       datalist.appendChild(opt);
       labelMap.set(label, it);
-    });
+    }
     lastItems = filtered;
   }
 
@@ -43,7 +43,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const value = the_input.value.trim();
     if (value.length < 2) {
-      while (datalist.firstChild) datalist.removeChild(datalist.firstChild);
+      while (datalist.firstChild) datalist.firstChild.remove();
       selectedCity = null;
       return;
     }
@@ -119,52 +119,50 @@ window.addEventListener('DOMContentLoaded', () => {
     if (match) selectedCity = match;
   });
 
-  the_form.addEventListener('submit', async function (event) {
-    event.preventDefault();
+the_form.addEventListener('submit', async function (event) {
+  event.preventDefault();
 
-    if (!selectedCity) {
-      const match = resolveFromInputValue();
-      if (match) {
-        selectedCity = match;
-      } else {
-        const value = the_input.value.trim();
-        if (value.length >= 2) {
-          try {
-            const res = await fetch(`/city/${encodeURIComponent(value)}`);
-            const data = await res.json();
-            const items = (data && data.data) ? data.data : [];
-            selectedCity = items.length > 0 ? items[0] : null;
-          } catch (e) {
-            console.error("Error fetching city data:", e);
-          }
+  if (!selectedCity) {
+    const match = resolveFromInputValue();
+
+    if (match) {
+      selectedCity = match;
+    } else {
+      const value = the_input.value.trim();
+
+      if (value.length >= 2) {
+        try {
+          const res = await fetch(`/city/${encodeURIComponent(value)}`);
+          const data = await res.json();
+          const items = data?.data ?? [];
+          selectedCity = items.length > 0 ? items[0] : null;
+        } catch (e) {
+          console.error("Error fetching city data:", e);
         }
       }
     }
+  }
 
-    if (!selectedCity) {
-      console.error("No city selected or resolved.");
-      return;
-    }
+  if (!selectedCity) {
+    alert("Please select a valid city.");
+    return;
+  }
 
+  document.getElementById('destination').value = selectedCity.name;
+  document.getElementById('geo-latitude').value = selectedCity.latitude;
+  document.getElementById('geo-longitude').value = selectedCity.longitude;
+  document.getElementById('country-code').value = codeToCountryName(selectedCity.country);
 
-    //fetchTravelInfo();
-  });
+  console.log(
+    "Info:",
+    selectedCity.name,
+    selectedCity.latitude,
+    selectedCity.longitude,
+    selectedCity.country
+  );
 
-  the_form.addEventListener('submit', function(event) {
-      if (!selectedCity) {
-          alert('Please select a valid city.');
-          event.preventDefault();
-          return;
-      }
-
-      document.getElementById('destination').value = selectedCity.name;
-      document.getElementById('geo-latitude').value = selectedCity.latitude;
-      document.getElementById('geo-longitude').value = selectedCity.longitude;
-      document.getElementById('country-code').value = codeToCountryName(selectedCity.country);
-
-      console.log("Info: " + selectedCity.name, selectedCity.latitude, selectedCity.longitude, selectedCity.country);
-      the_form.submit()
-  });
+  the_form.submit();
+});
 
 });
 
