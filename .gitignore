@@ -2,3 +2,6 @@
 .env
 *.log
 .properties
+.vscode
+node_modules
+target

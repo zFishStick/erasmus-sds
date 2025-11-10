@@ -8,12 +8,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.sds2.classes.GeoCode;
 import com.sds2.classes.Price;
+import com.sds2.classes.poi.POI;
+import com.sds2.classes.poi.POIInfo;
 import com.sds2.classes.response.POISResponse;
 import com.sds2.dto.POIDTO;
 import com.sds2.repository.POIRepository;
-
-import com.sds2.classes.poi.POI;
-import com.sds2.classes.poi.POIInfo;
 
 @Service
 public class POIService {
@@ -64,7 +63,8 @@ public class POIService {
         String uri = "https://api.amadeus.com/v1/shopping/activities?latitude=%f&longitude=%f".formatted(
                 latitude, longitude
         );
-
+        uri = uri.replace(",", ".");
+        
         POISResponse response = webClientBuilder
             .build()
             .get()

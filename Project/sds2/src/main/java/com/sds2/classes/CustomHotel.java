@@ -9,7 +9,6 @@ public class CustomHotel {
     public final Double latitude;
     public final Double longitude;
     public final String rating;
-    // distance fields removed
 
     public CustomHotel(JsonNode node) {
         this.hotelId = node.path("hotelId").asText("").trim();
@@ -33,8 +32,6 @@ public class CustomHotel {
         this.latitude = geo.has("latitude") ? geo.path("latitude").asDouble() : null;
         this.longitude = geo.has("longitude") ? geo.path("longitude").asDouble() : null;
         this.rating = node.path("rating").asText("");
-
-        // distance fields removed
     }
 }
 

@@ -3,53 +3,46 @@
 <head>
     <meta charset="UTF-8" />
     <title th:text="${'Hotels near ' + #strings.toUpperCase(cityName)}">Hotels</title>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.4; }
-        header { margin-bottom: 16px; }
-        .hotel { border: 1px solid #ddd; border-radius: 6px; padding: 12px; margin: 10px 0; }
-        .hotel h3 { margin: 0 0 8px 0; }
-        .meta { color: #555; font-size: 0.95em; }
-        .actions { margin-top: 8px; }
-        .back { margin-top: 18px; display: inline-block; }
-    </style>
+    <link rel="stylesheet" href="/./style/style.css"/>
+    <link rel="stylesheet" href="/./style/hotels.css"/>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Hotels results" />
     <meta name="robots" content="noindex" />
 </head>
 <body>
-<header>
+<header class="site-header hotels-header">
     <h1 th:text="${'Hotels near ' + #strings.toUpperCase(cityName)}">Hotels</h1>
-    <p class="meta">
+    <p class="hotels-meta">
         <span>Center coordinates: </span>
         <span th:text="${#numbers.formatDecimal(latitude, 1, 6)}"></span>,
         <span th:text="${#numbers.formatDecimal(longitude, 1, 6)}"></span>
     </p>
-    <p class="meta" th:if="${hotels != null}">
+    <p class="hotels-meta" th:if="${hotels != null}">
         <span th:text="${'Results: ' + total + ' • Page ' + page + '/' + totalPages}">Results</span>
     </p>
     <p><a class="back" href="/">Back to home</a></p>
     <div>
-        <form th:action="@{'/amadeus/pois/' + ${cityName}}" method="get" style="margin-top: 10px;">
+        <form th:action="@{'/pois/' + ${countryCode} + '/' + ${cityName}}" method="get" style="margin-top: 10px;">
             <input type="hidden" name="latitude" th:value="${latitude}" />
             <input type="hidden" name="longitude" th:value="${longitude}" />
             <input type="hidden" name="city" th:value="${cityName}" />
             <button type="submit">Back to POIs</button>
         </form>
     </div>
-</header>
+ </header>
+
+<main class="container">
 
 <div th:if="${hotels == null or #lists.isEmpty(hotels)}">
     <p>No hotels found around this area.</p>
-    <p class="meta">Try adjusting the search or returning to POIs.</p>
-</div>
+    <p class="hotels-meta">Try adjusting the search or returning to POIs.</p>
+ </div>
 
 <div th:if="${hotels != null and !#lists.isEmpty(hotels)}">
-    <div th:each="hotel,iter : ${hotels}" class="hotel">
+    <div th:each="hotel,iter : ${hotels}" class="card hotel-card">
         <h3 th:text="${hotel.name != null && !#strings.isEmpty(hotel.name) ? hotel.name : 'Unnamed hotel'}">Hotel</h3>
-        <div class="meta">
+        <div class="hotels-meta">
             <span th:text="${hotel.address}">Address</span>
-            <span th:if="${hotel.rating != null && !#strings.isEmpty(hotel.rating)}"> • Rating: <span th:text="${hotel.rating}">N/A</span></span>
-            
             <span th:if="${priceMap != null && hotel.hotelId != null && priceMap.containsKey(hotel.hotelId)}">
                 • Available for selected dates — From <strong th:text="${priceMap.get(hotel.hotelId)}"></strong>
                 <span th:if="${checkInDate != null && checkOutDate != null}"> ( 
@@ -63,17 +56,13 @@
                 • Price unavailable
             </span>
         </div>
-        <div class="actions">
-            <a th:if="${hotel.hotelId != null && !#strings.isEmpty(hotel.hotelId)}"
-               th:href="@{/amadeus/hotels/{city}/{hid}(city=${cityName},hid=${hotel.hotelId},checkInDate=${checkInDate},checkOutDate=${checkOutDate})}">View details</a>
-            <span> | </span>
-            <a th:if="${hotel.latitude != null && hotel.longitude != null}"
+        <div class="hotel-actions"><a class="btn btn-primary" th:if="${hotel.hotelId != null && !#strings.isEmpty(hotel.hotelId)}"
+               th:href="@{/amadeus/hotels/{city}/{hid}(city=${cityName},hid=${hotel.hotelId},checkInDate=${checkInDate},checkOutDate=${checkOutDate})}">View details</a><a class="btn btn-ghost" th:if="${hotel.latitude != null && hotel.longitude != null}"
                th:href="${'https://www.google.com/maps/search/?api=1&query=' + hotel.latitude + ',' + hotel.longitude}"
-               target="_blank" rel="noopener">Open in Maps</a>
-        </div>
+               target="_blank" rel="noopener">Open in Maps</a></div>
     </div>
 
-    <div class="meta" style="margin-top:16px;">
+    <div class="hotels-meta" style="margin-top:16px;">
         <span th:text="${'Showing ' + ((page-1)*size + 1) + '–' + (((page-1)*size + #lists.size(hotels))) + ' of ' + total}">Showing</span>
     </div>
     <nav class="actions" aria-label="Pagination" style="margin-top:8px;">
@@ -83,7 +72,11 @@
         <a th:if="${page < totalPages}"
            th:href="@{/amadeus/hotels/{city}(city=${cityName},lat=${latitude},lon=${longitude},checkInDate=${checkInDate},checkOutDate=${checkOutDate},page=${page+1},size=${size})}">Next</a>
     </nav>
-</div>
+ </div>
+
+</main>
 
 </body>
 </html>
+
+
