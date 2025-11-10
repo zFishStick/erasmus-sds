@@ -1,12 +1,12 @@
 package com.sds2.dto;
 
 import java.io.Serializable;
-import java.util.List;
+
+import com.sds2.classes.response.HotelResponse.Address;
 
 public record HotelDTO (
     String name,
     String cityName,
     String countryCode,
-    List<String> lines
-
+    Address address
 ) implements Serializable {}

@@ -17,6 +17,15 @@
 <header class="pois-header" role="banner">
     <div class="container">
         <h1 th:text="${'Point of interests in ' + (cityName != null and !#strings.isEmpty(cityName) ? cityName + ', ' + countryCode : '')}">Point of interests in CITY</h1>
+        <div th:if="${cityName != null}" class="actions" style="justify-content:center; margin: 10px 0 6px;">
+          <form th:action="@{'/amadeus/hotels/' + ${cityName}}" method="get">
+            <input type="hidden" name="lat" th:value="${latitude}" />
+            <input type="hidden" name="lon" th:value="${longitude}" />
+            <input type="hidden" name="checkInDate" th:if="${checkInDate != null}" th:value="${checkInDate}" />
+            <input type="hidden" name="checkOutDate" th:if="${checkOutDate != null}" th:value="${checkOutDate}" />
+            <button type="submit" class="btn btn-primary">Want to book a hotel?</button>
+          </form>
+        </div>
         <h2>Activities</h2>
         <div th:if="${poisData == null or #lists.isEmpty(poisData)}">
             <p>No activities found.</p>
