@@ -1,9 +1,12 @@
 package com.sds2.service;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -38,10 +41,17 @@ public class CityService {
                     .map(this::mapToDTO)
                     .toList();
         }
-
-        String uri = "https://api.amadeus.com/v1/reference-data/locations/cities?keyword=%s&max=5".formatted(
+        
+        String uriString = String.format(Locale.US, "https://api.amadeus.com/v1/reference-data/locations/cities?keyword=%s&max=5",
                 URLEncoder.encode(name, StandardCharsets.UTF_8));
 
+        URI uri;
+        try {
+            uri = new URI(uriString);
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException("Invalid URI syntax: " + uriString, e);
+        }
+        
         CityResponse response = webClientBuilder
                 .build()
                 .get()
