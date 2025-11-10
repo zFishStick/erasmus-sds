@@ -61,8 +61,6 @@ public class POIService {
     }
 
     private List<POIDTO> getPointOfInterestsByAPI(GeoCode coordinates, String cityName, String countryCode) {
-        // double latitude = coordinates.getLatitude();
-        // double longitude = coordinates.getLongitude();
 
         Map<String, Double> bbox = calculateBoundingBox(coordinates, 0.005);
 
@@ -107,7 +105,7 @@ public class POIService {
                 if (data.getPictures() != null && !data.getPictures().isEmpty()) {
                     poi.getInfo().setPictures(data.getPictures().get(0));
                 }
-                poiRepository.save(poi);
+                addPOI(poi);
                 return mapToDTO(poi);
             })
             .toList();

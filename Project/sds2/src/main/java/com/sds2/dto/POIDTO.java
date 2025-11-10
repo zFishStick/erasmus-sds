@@ -14,4 +14,5 @@ public record POIDTO
     String pictures,
     String minimumDuration,
     String bookingLink
+    
 ) implements Serializable{}
