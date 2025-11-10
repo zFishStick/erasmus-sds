@@ -11,13 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.sds2.classes.GeoCode;
-import com.sds2.classes.Price;
+import com.sds2.classes.poi.POI;
+import com.sds2.classes.poi.POIInfo;
 import com.sds2.classes.response.POISResponse;
 import com.sds2.dto.POIDTO;
 import com.sds2.repository.POIRepository;
-
-import com.sds2.classes.poi.POI;
-import com.sds2.classes.poi.POIInfo;
 
 @Service
 public class POIService {
@@ -64,7 +62,8 @@ public class POIService {
 
         Map<String, Double> bbox = calculateBoundingBox(coordinates, 0.005);
 
-        String uriString = String.format(Locale.US,"https://api.amadeus.com/v1/shopping/activities/by-square?north=%f&west=%f&south=%f&east=%f",
+        String uriString = String.format(Locale.US,
+        "https://api.amadeus.com/v1/shopping/activities/by-square?north=%f&west=%f&south=%f&east=%f",
         bbox.get("north"), bbox.get("west"), bbox.get("south"), bbox.get("east"));
 
         URI uri;
@@ -112,15 +111,16 @@ public class POIService {
     }
 
     private POIDTO mapToDTO(POI poi) {
-        String cityName = poi.getCityName();
-        String name = poi.getName();
-        String description = poi.getDescription();
-        String type = poi.getType();
-        Price price = poi.getPrice();
-        String minimumDuration = poi.getInfo().getMinimumDuration();
-        String bookingLink = poi.getInfo().getBookingLink();
-        String pictures = poi.getInfo().getPictures();
-        return new POIDTO(cityName, name, description, type, price, pictures, minimumDuration, bookingLink);
+        return new POIDTO(
+            poi.getCityName(),
+            poi.getInfo().getName(),
+            poi.getInfo().getDescription(),
+            poi.getType(),
+            poi.getPrice(),
+            poi.getInfo().getPictures(),
+            poi.getInfo().getMinimumDuration(),
+            poi.getInfo().getBookingLink()
+        );
     }
 
     public Map<String, Double> calculateBoundingBox(GeoCode center, double distanceKm) {
