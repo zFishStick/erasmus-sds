@@ -1,15 +1,10 @@
 package com.sds2.controller;
 
 import java.util.List;
-import java.util.Map;
-
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties.Http;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.sds2.classes.hotel.Hotel;
-import com.sds2.classes.hotel.HotelOffer;
 import com.sds2.classes.request.HotelRequest;
 import com.sds2.dto.HotelDTO;
 import com.sds2.dto.HotelDetailsDTO;
@@ -22,11 +17,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
-
 @Controller
 @RequestMapping("/hotels")
 public class HotelController {
+
+    private static final String HOTELS_DATA = "hotels";
 
     private final HotelService hotelService;
 
@@ -40,7 +35,7 @@ public class HotelController {
         HttpSession session
         ) {
             List<HotelDTO> hotels = hotelService.getHotelsByIataCode(hotelRequest.getDestination());
-            session.setAttribute("hotels", hotels);
+            session.setAttribute(HOTELS_DATA, hotels);
             return "redirect:/hotels/" + hotelRequest.getCountryCode() + "/" + hotelRequest.getDestination();
         }
 
@@ -53,30 +48,55 @@ public class HotelController {
         Model model,
         HttpSession session
     ) {
+        List<HotelDTO> hotels = (List<HotelDTO>) session.getAttribute(HOTELS_DATA);
+        int total = hotels != null ? hotels.size() : 0;
+        int fromIndex = page * size;
+        int toIndex = Math.min(fromIndex + size, total);
+
         model.addAttribute("cityName", destination);
         model.addAttribute("countryCode", countryCode);
-        List<HotelDTO> hotels = (List<HotelDTO>) session.getAttribute("hotels");
-        model.addAttribute("hotels", hotels);
+       
+        List<HotelDTO> pagedHotels = hotels != null ? hotels.subList(fromIndex, toIndex) : List.of();
 
-        session.removeAttribute("hotels");
-        return "hotels";
+        model.addAttribute(HOTELS_DATA, pagedHotels);
+        model.addAttribute("latitude", session.getAttribute("latitude"));
+        model.addAttribute("longitude", session.getAttribute("longitude"));
+
+        model.addAttribute("checkInDate", session.getAttribute("checkInDate"));
+        model.addAttribute("checkOutDate", session.getAttribute("checkOutDate"));
+
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", (int) Math.ceil((double) total / size));
+        model.addAttribute("pageSize", size);
+        model.addAttribute("totalHotels", total);
+
+        return HOTELS_DATA;
     }
 
     @GetMapping("/{countryCode}/{destination}/{hotelId}")
-    public String getMethodName(
-        @PathVariable String countryCode,
-        @PathVariable String destination,
-        @PathVariable String hotelId,
-        @RequestParam int adults,
-        Model model
+    public String getHotelOffers(
+            @PathVariable String countryCode,
+            @PathVariable String destination,
+            @PathVariable String hotelId,
+            @RequestParam(defaultValue = "1") int adults,
+            Model model
     ) {
         List<HotelDetailsDTO> hotelDetails = hotelService.getHotelById(hotelId, adults);
 
-        model.addAttribute("hotelDetails", hotelDetails);
+        HotelDetailsDTO firstHotelDetail = hotelDetails.isEmpty() ? null : hotelDetails.get(0);
+
+        if (firstHotelDetail != null) {
+            model.addAttribute("hotel", firstHotelDetail.hotel());
+            model.addAttribute("offer", firstHotelDetail.offer());
+        }
+
+
         model.addAttribute("cityName", destination);
         model.addAttribute("countryCode", countryCode);
+        model.addAttribute("adults", adults);
 
-        return "hotel-details";
+        return "hotel_details";
     }
+
 
 }
