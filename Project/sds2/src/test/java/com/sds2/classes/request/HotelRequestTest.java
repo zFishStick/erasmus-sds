@@ -4,7 +4,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-public class HotelRequestTest {
+class HotelRequestTest {
+
+    @Test
+    void defaultConstructorInitializesFields() {
+        new HotelRequest();
+    }
 
     @Test
     void constructorAndGettersSetters() {

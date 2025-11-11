@@ -14,7 +14,7 @@ public class POIInfo {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    protected POIInfo() {}
+    public POIInfo() {}
 
     public POIInfo(
         String name, 

@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import com.sds2.classes.GeoCode;
 import com.sds2.classes.response.HotelResponse.Address;
 
-public class HotelDTOTest {
+class HotelDTOTest {
 
     @Test
     void recordHoldsValues() {

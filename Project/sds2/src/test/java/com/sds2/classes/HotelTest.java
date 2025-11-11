@@ -2,25 +2,31 @@ package com.sds2.classes;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
-public class HotelTest {
+import com.sds2.classes.hotel.Hotel;
+import com.sds2.classes.response.HotelResponse;
+
+class HotelTest {
 
     @Test
     void constructorAndGettersSetters() {
-        com.sds2.classes.response.HotelResponse.Address addr = new com.sds2.classes.response.HotelResponse.Address();
+        HotelResponse.Address addr = new HotelResponse.Address();
         addr.setCountryCode("ES");
-        addr.setLines(java.util.List.of("Gran Via 1"));
+        addr.setLines(List.of("Gran Via 1"));
 
-        com.sds2.classes.hotel.Hotel h = new com.sds2.classes.hotel.Hotel("H123", "Hotel Centro", "MAD", addr, new GeoCode(40.4, -3.7));
+        Hotel h = new Hotel("H123", "Hotel Centro", "MAD", addr, new GeoCode(40.4, -3.7));
+
+        new Hotel();
 
         assertEquals("H123", h.getHotelId());
         assertEquals("Hotel Centro", h.getName());
         assertEquals("MAD", h.getIataCode());
         assertEquals("ES", h.getAddress().getCountryCode());
-        assertEquals(java.util.List.of("Gran Via 1"), h.getAddress().getLines());
+        assertEquals(List.of("Gran Via 1"), h.getAddress().getLines());
 
-        // setters
         h.setId(456L);
         h.setHotelId("H999");
         h.setName("Nuevo Nombre");

@@ -6,7 +6,34 @@ import com.sds2.classes.GeoCode;
 import com.sds2.classes.Price;
 import org.junit.jupiter.api.Test;
 
-public class POITest {
+class POITest {
+
+    @Test
+    void defaultConstructorInitializesFields() {
+        new POI();
+
+        POIInfo info = new POIInfo("Politechnic", "University",
+         "A visit to the technological university", null, "1h", null);
+
+        Price price = new Price(20.0, "PLN");
+
+        GeoCode coords = new GeoCode(52.4064, 16.9252);
+
+        POI poi2 = new POI(null, null, null, null, coords);
+        Long id = 123L;
+        poi2.setId(id);
+
+        poi2.setCityName("Poznan");
+        poi2.setCountryCode("PL");
+        poi2.setInfo(info);
+        poi2.setPrice(price);
+
+        assertNotNull(poi2.getInfo());
+        assertNotNull(poi2.getPrice());
+        assertNotNull(poi2.getCoordinates());
+
+        assertNotNull(poi2.getId());
+    }
 
     @Test
     void gettersAndMutatorsDelegateCorrectly() {

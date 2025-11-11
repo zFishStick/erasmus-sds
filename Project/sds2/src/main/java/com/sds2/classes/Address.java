@@ -13,8 +13,7 @@ public class Address {
     @ElementCollection
     private List<String> lines = new ArrayList<>();
 
-    public Address() {
-    }
+    public Address() {}
 
     public Address(String countryCode, List<String> lines) {
         this.countryCode = countryCode;

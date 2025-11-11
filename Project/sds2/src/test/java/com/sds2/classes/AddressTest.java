@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-public class AddressTest {
+class AddressTest {
 
     @Test
     void defaultConstructorInitializesEmptyLines() {
@@ -15,6 +15,10 @@ public class AddressTest {
         assertNotNull(addr.getLines());
         assertTrue(addr.getLines().isEmpty());
         assertNull(addr.getCountryCode());
+
+        Address addr2 = new Address("PL", null);
+        assertNotNull(addr2.getLines());
+        assertTrue(addr2.getLines().isEmpty());
     }
 
     @Test
@@ -26,7 +30,6 @@ public class AddressTest {
         assertEquals("FR", addr.getCountryCode());
         assertEquals(List.of("123 Main St"), addr.getLines());
 
-        // mutate original and ensure defensive copy
         lines.add("SHOULD NOT APPEAR");
         assertEquals(1, addr.getLines().size());
     }

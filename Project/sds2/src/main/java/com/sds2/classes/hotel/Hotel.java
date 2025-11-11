@@ -32,7 +32,7 @@ public class Hotel {
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
     private List<HotelOffer> offers = new ArrayList<>();
 
-    protected Hotel() {}
+    public Hotel() {}
 
     public Hotel(String hotelId, String name, String iataCode, Address address, GeoCode coordinates) {
         this.hotelId = hotelId;
