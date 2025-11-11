@@ -26,6 +26,7 @@
             <input type="hidden" name="latitude" th:value="${latitude}" />
             <input type="hidden" name="longitude" th:value="${longitude}" />
             <input type="hidden" name="city" th:value="${cityName}" />
+            <input type="hidden" name="adults" th:value="${adults}" />
             <button type="submit">Back to POIs</button>
         </form>
     </div>
@@ -58,14 +59,15 @@
                 • Price unavailable
             </span> -->
         </div>
-        <div class="hotel-actions"><a class="btn btn-primary" th:if="${hotel.hotelId != null && !#strings.isEmpty(hotel.hotelId)}"
-               th:href="@{/hotels/{city}/{hotelId}(city=${cityName},hotelId=${hotel.hotelId},checkInDate=${checkInDate},checkOutDate=${checkOutDate})}">View details</a><a class="btn btn-ghost" th:if="${hotel.coordinates != null && hotel.coordinates.latitude != null && hotel.coordinates.longitude != null}"
-               th:href="${'https://www.google.com/maps/search/?api=1&query=' + latitude + ',' + longitude}"
+        <div class="hotel-actions">
+            <a class="btn btn-primary" th:if="${hotel.hotelId != null && !#strings.isEmpty(hotel.hotelId)}"
+               th:href="@{/hotels/{countryCode}/{destination}/{hotelId}(countryCode=${countryCode},destination=${cityName},hotelId=${hotel.hotelId})}">View details</a>
+               <a class="btn btn-ghost" th:href="${'https://www.google.com/maps/search/?api=1&query=' + latitude + ',' + longitude}"
                target="_blank" rel="noopener">Open in Maps</a>
-            </div>
+        </div>
     </div>
 
-    <div th:if="${hotels != null and !#lists.isEmpty(hotels)}" class="hotels-meta" style="margin-top:16px;">
+    <div th:if="${hotels != null and !#lists.isEmpty(hotels)}" class="hotels-footer" style="margin-top:16px;">
         <a th:if="${currentPage > 0}" 
         th:href="@{'/hotels/' + ${countryCode} + '/' + ${cityName} + '?page=' + (${currentPage} - 1) + '&size=' + ${pageSize}}">
         Previous

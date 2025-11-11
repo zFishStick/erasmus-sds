@@ -25,6 +25,13 @@ public class POISController {
     
     private final POIService poiService;
     private static final String POISDATA = "poisData";
+    private static final String LATITUDE = "latitude";
+    private static final String LONGITUDE = "longitude";
+    private static final String CHECKIN = "checkInDate";
+    private static final String CHECKOUT = "checkOutDate";
+    private static final String COUNTRY = "countryCode";
+    private static final String CITY = "cityName";
+
 
     public POISController(POIService poiService) {
         this.poiService = poiService;
@@ -36,12 +43,12 @@ public class POISController {
         Logger.getLogger(POISController.class.getName()).info("Received POI Request: " + poiRequest.getDestination() + ", " + poiRequest.getCountryCode());
         GeoCode geoCode = new GeoCode(poiRequest.getGeoLatitude(), poiRequest.getGeoLongitude());
         List<POIDTO> activities = poiService.getPointOfInterests(geoCode, poiRequest.getDestination(), poiRequest.getCountryCode());
-        session.setAttribute("cityName", poiRequest.getDestination());
-        session.setAttribute("countryCode", poiRequest.getCountryCode());
-        session.setAttribute("latitude", poiRequest.getGeoLatitude());
-        session.setAttribute("longitude", poiRequest.getGeoLongitude());
-        session.setAttribute("checkInDate", poiRequest.getStartDate());
-        session.setAttribute("checkOutDate", poiRequest.getEndDate());
+        session.setAttribute(CITY, poiRequest.getDestination());
+        session.setAttribute(COUNTRY, poiRequest.getCountryCode());
+        session.setAttribute(LATITUDE, poiRequest.getGeoLatitude());
+        session.setAttribute(LONGITUDE, poiRequest.getGeoLongitude());
+        session.setAttribute(CHECKIN, poiRequest.getStartDate());
+        session.setAttribute(CHECKOUT, poiRequest.getEndDate());
         session.setAttribute(POISDATA, activities);
         return "redirect:/pois/" + poiRequest.getCountryCode() + "/" + poiRequest.getDestination();
     }
@@ -55,9 +62,8 @@ public class POISController {
             Model model,
             HttpSession session) {
 
-        model.addAttribute("cityName", destination);
-        model.addAttribute("countryCode", countryCode);
         List<POIDTO> activities = (List<POIDTO>) session.getAttribute(POISDATA);
+        
         if (activities == null) {
             model.addAttribute(POISDATA, List.of());
             model.addAttribute("currentPage", 0);
@@ -65,18 +71,33 @@ public class POISController {
             model.addAttribute("pageSize", size);
             return "pois";
         }
-        
-        model.addAttribute(POISDATA, activities);
-        Object lat = session.getAttribute("latitude");
-        Object lon = session.getAttribute("longitude");
-        Object cin = session.getAttribute("checkInDate");
-        Object cout = session.getAttribute("checkOutDate");
-        if (lat != null) model.addAttribute("latitude", lat);
-        if (lon != null) model.addAttribute("longitude", lon);
-        if (cin != null) model.addAttribute("checkInDate", cin);
-        if (cout != null) model.addAttribute("checkOutDate", cout);
+
+        int total = activities.size();
+        int fromIndex = page * size;
+        int toIndex = Math.min(fromIndex + size, total);
+        List<POIDTO> pagedActivities;
+        if (fromIndex < 0 || fromIndex >= total) {
+            pagedActivities = List.of();
+        } else {
+            pagedActivities = activities.subList(fromIndex, toIndex);
+        }
+
+        model.addAttribute(CITY, destination);
+        model.addAttribute(COUNTRY, countryCode);
+        model.addAttribute(POISDATA, pagedActivities);
+
+        Object lat = session.getAttribute(LATITUDE);
+        Object lon = session.getAttribute(LONGITUDE);
+        Object cin = session.getAttribute(CHECKIN);
+        Object cout = session.getAttribute(CHECKOUT);
+        if (lat != null) model.addAttribute(LATITUDE, lat);
+        if (lon != null) model.addAttribute(LONGITUDE, lon);
+        if (cin != null) model.addAttribute(CHECKIN, cin);
+        if (cout != null) model.addAttribute(CHECKOUT, cout);
+
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", (int) Math.ceil((double) activities.size() / size));
+        int totalPages = size > 0 ? (int) Math.ceil((double) total / size) : 0;
+        model.addAttribute("totalPages", totalPages);
         model.addAttribute("pageSize", size);
         
         return "pois";
