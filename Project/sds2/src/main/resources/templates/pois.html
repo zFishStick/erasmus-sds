@@ -3,20 +3,27 @@
 <head>
     <meta charset="UTF-8" />
     <title th:text="${'Point of interests in ' + (cityName != null and !#strings.isEmpty(cityName) ? cityName + ', ' + countryCode : '')}">POIs</title>
-
     <script src="/./scripts/filter_places.js"></script>
     <link rel="stylesheet" href="/./style/style.css"/>
     <link rel="stylesheet" href="/../style/pois.css"/>
-
-    <!-- <link rel="stylesheet" href="../static/style/style.css"/>
-    <link rel="stylesheet" href="../static/style/pois.css"/> -->
-
   </head>
 <body>
 
 <header class="pois-header" role="banner">
     <div class="container">
         <h1 th:text="${'Point of interests in ' + (cityName != null and !#strings.isEmpty(cityName) ? cityName + ', ' + countryCode : '')}">Point of interests in CITY</h1>
+        <div th:if="${cityName != null}" class="actions" style="justify-content:center; margin: 10px 0 6px;">
+          <form th:action="@{/hotels}" method="post">
+            <input type="hidden" name="destination" th:value="${cityName}" />
+            <input type="hidden" name="countryCode" th:value="${countryCode}" />
+            <input type="hidden" name="geoLatitude" th:value="${latitude}" />
+            <input type="hidden" name="geoLongitude" th:value="${longitude}" />
+            <input type="hidden" name="checkInDate" th:if="${checkInDate != null}" th:value="${checkInDate}" />
+            <input type="hidden" name="checkOutDate" th:if="${checkOutDate != null}" th:value="${checkOutDate}" />
+            <button type="submit" class="btn btn-primary">Want to book a hotel?</button>
+          </form>
+        </div>
+
         <h2>Activities</h2>
         <div th:if="${poisData == null or #lists.isEmpty(poisData)}">
             <p>No activities found.</p>
@@ -54,17 +61,5 @@
 <p class="pois-back">
   <a href="/">Back</a>
 </p>
-
-<div th:if="${cityName != null}">
-  <form th:action="@{'/hotels/' + ${cityName}}" method="get" style="margin-top: 14px;">
-    <input type="hidden" name="city" th:value="${cityName}" />
-    <!-- <input type="hidden" name="countryCode" th:value="${countryCode}" />
-    <input type="hidden" name="lat" th:value="${latitude}" />
-    <input type="hidden" name="lon" th:value="${longitude}" /> -->
-    <input type="hidden" name="checkInDate" th:if="${checkInDate != null}" th:value="${checkInDate}" />
-    <input type="hidden" name="checkOutDate" th:if="${checkOutDate != null}" th:value="${checkOutDate}" />
-    <button type="submit">Want to book a hotel?</button>
-  </form>
-</div>
 </body>
 </html>

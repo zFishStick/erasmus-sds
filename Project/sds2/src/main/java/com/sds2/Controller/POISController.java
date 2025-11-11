@@ -25,6 +25,13 @@ public class POISController {
     
     private final POIService poiService;
     private static final String POISDATA = "poisData";
+    private static final String LATITUDE = "latitude";
+    private static final String LONGITUDE = "longitude";
+    private static final String CHECKIN = "checkInDate";
+    private static final String CHECKOUT = "checkOutDate";
+    private static final String COUNTRY = "countryCode";
+    private static final String CITY = "cityName";
+
 
     public POISController(POIService poiService) {
         this.poiService = poiService;
@@ -36,8 +43,12 @@ public class POISController {
         Logger.getLogger(POISController.class.getName()).info("Received POI Request: " + poiRequest.getDestination() + ", " + poiRequest.getCountryCode());
         GeoCode geoCode = new GeoCode(poiRequest.getGeoLatitude(), poiRequest.getGeoLongitude());
         List<POIDTO> activities = poiService.getPointOfInterests(geoCode, poiRequest.getDestination(), poiRequest.getCountryCode());
-        session.setAttribute("cityName", poiRequest.getDestination());
-        session.setAttribute("countryCode", poiRequest.getCountryCode());
+        session.setAttribute(CITY, poiRequest.getDestination());
+        session.setAttribute(COUNTRY, poiRequest.getCountryCode());
+        session.setAttribute(LATITUDE, poiRequest.getGeoLatitude());
+        session.setAttribute(LONGITUDE, poiRequest.getGeoLongitude());
+        session.setAttribute(CHECKIN, poiRequest.getStartDate());
+        session.setAttribute(CHECKOUT, poiRequest.getEndDate());
         session.setAttribute(POISDATA, activities);
         return "redirect:/pois/" + poiRequest.getCountryCode() + "/" + poiRequest.getDestination();
     }
@@ -51,9 +62,8 @@ public class POISController {
             Model model,
             HttpSession session) {
 
-        model.addAttribute("cityName", destination);
-
         List<POIDTO> activities = (List<POIDTO>) session.getAttribute(POISDATA);
+        
         if (activities == null) {
             model.addAttribute(POISDATA, List.of());
             model.addAttribute("currentPage", 0);
@@ -62,15 +72,34 @@ public class POISController {
             return "pois";
         }
 
-        int start = page * size;
-        int end = Math.min(start + size, activities.size());
-        List<POIDTO> pageActivities = (start > activities.size()) ? List.of() : activities.subList(start, end);
+        int total = activities.size();
+        int fromIndex = page * size;
+        int toIndex = Math.min(fromIndex + size, total);
+        List<POIDTO> pagedActivities;
+        if (fromIndex < 0 || fromIndex >= total) {
+            pagedActivities = List.of();
+        } else {
+            pagedActivities = activities.subList(fromIndex, toIndex);
+        }
 
-        model.addAttribute(POISDATA, pageActivities);
+        model.addAttribute(CITY, destination);
+        model.addAttribute(COUNTRY, countryCode);
+        model.addAttribute(POISDATA, pagedActivities);
+
+        Object lat = session.getAttribute(LATITUDE);
+        Object lon = session.getAttribute(LONGITUDE);
+        Object cin = session.getAttribute(CHECKIN);
+        Object cout = session.getAttribute(CHECKOUT);
+        if (lat != null) model.addAttribute(LATITUDE, lat);
+        if (lon != null) model.addAttribute(LONGITUDE, lon);
+        if (cin != null) model.addAttribute(CHECKIN, cin);
+        if (cout != null) model.addAttribute(CHECKOUT, cout);
+
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", (int) Math.ceil((double) activities.size() / size));
+        int totalPages = size > 0 ? (int) Math.ceil((double) total / size) : 0;
+        model.addAttribute("totalPages", totalPages);
         model.addAttribute("pageSize", size);
-
+        
         return "pois";
     }
 

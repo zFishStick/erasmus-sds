@@ -88,7 +88,7 @@ body {
 }
 
 label { font-weight: 600; }
-input[type="text"], input[type="date"] {
+input[type="text"], input[type="date"], input[type="email"], input[type="tel"] {
   appearance: none;
   width: 100%;
   padding: 12px 14px;

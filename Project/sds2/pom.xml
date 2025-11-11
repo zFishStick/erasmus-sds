@@ -131,6 +131,8 @@
         
       </plugins>
     </pluginManagement>
+    <plugins>
+    </plugins>
   </build>
 
   <pluginRepositories>

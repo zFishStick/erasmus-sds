@@ -1,12 +1,23 @@
 package com.sds2.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-public record HotelDTO (
-    String name,
-    String cityName,
-    String countryCode,
-    List<String> lines
+import com.sds2.classes.GeoCode;
+import com.sds2.classes.response.HotelResponse.Address;
 
-) implements Serializable {}
+public record HotelDTO (
+    String hotelId,
+    String name,
+    GeoCode coordinates,
+    Address address,
+    List<HotelOfferDTO> offers
+) implements Serializable {
+    
+    public HotelDTO withOffer(HotelOfferDTO offer) {
+        List<HotelOfferDTO> newList = new ArrayList<>(offers);
+        newList.add(offer);
+        return new HotelDTO(hotelId, name, coordinates, address, newList);
+    }
+}
