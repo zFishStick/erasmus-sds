@@ -48,8 +48,8 @@ public class City {
         this.longitude = longitude;
     }
     
-    public Coordinates getCoordinates() {
-        return new Coordinates(latitude, longitude);
+    public GeoCode getCoordinates() {
+        return new GeoCode(latitude, longitude);
     }
 
     @Override

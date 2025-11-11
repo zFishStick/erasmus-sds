@@ -26,7 +26,7 @@ public class POI {
     @Embedded
     private GeoCode coordinates = new GeoCode();
 
-    protected POI() {}
+    public POI() {}
 
     public POI(
         String cityName,
