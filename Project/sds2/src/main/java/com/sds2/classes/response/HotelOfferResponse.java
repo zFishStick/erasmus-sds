@@ -14,27 +14,33 @@ public class HotelOfferResponse {
     public void setData(List<HotelOfferData> data) { this.data = data; }
     
     public static class HotelOfferData {
-        private Offers offers;
-        private int adults;
+        private List<Offers> offers;
+        private Guests adults;
         private Price price;
 
-        public Offers getOffers() { return offers; }
+        public List<Offers> getOffers() { return offers; }
 
-        public void setOffers(Offers offers) { this.offers = offers; }
+        public void setOffers(List<Offers> offers) { this.offers = offers; }
 
-        public int getAdults() { return adults; }
+        public Guests getAdults() { return adults; }
 
-        public void setAdults(int adults) { this.adults = adults; }
+        public void setAdults(Guests adults) { this.adults = adults; }
 
-        public String getId() { return offers != null ? offers.getId() : null; }
+        public String getId() { return offers != null && !offers.isEmpty() ? offers.get(0).getId() : null; }
 
-        public String getCheckInDate() { return offers != null ? offers.getCheckInDate() : null; }
+        public String getCheckInDate() { return offers != null && !offers.isEmpty() ? offers.get(0).getCheckInDate() : null; }
 
-        public String getCheckOutDate() { return offers != null ? offers.getCheckOutDate() : null; }
-
-        public Room getRoom() { return offers != null ? offers.getRoom() : null; }
+        public String getCheckOutDate() { return offers != null && !offers.isEmpty() ? offers.get(0).getCheckOutDate() : null; }
+        public Room getRoom() { return offers != null && !offers.isEmpty() ? offers.get(0).getRoom() : null; }
 
         public Price getPrice() { return price; }
+    }
+
+    public static class Guests {
+        private int adults;
+
+        public int getAdults() { return adults; }
+        public void setAdults(int adults) { this.adults = adults; }
     }
 
     public static class Offers {
