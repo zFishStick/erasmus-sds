@@ -34,14 +34,12 @@ public class Hotel {
 
     protected Hotel() {}
 
-    public Hotel(String hotelId, String name, String iataCode, Address address,
-                 GeoCode coordinates, List<HotelOffer> offers) {
+    public Hotel(String hotelId, String name, String iataCode, Address address, GeoCode coordinates) {
         this.hotelId = hotelId;
         this.name = name;
         this.iataCode = iataCode;
         this.address = address;
         this.coordinates = coordinates;
-        this.offers = offers;
     }
 
     public Long getId() { return id; }
