@@ -19,7 +19,7 @@ html,body {
     }
 
     img {
-        max-width: 25%;
+        max-width: 50%;
         height: auto;
         border-radius: 8px;
     }
@@ -29,6 +29,7 @@ html,body {
         flex-direction: row;
         gap: 20px;
         justify-content: center;
+        align-items: center;
     }
 
     .details {

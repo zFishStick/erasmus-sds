@@ -67,10 +67,10 @@
     </div>
     <nav class="actions" aria-label="Pagination" style="margin-top:8px;">
         <a th:if="${page > 1}"
-           th:href="@{/amadeus/hotels/{city}(city=${cityName},lat=${latitude},lon=${longitude},checkInDate=${checkInDate},checkOutDate=${checkOutDate},page=${page-1},size=${size})}">Previous</a>
+           th:href="@{/hotels/{city}(city=${cityName},lat=${latitude},lon=${longitude},checkInDate=${checkInDate},checkOutDate=${checkOutDate},page=${page-1},size=${size})}">Previous</a>
         <span th:if="${page > 1 and page < totalPages}"> | </span>
         <a th:if="${page < totalPages}"
-           th:href="@{/amadeus/hotels/{city}(city=${cityName},lat=${latitude},lon=${longitude},checkInDate=${checkInDate},checkOutDate=${checkOutDate},page=${page+1},size=${size})}">Next</a>
+           th:href="@{/hotels/{city}(city=${cityName},lat=${latitude},lon=${longitude},checkInDate=${checkInDate},checkOutDate=${checkOutDate},page=${page+1},size=${size})}">Next</a>
     </nav>
  </div>
 

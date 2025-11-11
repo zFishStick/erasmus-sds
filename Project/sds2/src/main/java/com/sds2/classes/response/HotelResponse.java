@@ -15,14 +15,14 @@ public class HotelResponse {
 
     public static class HotelData {
         private String name;
-        private Long hotelId;
+        private String hotelId;
         private String iataCode;
         private GeoCode coordinates;
         private Address address;
-        private HotelOffer offer;
+        private List<HotelOffer> offer;
         
-        public Long getHotelId() { return hotelId; }
-        public void setHotelId(Long hotelId) { this.hotelId = hotelId; }
+        public String getHotelId() { return hotelId; }
+        public void setHotelId(String hotelId) { this.hotelId = hotelId; }
 
         public String getIataCode() { return iataCode; }
         public void setIataCode(String iataCode) { this.iataCode = iataCode; }
@@ -36,8 +36,8 @@ public class HotelResponse {
         public Address getAddress() { return address; }
         public void setAddress(Address address) { this.address = address; }
 
-        public HotelOffer getOffer() { return offer; }
-        public void setOffer(HotelOffer offer) { this.offer = offer; }
+        public List<HotelOffer> getOffers() { return offer; }
+        public void setOffers(List<HotelOffer> offer) { this.offer = offer; }
     }
 
     public static class Address {

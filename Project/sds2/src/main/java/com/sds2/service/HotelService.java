@@ -1,34 +1,25 @@
 package com.sds2.service;
 
-import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.sds2.classes.GeoCode;
 import com.sds2.classes.response.HotelResponse;
 import com.sds2.dto.HotelDTO;
 import com.sds2.dto.HotelDetailsDTO;
 import com.sds2.dto.HotelOfferDTO;
-import com.sds2.dto.HotelBookingResult;
-import com.sds2.dto.OffersPreview;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sds2.amadeus.dto.HotelModels.HotelSummary;
 import com.sds2.repository.HotelRepository;
 
 import com.sds2.classes.hotel.Hotel;
-import com.sds2.classes.hotel.HotelOffer;
 
 @Service
 public class HotelService {
@@ -56,12 +47,20 @@ public class HotelService {
         hotelRepository.save(hotel);
     }
 
-    public HotelDetailsDTO getHotelById(String hotelId, int adults) {
-        HotelDTO hotel = hotelRepository.findByHotelId(hotelId);
-        HotelOfferDTO offer = hotelOfferService.getOffersByHotelId(hotelId, adults);        
-        return new HotelDetailsDTO(hotel, offer);
-    }
+    public List<HotelDetailsDTO> getHotelById(String hotelId, int adults) {
+        Hotel hotel = hotelRepository.findByHotelId(hotelId);
 
+        if (hotel == null) return List.of();
+
+        List<HotelOfferDTO> offers = hotelOfferService.getOffersByHotelId(hotelId, adults);
+        
+        HotelDTO hotelDTO = mapToDTO(hotel);
+
+        return offers.stream()
+            .map(offer -> new HotelDetailsDTO(hotelDTO.withOffer(offer), offer))
+            .toList();
+
+    }
 
     public List<HotelDTO> getHotelsByIataCode(String cityName) {
 
@@ -77,14 +76,14 @@ public class HotelService {
             Logger.getLogger(HotelService.class.getName()).info("No hotels found in database for given destination.");
         }
 
-        return getHotelsByIataCodeFromAPI(iataCode, cityName);
+        return getHotelsByIataCodeFromAPI(iataCode);
 
     }
 
-    private List<HotelDTO> getHotelsByIataCodeFromAPI(String iataCode, String cityName) {
-        
+    private List<HotelDTO> getHotelsByIataCodeFromAPI(String iataCode) {
+
         String url = String.format(Locale.US,
-         "https://api.amadeus.com/v1/reference-data/locations/hotels/by-city?radius=2&cityCode=%s", iataCode);
+         "https://api.amadeus.com/v1/reference-data/locations/hotels/by-city?cityCode=%s&radius=2", iataCode);
 
         URI uri;
         try {
@@ -93,6 +92,8 @@ public class HotelService {
             Logger.getLogger(HotelService.class.getName()).severe("Invalid URI syntax: " + e.getMessage());
             return List.of();
         }
+
+        Logger.getLogger(HotelService.class.getName()).info("Uri for hotel search: " + uri.toString());
 
         HotelResponse response = webClientBuilder
             .build()
@@ -107,31 +108,45 @@ public class HotelService {
             throw new IllegalStateException("Failed to retrieve hotels from API: response data is null");
         }
         
-        return mapToDTOs(response, iataCode, cityName);
+        return mapToDTOs(response);
     }
 
     private String convertToIataCode(String input) {
         ObjectMapper mapper = new ObjectMapper();
-        try {
-            Map<String, Map<String, String>> airports = mapper.readValue(new File("airports.json"), Map.class);
-            String iataCode = airports.get(input).get("iata");
-            return iataCode != null ? iataCode : input;
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("airports.json")) {
+            if (is == null) {
+                throw new FileNotFoundException("airports.json not found in resources");
+            }
+            Map<String, Map<String, Object>> airports = mapper.readValue(is, Map.class);
+
+            for (Map<String, Object> airport : airports.values()) {
+                if (input.equalsIgnoreCase((String) airport.get("city"))) {
+                    String iata = (String) airport.get("iata");
+                    if (iata != null && !iata.isEmpty()) {
+                        return iata;
+                    }
+                }
+            }
+            return input;
+
         } catch (Exception e) {
-            Logger.getLogger(HotelService.class.getName()).severe("Error reading airports.json: " + e.getMessage());
+            Logger.getLogger(HotelService.class.getName())
+                .severe("Error reading airports.json: " + e.getMessage());
             return input;
         }
     }
 
-    private List<HotelDTO> mapToDTOs(HotelResponse response, String iataCode, String cityName) {
+
+    private List<HotelDTO> mapToDTOs(HotelResponse response) {
         return response.getData().stream()
             .map(data -> {
                 Hotel hotel = new Hotel(
-                    data.getHotelId().toString(),
+                    data.getHotelId(),
                     data.getName(),
+                    data.getIataCode(),
                     data.getAddress(),
-                    cityName,
-                    iataCode,
-                    data.getCoordinates()
+                    data.getCoordinates(),
+                    data.getOffers()
                 );
                 addHotel(hotel);
                 return mapToDTO(hotel);
@@ -140,11 +155,22 @@ public class HotelService {
     }
 
     private HotelDTO mapToDTO(Hotel hotel) {
+
+        List<HotelOfferDTO> offersDTO = hotel.getOffers().stream()
+            .map(offer -> new HotelOfferDTO(
+                offer.getOfferId(),
+                offer.getCheckInDate(),
+                offer.getCheckOutDate(),
+                offer.getPrice(),
+                offer.getRoom(),
+                offer.getAdults()
+            ))
+            .toList();
+
         return new HotelDTO(
             hotel.getName(),
-            hotel.getCityName(),
-            hotel.getCountryCode(),
-            hotel.getAddress()
+            hotel.getAddress(),
+            offersDTO
         );
     }
 
