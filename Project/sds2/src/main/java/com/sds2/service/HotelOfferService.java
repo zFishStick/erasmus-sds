@@ -47,7 +47,8 @@ public class HotelOfferService {
         Hotel hotel = hotelRepository.findByHotelId(hotelId);
         List<HotelOffer> hotelOffer = hotelOfferRepository.findByHotelAndAdults(hotel, adultsNum);
 
-        if (hotelOffer != null) {
+        if (!hotelOffer.isEmpty()) {
+            Logger.getLogger(HotelOfferService.class.getName()).info("HOTEL OFFERS FOUND IN DB: " + hotelOffer.size());
             return hotelOffer.stream()
                 .map(this::mapToDTO)
                 .toList();
@@ -62,11 +63,13 @@ public class HotelOfferService {
         String url = String.format(Locale.US,
         "https://api.amadeus.com/v3/shopping/hotel-offers?hotelIds=%s&adults=%s", hotel.getHotelId(), adultsNum);
 
+        Logger.getLogger(HotelOfferService.class.getName()).info("URI for Hotel Offers API: " + url);
+
         URI uri;
         try {
             uri = new URI(url);
         } catch (URISyntaxException e) {
-            Logger.getLogger(HotelService.class.getName()).severe("Invalid URI syntax: " + e.getMessage());
+            Logger.getLogger(HotelOfferService.class.getName()).severe("Invalid URI syntax: " + e.getMessage());
             return List.of();
         }
 
@@ -83,6 +86,9 @@ public class HotelOfferService {
             throw new IllegalStateException("Failed to retrieve hotel offers from API: response data is null");
         }
 
+        Logger.getLogger(HotelOfferService.class.getName())
+            .info("Fetched " + response.getData() + " offers from API for hotel ID: " + hotel.getHotelId());
+
         return mapToDTOs(response, hotel, adultsNum);
 
     }
@@ -91,9 +97,9 @@ public class HotelOfferService {
         return response.getData().stream()
         .map(data -> {
             HotelOffer hotelOffer = new HotelOffer(
-                data.getOffers().getId(),
-                data.getOffers().getCheckInDate(),
-                data.getOffers().getCheckOutDate(),
+                data.getOffers().get(0).getId(),
+                data.getOffers().get(0).getCheckInDate(),
+                data.getOffers().get(0).getCheckOutDate(),
                 data.getRoom(),
                 data.getPrice(),
                 adultsNum,

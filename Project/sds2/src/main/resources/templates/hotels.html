@@ -60,8 +60,9 @@
             </span> -->
         </div>
         <div class="hotel-actions">
-            <a class="btn btn-primary" th:if="${hotel.hotelId != null && !#strings.isEmpty(hotel.hotelId)}"
+            <!-- <a class="btn btn-primary" th:if="${hotel.hotelId != null && !#strings.isEmpty(hotel.hotelId)}"
                th:href="@{/hotels/{countryCode}/{destination}/{hotelId}(countryCode=${countryCode},destination=${cityName},hotelId=${hotel.hotelId})}">View details</a>
+                -->
                <a class="btn btn-ghost" th:href="${'https://www.google.com/maps/search/?api=1&query=' + latitude + ',' + longitude}"
                target="_blank" rel="noopener">Open in Maps</a>
         </div>

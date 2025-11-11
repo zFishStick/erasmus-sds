@@ -48,11 +48,19 @@ public class HotelService {
     }
 
     public List<HotelDetailsDTO> getHotelById(String hotelId, int adults) {
+        Logger.getLogger(HotelService.class.getName())
+            .info("Fetching hotel details for ID: " + hotelId + " with " + adults + " adults.");
+
         Hotel hotel = hotelRepository.findByHotelId(hotelId);
 
-        if (hotel == null) return List.of();
+        if (hotel == null) {
+            Logger.getLogger(HotelService.class.getName()).info("No hotel found in database for ID: " + hotelId);
+            return List.of();
+        }
 
         List<HotelOfferDTO> offers = hotelOfferService.getOffersByHotelId(hotelId, adults);
+
+        Logger.getLogger(HotelService.class.getName()).info("Fetched " + offers.size() + " offers for hotel ID: " + hotelId);
         
         HotelDTO hotelDTO = mapToDTO(hotel);
 
