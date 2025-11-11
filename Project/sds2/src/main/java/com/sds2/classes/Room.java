@@ -4,17 +4,8 @@ import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class Room {
-    private String hotelId;
     private String category;
     private String description;
-
-    public String getHotelId() {
-        return hotelId;
-    }
-
-    public void setHotelId(String hotelId) {
-        this.hotelId = hotelId;
-    }
 
     public String getCategory() {
         return category;

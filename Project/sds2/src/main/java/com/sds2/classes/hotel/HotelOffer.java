@@ -8,6 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class HotelOffer {
@@ -15,7 +17,6 @@ public class HotelOffer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String offerId;
-    private String hotelId;
     private String checkInDate;
     private String checkOutDate;
     @Embedded
@@ -24,25 +25,29 @@ public class HotelOffer {
     private Price price;
     private int adults;
 
+    @ManyToOne
+    @JoinColumn(name = "hotel_id")
+    private Hotel hotel;
+
     public HotelOffer() {}
 
     public HotelOffer 
     (
-        String offerId, 
-        String hotelId, 
+        String offerId,
         String checkInDate, 
         String checkOutDate, 
         Room room, 
         Price price,
-        int adults
+        int adults,
+        Hotel hotel
         ) {
         this.offerId = offerId;
-        this.hotelId = hotelId;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.room = room;
         this.price = price;
         this.adults = adults;
+        this.hotel = hotel;
     }
 
     public Long getId() {
@@ -59,14 +64,6 @@ public class HotelOffer {
 
     public void setOfferId(String offerId) {
         this.offerId = offerId;
-    }
-
-    public String getHotelId() {
-        return hotelId;
-    }
-
-    public void setHotelId(String hotelId) {
-        this.hotelId = hotelId;
     }
 
     public String getCheckInDate() {
@@ -108,28 +105,12 @@ public class HotelOffer {
     public void setAdults(int adults) {
         this.adults = adults;
     }
+
+    public Hotel getHotel() {
+        return hotel;
+    }
+
+    public void setHotel(Hotel hotel) {
+        this.hotel = hotel;
+    }
 }
-
-
-
-// "offers":[{"id":"N8D7VAMA3W","checkInDate":"2025-11-11","checkOutDate":"2025-11-12",
-// "rateCode":"PRO","rateFamilyEstimated":{"code":"PRO","type":"P"},
-// "commission":{"percentage":"4.00"},"boardType":"BREAKFAST",
-// "room":{"type":"ROH","typeEstimated":{"category":"STANDARD_ROOM"},
-// "description":{"text":"HRS-Rate - LastMinute-Discount\nStandard room A standard room consists of a room with shower-toilet or bathtub-toilet.","lang":"EN"}},
-
-
-// "guests":{"adults":1},"price":{"currency":"PLN","total":"243.00",
-// "taxes":[{"code":"VALUE_ADDED_TAX","percentage":"8.00","included":true},
-// {"code":"SERVICE_CHARGE","percentage":"23.00","included":true}],
-// "variations":{"average":{"total":"243.00"},
-// "changes":[{"startDate":"2025-11-11","endDate":"2025-11-12","total":"243.00"}]}},
-// "policies":{"cancellations":[{"numberOfNights":1,"deadline":"2025-11-11T17:00:00+01:00",
-// "description":{"text":"The cancellation policy only applies for guaranteed bookings. The cancellation policy only applies for guaranteed bookings."},
-// "policyType":"CANCELLATION"}],
-// "holdTime":{"deadline":"2025-11-11T18:00:00"},"paymentType":"holdTime",
-// "refundable":{"cancellationRefund":"REFUNDABLE_UP_TO_DEADLINE"},
-// "lengthOfStay":{"minimumLengthOfStay":1}},"self":"https://api.amadeus.com/v3/shopping/hotel-offers/N8D7VAMA3W",
-// "roomInformation":{"description":"HRS-Rate - LastMinute-Discount\nStandard room A standard room consists of a room with shower-toilet or bathtub-toilet.",
-// "type":"ROH","typeEstimated":{"category":"STANDARD_ROOM"}}}],
-// "self":"https://api.amadeus.com/v3/shopping/hotel-offers?hotelIds=HSPOZAGQ&adults=1"}

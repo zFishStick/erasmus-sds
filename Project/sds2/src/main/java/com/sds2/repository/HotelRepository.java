@@ -12,8 +12,8 @@ import com.sds2.dto.HotelDTO;
 public interface HotelRepository extends JpaRepository<Hotel, Long> {
     HotelDTO findById(long id);
     List<Hotel> findByIataCode(String iataCode);
-    HotelDTO findByHotelId(String hotelId);
+    Hotel findByHotelId(String hotelId);
     List<Hotel> findByHotelIdIn(Iterable<String> hotelIds);
-    List<Hotel> findByCityNameOrCountryCode(String cityName, String countryCode);
+    List<Hotel> findByAddress_CityNameOrAddress_CountryCode(String cityName, String countryCode);
     List<Hotel> findByCoordinates_LatitudeAndCoordinates_Longitude(double latitude, double longitude);
 }

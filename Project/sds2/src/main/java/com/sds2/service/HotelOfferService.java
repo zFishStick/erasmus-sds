@@ -9,29 +9,30 @@ import java.util.logging.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.sds2.classes.hotel.Hotel;
 import com.sds2.classes.hotel.HotelOffer;
 import com.sds2.classes.response.HotelOfferResponse;
-import com.sds2.classes.response.HotelResponse;
 import com.sds2.dto.HotelOfferDTO;
 import com.sds2.repository.HotelOfferRepository;
+import com.sds2.repository.HotelRepository;
 
 @Service
 public class HotelOfferService {
     private final HotelOfferRepository hotelOfferRepository;
-    private final HotelService hotelService;
     private final AmadeusAuthService amadeusAuthService;
     private final WebClient.Builder webClientBuilder;
+    private final HotelRepository hotelRepository;
 
     public HotelOfferService(
         HotelOfferRepository hotelOfferRepository,
-        HotelService hotelService,
         AmadeusAuthService amadeusAuthService,
-        WebClient.Builder webClientBuilder
+        WebClient.Builder webClientBuilder,
+        HotelRepository hotelRepository
     ) {
         this.hotelOfferRepository = hotelOfferRepository;
-        this.hotelService = hotelService;
         this.amadeusAuthService = amadeusAuthService;
         this.webClientBuilder = webClientBuilder;
+        this.hotelRepository = hotelRepository;
     }
 
     public void addHotelOffer(HotelOffer offer) {
@@ -41,28 +42,32 @@ public class HotelOfferService {
         hotelOfferRepository.save(offer);
     }
 
-    public HotelOfferDTO getOffersByHotelId(String hotelId, int adultsNum) {
-        HotelOffer hotelOffer = hotelOfferRepository.findByHotelIdAndAdults(hotelId, adultsNum);
+    public List<HotelOfferDTO> getOffersByHotelId(String hotelId, int adultsNum) {
+
+        Hotel hotel = hotelRepository.findByHotelId(hotelId);
+        List<HotelOffer> hotelOffer = hotelOfferRepository.findByHotelAndAdults(hotel, adultsNum);
 
         if (hotelOffer != null) {
-            return mapToDTO(hotelOffer);
+            return hotelOffer.stream()
+                .map(this::mapToDTO)
+                .toList();
         }
 
-        return getOffersByHotelAndAdultsByAPI(hotelId, adultsNum);
+        return getOffersByHotelAndAdultsByAPI(hotel, adultsNum);
 
     }
 
-    public HotelOfferDTO getOffersByHotelAndAdultsByAPI(String hotelId, int adultsNum) {
+    public List<HotelOfferDTO> getOffersByHotelAndAdultsByAPI(Hotel hotel, int adultsNum) {
         
         String url = String.format(Locale.US,
-        "https://api.amadeus.com/v3/shopping/hotel-offers?hotelIds=%s&adults=%s", hotelId, adultsNum);
+        "https://api.amadeus.com/v3/shopping/hotel-offers?hotelIds=%s&adults=%s", hotel.getHotelId(), adultsNum);
 
         URI uri;
         try {
             uri = new URI(url);
         } catch (URISyntaxException e) {
             Logger.getLogger(HotelService.class.getName()).severe("Invalid URI syntax: " + e.getMessage());
-            return null;
+            return List.of();
         }
 
         HotelOfferResponse response = webClientBuilder
@@ -78,30 +83,29 @@ public class HotelOfferService {
             throw new IllegalStateException("Failed to retrieve hotel offers from API: response data is null");
         }
 
-        return mapToDTOs(response, hotelId, adultsNum);
+        return mapToDTOs(response, hotel, adultsNum);
 
     }
 
-    public HotelOfferDTO mapToDTOs(HotelOfferResponse response, String hotelId, int adultsNum) {
-        return response.getData().stream().findFirst()
+    public List<HotelOfferDTO> mapToDTOs(HotelOfferResponse response, Hotel hotel, int adultsNum) {
+        return response.getData().stream()
         .map(data -> {
             HotelOffer hotelOffer = new HotelOffer(
                 data.getOffers().getId(),
-                hotelId,
                 data.getOffers().getCheckInDate(),
                 data.getOffers().getCheckOutDate(),
                 data.getRoom(),
                 data.getPrice(),
-                adultsNum
+                adultsNum,
+                hotel
             );
             addHotelOffer(hotelOffer);
             return mapToDTO(hotelOffer);
-        }).orElse(null);
+        }).toList();
     }
 
     private HotelOfferDTO mapToDTO(HotelOffer hotelOffer) {
         return new HotelOfferDTO(
-            hotelOffer.getHotelId(),
             hotelOffer.getOfferId(),
             hotelOffer.getCheckInDate(),
             hotelOffer.getCheckOutDate(),
