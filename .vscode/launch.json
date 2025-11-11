@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Server",
+            "request": "launch",
+            "mainClass": "Server",
+            "projectName": "sds2_project"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-Server<sds2>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.sds2.Server",
+            "projectName": "sds2",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

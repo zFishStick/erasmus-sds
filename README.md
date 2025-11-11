@@ -4,6 +4,12 @@
 -  Currently is still under development, but new features will be added in order to satisfy the users requirements.
 
 
+## UI Quick Start
+
+- Open `erasmus-sds\Project\src\gui\pages\index.html` in PowerShell terminal (from the repo folder)
+- Enter a destination and a start/end date, then click `Search`.
+- The current build shows a local preview only; API submission is handled by the Java backend (separate task in the backlog).
+
 ## Roles and responsabilities
 ### Project Owner (and Developer)
 - Gabriel Pesce

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${'Hotels near ' + #strings.toUpperCase(cityName)}">Hotels</title>
+    <link rel="stylesheet" href="/./style/style.css"/>
+    <link rel="stylesheet" href="/./style/hotels.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Hotels results" />
+    <meta name="robots" content="noindex" />
+</head>
+<body>
+<header class="site-header hotels-header">
+    <h1 th:text="${'Hotels near ' + #strings.toUpperCase(cityName)}">Hotels</h1>
+    <p class="hotels-meta">
+        <span>Center coordinates: </span>
+        <span th:text="${#numbers.formatDecimal(latitude, 1, 6)}"></span>,
+        <span th:text="${#numbers.formatDecimal(longitude, 1, 6)}"></span>
+    </p>
+    <p th:if="${hotels != null and !#lists.isEmpty(hotels)}">
+        <span th:text="'Found ' + ${totalHotels} + ' results'">Results</span>
+    </p>
+    <p><a class="back" href="/">Back to home</a></p>
+    <div>
+        <form th:action="@{'/pois/' + ${countryCode} + '/' + ${cityName}}" method="get" style="margin-top: 10px;">
+            <input type="hidden" name="latitude" th:value="${latitude}" />
+            <input type="hidden" name="longitude" th:value="${longitude}" />
+            <input type="hidden" name="city" th:value="${cityName}" />
+            <input type="hidden" name="adults" th:value="${adults}" />
+            <button type="submit">Back to POIs</button>
+        </form>
+    </div>
+ </header>
+
+<main class="container">
+
+<div th:if="${hotels == null or #lists.isEmpty(hotels)}">
+    <p>No hotels found around this area.</p>
+    <p class="hotels-meta">Try adjusting the search or returning to POIs.</p>
+ </div>
+
+<div th:if="${hotels != null and !#lists.isEmpty(hotels)}">
+    <div th:each="hotel,iter : ${hotels}" class="card hotel-card">
+        <h3 th:text="${hotel.name != null && !#strings.isEmpty(hotel.name) ? hotel.name : 'Unnamed hotel'}">Hotel</h3>
+        <div class="hotels-meta">
+            <span th:text="${hotel.address.lines != null && !#lists.isEmpty(hotel.address.lines) ? hotel.address.lines[0] : 'Address not available'}"></span>
+            <span th:text="${hotel.address.cityName}"></span>
+            <span th:text="${hotel.address.countryCode}"></span>
+            <span th:if="${priceMap != null && hotel.hotelId != null && priceMap.containsKey(hotel.hotelId)}">
+                • Available for selected dates — From <strong th:text="${priceMap.get(hotel.hotelId)}"></strong>
+                <span th:if="${checkInDate != null && checkOutDate != null}"> ( 
+                    <span th:text="${checkInDate}"></span> → <span th:text="${checkOutDate}"></span> )
+                </span>
+            </span>
+            <!-- <span th:if="${checkInDate != null && checkOutDate != null && hotel.hotelId != null && checkedIds != null && checkedIds.contains(hotel.hotelId) && (priceMap == null || !priceMap.containsKey(hotel.hotelId))}">
+                • No availability for these dates
+            </span>
+            <span th:if="${checkInDate != null && checkOutDate != null && hotel.hotelId != null && (checkedIds == null || !checkedIds.contains(hotel.hotelId)) && (priceMap == null || !priceMap.containsKey(hotel.hotelId))}">
+                • Price unavailable
+            </span> -->
+        </div>
+        <div class="hotel-actions">
+            <!-- <a class="btn btn-primary" th:if="${hotel.hotelId != null && !#strings.isEmpty(hotel.hotelId)}"
+               th:href="@{/hotels/{countryCode}/{destination}/{hotelId}(countryCode=${countryCode},destination=${cityName},hotelId=${hotel.hotelId})}">View details</a>
+                -->
+               <a class="btn btn-ghost" th:href="${'https://www.google.com/maps/search/?api=1&query=' + latitude + ',' + longitude}"
+               target="_blank" rel="noopener">Open in Maps</a>
+        </div>
+    </div>
+
+    <div th:if="${hotels != null and !#lists.isEmpty(hotels)}" class="hotels-footer" style="margin-top:16px;">
+        <a th:if="${currentPage > 0}" 
+        th:href="@{'/hotels/' + ${countryCode} + '/' + ${cityName} + '?page=' + (${currentPage} - 1) + '&size=' + ${pageSize}}">
+        Previous
+        </a>
+
+        <span>Page <span th:text="${currentPage + 1}">1</span> of <span th:text="${totalPages}">1</span></span>
+
+        <a th:if="${currentPage + 1 < totalPages}" 
+        th:href="@{'/hotels/' + ${countryCode} + '/' + ${cityName} + '?page=' + (${currentPage} + 1) + '&size=' + ${pageSize}}">
+        Next
+        </a>
+    </div>
+
+ </div>
+
+</main>
+
+</body>
+</html>
+
+
