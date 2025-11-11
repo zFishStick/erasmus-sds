@@ -1,0 +1,74 @@
+
+html,body {
+    overflow: auto;
+}
+
+.pois-header {
+    text-align: center;
+}
+
+.pois-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+
+    .pois-description {
+        line-height: 2 ;
+        width: 40%;
+    }
+
+    img {
+        max-width: 50%;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    .row {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .details {
+        font-size: large;
+    }
+
+    a {
+        text-decoration: underline;
+        color: white;
+        font-size: xx-large;
+    }
+}
+
+.pois-back {
+    color: white;
+    font-size: xx-large;
+    cursor: pointer;
+    text-align: center;
+
+    a {
+        color: white;
+
+        ::after {
+            color: white;
+        }
+    }
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin: 20px;
+
+    a {
+        color: white;
+        font-size: large;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+}
