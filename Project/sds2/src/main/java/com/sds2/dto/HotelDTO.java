@@ -4,10 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sds2.classes.GeoCode;
 import com.sds2.classes.response.HotelResponse.Address;
 
 public record HotelDTO (
+    String hotelId,
     String name,
+    GeoCode coordinates,
     Address address,
     List<HotelOfferDTO> offers
 ) implements Serializable {
@@ -15,6 +18,6 @@ public record HotelDTO (
     public HotelDTO withOffer(HotelOfferDTO offer) {
         List<HotelOfferDTO> newList = new ArrayList<>(offers);
         newList.add(offer);
-        return new HotelDTO(name, address, newList);
+        return new HotelDTO(hotelId, name, coordinates, address, newList);
     }
 }

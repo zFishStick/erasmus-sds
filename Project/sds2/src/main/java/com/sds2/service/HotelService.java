@@ -93,8 +93,6 @@ public class HotelService {
             return List.of();
         }
 
-        Logger.getLogger(HotelService.class.getName()).info("Uri for hotel search: " + uri.toString());
-
         HotelResponse response = webClientBuilder
             .build()
             .get()
@@ -145,8 +143,7 @@ public class HotelService {
                     data.getName(),
                     data.getIataCode(),
                     data.getAddress(),
-                    data.getCoordinates(),
-                    data.getOffers()
+                    data.getCoordinates()
                 );
                 addHotel(hotel);
                 return mapToDTO(hotel);
@@ -168,7 +165,9 @@ public class HotelService {
             .toList();
 
         return new HotelDTO(
+            hotel.getHotelId(),
             hotel.getName(),
+            hotel.getCoordinates(),
             hotel.getAddress(),
             offersDTO
         );

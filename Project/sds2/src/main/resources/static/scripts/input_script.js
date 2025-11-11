@@ -80,17 +80,12 @@ globalThis.addEventListener('DOMContentLoaded', () => {
           const label = the_input.value.trim();
           const cityOnly = label.split(',')[0].trim();
           const normCity = normalizeText(cityOnly);
+          selectedCity = items.find(it => normalizeText(it.name || '') === normCity) || items[0] || null;
 
-          const eq = items.find(it => normalizeText(it.name || '') === normCity);
-          if (eq) {
-            selectedCity = eq;
-          } else if (items.length > 0) {
-            selectedCity = items[0];
-          }
         })
         .catch(err => {
           console.error("Error fetching location data:", err);
-          while (datalist.firstChild) datalist.removeChild(datalist.firstChild);
+          while (datalist.firstChild)  datalist.firstChild.remove();
         });
     }, 300);
   });
