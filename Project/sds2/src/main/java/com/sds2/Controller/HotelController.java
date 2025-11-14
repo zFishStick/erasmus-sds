@@ -1,6 +1,8 @@
 package com.sds2.controller;
 
 import java.util.List;
+import java.util.logging.Logger;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +36,10 @@ public class HotelController {
         HotelRequest hotelRequest, 
         HttpSession session
         ) {
-            List<HotelDTO> hotels = hotelService.getHotelsByIataCode(hotelRequest.getDestination());
+            List<HotelDTO> hotels = hotelService.getHotelsByCoordinates(
+                hotelRequest.getLatitude(),
+                hotelRequest.getLongitude()
+            );
             session.setAttribute(HOTELS_DATA, hotels);
             return "redirect:/hotels/" + hotelRequest.getCountryCode() + "/" + hotelRequest.getDestination();
         }
@@ -83,13 +88,14 @@ public class HotelController {
     ) {
         List<HotelDetailsDTO> hotelDetails = hotelService.getHotelById(hotelId, adults);
 
+        Logger.getLogger(HotelController.class.getName()).info("Fetched " + hotelDetails.size() + " hotel details for hotel ID: " + hotelId);
+
         HotelDetailsDTO firstHotelDetail = hotelDetails.isEmpty() ? null : hotelDetails.get(0);
 
         if (firstHotelDetail != null) {
             model.addAttribute("hotel", firstHotelDetail.hotel());
             model.addAttribute("offer", firstHotelDetail.offer());
         }
-
 
         model.addAttribute("cityName", destination);
         model.addAttribute("countryCode", countryCode);
