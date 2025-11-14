@@ -60,11 +60,9 @@ public class POIService {
 
     private List<POIDTO> getPointOfInterestsByAPI(GeoCode coordinates, String cityName, String countryCode) {
 
-        Map<String, Double> bbox = calculateBoundingBox(coordinates, 0.005);
-
         String uriString = String.format(Locale.US,
-        "https://api.amadeus.com/v1/shopping/activities/by-square?north=%f&west=%f&south=%f&east=%f",
-        bbox.get("north"), bbox.get("west"), bbox.get("south"), bbox.get("east"));
+        "https://api.amadeus.com/v1/shopping/activities?latitude=%f&longitude=%f",
+        coordinates.getLatitude(), coordinates.getLongitude());
 
         URI uri;
         try {
