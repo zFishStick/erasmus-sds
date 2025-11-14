@@ -1,4 +1,4 @@
-name: Build
+name: SonarQube
 
 on:
   push:
@@ -38,5 +38,4 @@ jobs:
         working-directory: Project/sds2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Travel-Planner -Dsonar.projectName='Travel Planner'
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=zFishStick_erasmus-sds
