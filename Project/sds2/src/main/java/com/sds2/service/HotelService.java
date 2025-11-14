@@ -1,12 +1,9 @@
 package com.sds2.service;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.springframework.stereotype.Service;
@@ -16,7 +13,6 @@ import com.sds2.classes.response.HotelResponse;
 import com.sds2.dto.HotelDTO;
 import com.sds2.dto.HotelDetailsDTO;
 import com.sds2.dto.HotelOfferDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sds2.repository.HotelRepository;
 
 import com.sds2.classes.hotel.Hotel;
@@ -48,19 +44,13 @@ public class HotelService {
     }
 
     public List<HotelDetailsDTO> getHotelById(String hotelId, int adults) {
-        Logger.getLogger(HotelService.class.getName())
-            .info("Fetching hotel details for ID: " + hotelId + " with " + adults + " adults.");
-
         Hotel hotel = hotelRepository.findByHotelId(hotelId);
 
         if (hotel == null) {
-            Logger.getLogger(HotelService.class.getName()).info("No hotel found in database for ID: " + hotelId);
             return List.of();
         }
 
         List<HotelOfferDTO> offers = hotelOfferService.getOffersByHotelId(hotelId, adults);
-
-        Logger.getLogger(HotelService.class.getName()).info("Fetched " + offers.size() + " offers for hotel ID: " + hotelId);
         
         HotelDTO hotelDTO = mapToDTO(hotel);
 
@@ -70,11 +60,9 @@ public class HotelService {
 
     }
 
-    public List<HotelDTO> getHotelsByIataCode(String cityName) {
+    public List<HotelDTO> getHotelsByCoordinates(Double latitude, Double longitude) {
 
-        String iataCode = convertToIataCode(cityName); //I.E "POZ" for Poznan
-
-        List<Hotel> hotels = hotelRepository.findByIataCode(iataCode);
+        List<Hotel> hotels = hotelRepository.findByCoordinates_LatitudeAndCoordinates_Longitude(latitude, longitude);
 
         if (!hotels.isEmpty()) {
             return hotels.stream()
@@ -84,14 +72,14 @@ public class HotelService {
             Logger.getLogger(HotelService.class.getName()).info("No hotels found in database for given destination.");
         }
 
-        return getHotelsByIataCodeFromAPI(iataCode);
+        return getHotelsByCoordinatesFromAPI(latitude, longitude);
 
     }
 
-    private List<HotelDTO> getHotelsByIataCodeFromAPI(String iataCode) {
+    private List<HotelDTO> getHotelsByCoordinatesFromAPI(Double latitude, Double longitude) {
 
         String url = String.format(Locale.US,
-         "https://api.amadeus.com/v1/reference-data/locations/hotels/by-city?cityCode=%s&radius=2", iataCode);
+         "https://api.amadeus.com/v1/reference-data/locations/hotels/by-city?latitude=%f&longitude=%f&radius=2", latitude, longitude);
 
         URI uri;
         try {
@@ -116,32 +104,6 @@ public class HotelService {
         
         return mapToDTOs(response);
     }
-
-    private String convertToIataCode(String input) {
-        ObjectMapper mapper = new ObjectMapper();
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream("airports.json")) {
-            if (is == null) {
-                throw new FileNotFoundException("airports.json not found in resources");
-            }
-            Map<String, Map<String, Object>> airports = mapper.readValue(is, Map.class);
-
-            for (Map<String, Object> airport : airports.values()) {
-                if (input.equalsIgnoreCase((String) airport.get("city"))) {
-                    String iata = (String) airport.get("iata");
-                    if (iata != null && !iata.isEmpty()) {
-                        return iata;
-                    }
-                }
-            }
-            return input;
-
-        } catch (Exception e) {
-            Logger.getLogger(HotelService.class.getName())
-                .severe("Error reading airports.json: " + e.getMessage());
-            return input;
-        }
-    }
-
 
     private List<HotelDTO> mapToDTOs(HotelResponse response) {
         return response.getData().stream()
