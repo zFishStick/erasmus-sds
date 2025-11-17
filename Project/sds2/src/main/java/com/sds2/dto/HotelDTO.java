@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sds2.classes.GeoCode;
-import com.sds2.classes.response.HotelResponse.Address;
+import com.sds2.classes.hotel.HotelAddress;
 
 public record HotelDTO (
     String hotelId,
     String name,
     GeoCode coordinates,
-    Address address,
+    HotelAddress address,
     List<HotelOfferDTO> offers
 ) implements Serializable {
     

@@ -3,7 +3,7 @@ package com.sds2.classes.response;
 import java.util.List;
 
 import com.sds2.classes.GeoCode;
-import com.sds2.classes.hotel.HotelOffer;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class HotelResponse {
 
@@ -17,9 +17,9 @@ public class HotelResponse {
         private String name;
         private String hotelId;
         private String iataCode;
-        private GeoCode coordinates;
+        @JsonProperty("geoCode")
+        private GeoCode geoCode;
         private Address address;
-        private List<HotelOffer> offer;
         
         public String getHotelId() { return hotelId; }
         public void setHotelId(String hotelId) { this.hotelId = hotelId; }
@@ -30,14 +30,12 @@ public class HotelResponse {
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
 
-        public GeoCode getCoordinates() { return coordinates; }
-        public void setCoordinates(GeoCode coordinates) { this.coordinates = coordinates; }
+        public GeoCode getGeoCode() { return geoCode; }
+        public void setGeoCode(GeoCode geoCode) { this.geoCode = geoCode; }
 
         public Address getAddress() { return address; }
         public void setAddress(Address address) { this.address = address; }
 
-        public List<HotelOffer> getOffers() { return offer; }
-        public void setOffers(List<HotelOffer> offer) { this.offer = offer; }
     }
 
     public static class Address {

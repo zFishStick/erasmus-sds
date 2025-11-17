@@ -7,15 +7,16 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.sds2.classes.hotel.Hotel;
-import com.sds2.classes.response.HotelResponse;
+import com.sds2.classes.hotel.HotelAddress;
 
 class HotelTest {
 
     @Test
     void constructorAndGettersSetters() {
-        HotelResponse.Address addr = new HotelResponse.Address();
+        HotelAddress addr = new HotelAddress();
         addr.setCountryCode("ES");
-        addr.setLines(List.of("Gran Via 1"));
+        addr.setCityName("MADRID");
+        addr.setLine("Gran Via 1");
 
         Hotel h = new Hotel("H123", "Hotel Centro", "MAD", addr, new GeoCode(40.4, -3.7));
 
@@ -25,7 +26,7 @@ class HotelTest {
         assertEquals("Hotel Centro", h.getName());
         assertEquals("MAD", h.getIataCode());
         assertEquals("ES", h.getAddress().getCountryCode());
-        assertEquals(List.of("Gran Via 1"), h.getAddress().getLines());
+        assertEquals("Gran Via 1", h.getAddress().getLine());
 
         h.setId(456L);
         h.setHotelId("H999");
