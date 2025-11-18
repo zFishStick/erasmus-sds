@@ -8,14 +8,16 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.sds2.classes.GeoCode;
-import com.sds2.classes.response.HotelResponse.Address;
+import com.sds2.classes.hotel.HotelAddress;
 
 class HotelDTOTest {
 
     @Test
     void recordHoldsValues() {
-        Address address = new Address();
+        HotelAddress address = new HotelAddress();
         address.setCountryCode("FR");
+        address.setCityName("PARIS");
+        address.setLine("1 Rue de Paris");
         GeoCode coords = new GeoCode(48.85, 2.35);
         List<HotelOfferDTO> offers = new ArrayList<>();
 

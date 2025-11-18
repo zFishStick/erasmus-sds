@@ -14,6 +14,8 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
     List<Hotel> findByIataCode(String iataCode);
     Hotel findByHotelId(String hotelId);
     List<Hotel> findByHotelIdIn(Iterable<String> hotelIds);
-    List<Hotel> findByAddress_CityNameOrAddress_CountryCode(String cityName, String countryCode);
+    List<Hotel> findByAddress_CityNameIgnoreCaseAndAddress_CountryCodeIgnoreCase(String cityName, String countryCode);
+    List<Hotel> findByAddress_CityNameIgnoreCase(String cityName);
+    List<Hotel> findByAddress_CountryCodeIgnoreCase(String countryCode);
     List<Hotel> findByCoordinates_LatitudeAndCoordinates_Longitude(double latitude, double longitude);
 }

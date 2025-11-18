@@ -2,9 +2,6 @@ package com.sds2.classes.response;
 
 import java.util.List;
 
-import com.sds2.classes.Price;
-import com.sds2.classes.Room;
-
 public class HotelOfferResponse {
 
     private List<HotelOfferData> data;
@@ -14,40 +11,20 @@ public class HotelOfferResponse {
     public void setData(List<HotelOfferData> data) { this.data = data; }
     
     public static class HotelOfferData {
-        private List<Offers> offers;
-        private Guests adults;
-        private Price price;
+        private List<OfferItem> offers;
 
-        public List<Offers> getOffers() { return offers; }
+        public List<OfferItem> getOffers() { return offers; }
 
-        public void setOffers(List<Offers> offers) { this.offers = offers; }
-
-        public Guests getAdults() { return adults; }
-
-        public void setAdults(Guests adults) { this.adults = adults; }
-
-        public String getId() { return offers != null && !offers.isEmpty() ? offers.get(0).getId() : null; }
-
-        public String getCheckInDate() { return offers != null && !offers.isEmpty() ? offers.get(0).getCheckInDate() : null; }
-
-        public String getCheckOutDate() { return offers != null && !offers.isEmpty() ? offers.get(0).getCheckOutDate() : null; }
-        public Room getRoom() { return offers != null && !offers.isEmpty() ? offers.get(0).getRoom() : null; }
-
-        public Price getPrice() { return price; }
+        public void setOffers(List<OfferItem> offers) { this.offers = offers; }
     }
 
-    public static class Guests {
-        private int adults;
-
-        public int getAdults() { return adults; }
-        public void setAdults(int adults) { this.adults = adults; }
-    }
-
-    public static class Offers {
+    public static class OfferItem {
         private String id;
         private String checkInDate;
         private String checkOutDate;
-        private Room room;
+        private OfferGuests guests;
+        private OfferPrice price;
+        private OfferRoom room;
 
         public String getId() { return id; }
         public void setId(String id) { this.id = id; }
@@ -58,19 +35,64 @@ public class HotelOfferResponse {
         public String getCheckOutDate() { return checkOutDate; }
         public void setCheckOutDate(String checkOutDate) { this.checkOutDate = checkOutDate; }
 
-        public Room getRoom() { return room; }
-        public void setRoom(Room room) { this.room = room; }
+        public OfferGuests getGuests() { return guests; }
+        public void setGuests(OfferGuests guests) { this.guests = guests; }
 
-        @Override
-        public String toString() {
-            return "Offers{id=" + id + ", checkInDate='" + checkInDate + "', checkOutDate='" + checkOutDate + "', room=" + room + "}";
-        }
+        public OfferPrice getPrice() { return price; }
+        public void setPrice(OfferPrice price) { this.price = price; }
+
+        public OfferRoom getRoom() { return room; }
+        public void setRoom(OfferRoom room) { this.room = room; }
     }
-    
-}
 
-// "offers":[{"id":"N8D7VAMA3W","checkInDate":"2025-11-11","checkOutDate":"2025-11-12",
-// "rateCode":"PRO","rateFamilyEstimated":{"code":"PRO","type":"P"},
-// "commission":{"percentage":"4.00"},"boardType":"BREAKFAST",
-// "room":{"type":"ROH","typeEstimated":{"category":"STANDARD_ROOM"},
-// "description":{"text":"HRS-Rate - LastMinute-Discount\nStandard room A standard room consists of a room with shower-toilet or bathtub-toilet.","lang":"EN"}},
+    public static class OfferGuests {
+        private Integer adults;
+
+        public Integer getAdults() { return adults; }
+        public void setAdults(Integer adults) { this.adults = adults; }
+    }
+
+    public static class OfferPrice {
+        private String currency;
+        private String total;
+
+        public String getCurrency() { return currency; }
+        public void setCurrency(String currency) { this.currency = currency; }
+
+        public String getTotal() { return total; }
+        public void setTotal(String total) { this.total = total; }
+    }
+
+    public static class OfferRoom {
+        private String type;
+        private OfferRoomTypeEstimated typeEstimated;
+        private OfferRoomDescription description;
+
+        public String getType() { return type; }
+        public void setType(String type) { this.type = type; }
+
+        public OfferRoomTypeEstimated getTypeEstimated() { return typeEstimated; }
+        public void setTypeEstimated(OfferRoomTypeEstimated typeEstimated) { this.typeEstimated = typeEstimated; }
+
+        public OfferRoomDescription getDescription() { return description; }
+        public void setDescription(OfferRoomDescription description) { this.description = description; }
+    }
+
+    public static class OfferRoomTypeEstimated {
+        private String category;
+
+        public String getCategory() { return category; }
+        public void setCategory(String category) { this.category = category; }
+    }
+
+    public static class OfferRoomDescription {
+        private String text;
+        private String lang;
+
+        public String getText() { return text; }
+        public void setText(String text) { this.text = text; }
+
+        public String getLang() { return lang; }
+        public void setLang(String lang) { this.lang = lang; }
+    }
+}
