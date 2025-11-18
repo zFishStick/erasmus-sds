@@ -14,6 +14,7 @@ public class CityResponse {
         private String name;
         private Address address;
         private GeoCode geoCode;
+        private String iataCode;
 
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
@@ -23,6 +24,9 @@ public class CityResponse {
 
         public GeoCode getGeoCode() { return geoCode; }
         public void setGeoCode(GeoCode geoCode) { this.geoCode = geoCode; }
+
+        public String getIataCode() { return iataCode; }
+        public void setIataCode(String iataCode) { this.iataCode = iataCode; }
     }
 
     public static class Address {
