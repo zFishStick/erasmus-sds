@@ -40,7 +40,17 @@ public class PlaceService {
         placesRepository.save(place);
     }
 
+    public PlacesDTO findPlaceByName(String name) {
+        Places p = placesRepository.findByText(name);
+        if (p == null) {
+            throw new IllegalStateException("Place with name " + name + " not found");
+        }
+        return mapToDTO(p);
+    }
+
     public PlaceResponse searchText(String query) {
+
+        
 
         String url = "https://places.googleapis.com/v1/places:searchText";
 
@@ -54,7 +64,8 @@ public class PlaceService {
             "places.addressComponents",
             "places.rating",
             "places.photos.name",
-            "places.priceRange"
+            "places.priceRange",
+            "places.websiteUri"
         };
 
         String textQueryBody = """
@@ -86,13 +97,15 @@ public class PlaceService {
             .map(data -> {                
                 Places places = Places.builder()
                     .citySummary(new CitySummary(city, country))
-                    .text(data.getName())
+                    .name(data.getName())
+                    .text(data.getDisplayName().getText())
                     .photoUrl(getPlacePhoto(data.getPhotos()[0].getName()))
                     .type(data.getPrimaryType())
                     .address(data.getFormattedAddress())
                     .location(data.getLocation())
                     .rating(data.getRating())
                     .priceRange(data.getPriceRange())
+                    .websiteUri(data.getWebsiteUri())
                     .build();
 
             addPlace(places);
@@ -109,7 +122,8 @@ public class PlaceService {
             places.getAddress(),
             places.getLocation(),
             places.getRating(),
-            places.getPriceRange()
+            places.getPriceRange(),
+            places.getWebsiteUri()
         );
     }
 
@@ -117,6 +131,14 @@ public class PlaceService {
 
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
+
+        List<Places> existingPlaces = placesRepository.findByCitySummary_CityAndCitySummary_Country(city, country);
+
+        if (!existingPlaces.isEmpty()) {
+            return existingPlaces.stream()
+                .map(this::mapToDTO)
+                .toList();
+        }
 
         String url = "https://places.googleapis.com/v1/places:searchNearby";
 
@@ -130,7 +152,8 @@ public class PlaceService {
             "places.addressComponents",
             "places.rating",
             "places.photos.name", // photoReference
-            "places.priceRange"
+            "places.priceRange",
+            "places.websiteUri"
         };
 
         String body = """

@@ -11,6 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CitySummary {
-    private String name;
+    private String city;
     private String country;
 }

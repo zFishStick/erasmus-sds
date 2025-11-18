@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Planner - Place Details</title>
+</head>
+<body>
+
+    <div class="container">
+        <h1 th:text="${place.name}">Place Name</h1>
+        <div>
+            <img th:if="${place.photoUrl != null}" th:src="${place.photoUrl}" alt="Placeholder"/>
+        </div>
+        <div>
+            <p><span class="main-text">Address:</span> <span th:text="${place.address}">Place Address</span></p>
+            <p><span class="main-text">Type:</span> <span th:text="${place.type}">Place Type</span></p>
+            <p th:if="${place.priceRange != null}">
+                <span class="main-text">Price Range:</span>
+                <span th:text="${place.priceRange}">Price Range</span>
+            </p>
+            <p th:unless="${place.priceRange != null}">Free visit!</p>
+            <p><span class="main-text">Rating:</span> <span th:text="${place.rating}">Place Rating</span></p>
+            <p th:if="${place.websiteUri != null}">
+                Website: <a th:href="${place.websiteUri}" th:text="${place.websiteUri}">Website Link</a>
+            </p>
+        </div>
+    </div>
+    
+</body>
+</html>
