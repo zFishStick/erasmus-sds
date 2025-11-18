@@ -29,7 +29,6 @@
             <p>No activities found.</p>
     </div>
 </header>
-
 <div class="pois-container" th:if="${poisData != null and !#lists.isEmpty(poisData)}" th:each="activity : ${poisData}">
   <h2 th:text="${activity.name}">Activity name</h2>
   <div class="row">

@@ -4,7 +4,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.springframework.stereotype.Service;
@@ -121,21 +120,4 @@ public class POIService {
         );
     }
 
-    public Map<String, Double> calculateBoundingBox(GeoCode center, double distanceKm) {
-        final double EARTH_RADIUS_KM = 6371.0;
-        double deltaLat = Math.toDegrees(distanceKm / EARTH_RADIUS_KM);
-        double deltaLon = Math.toDegrees(distanceKm / (EARTH_RADIUS_KM * Math.cos(Math.toRadians(center.getLatitude()))));
-
-        double north = center.getLatitude() + deltaLat;
-        double south = center.getLatitude() - deltaLat;
-        double east = center.getLongitude() + deltaLon;
-        double west = center.getLongitude() - deltaLon;
-        
-        return Map.of(
-            "north", north,
-            "south", south,
-            "east", east,
-            "west", west
-        );
-    }
 }
