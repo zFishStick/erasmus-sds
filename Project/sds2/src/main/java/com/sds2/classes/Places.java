@@ -28,24 +28,19 @@ public class Places {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Embedded
     private CitySummary citySummary;
-
+    private String name;
     private String text;
-
     @Column(columnDefinition = "TEXT")
     private String photoUrl;
     private String type;
-
     private String address;
-
     @Embedded
     private Location location;
-
     private Double rating;
-
     @Column(columnDefinition = "TEXT")
     @Convert(converter = PriceRangeConverter.class)
     private PriceRange priceRange;
+    private String websiteUri;
 }
