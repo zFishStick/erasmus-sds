@@ -1,6 +1,11 @@
 package com.sds2.classes.request;
 
-public class POIRequest {
+import java.io.Serializable;
+
+import lombok.ToString;
+
+@ToString
+public class POIRequest implements Serializable {
     private String destination;
     private String countryCode;
     private Double latitude;

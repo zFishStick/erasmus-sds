@@ -13,7 +13,8 @@ public record PlacesDTO(
     String address,
     Location location,
     Double rating,
-    PriceRange priceRange
+    PriceRange priceRange,
+    String websiteUri
 ) implements Serializable {
     @Override
     public boolean equals(Object o) {
@@ -26,12 +27,13 @@ public record PlacesDTO(
                Objects.equals(address, that.address) &&
                Objects.equals(location, that.location) &&
                Objects.equals(rating, that.rating) &&
-               Objects.equals(priceRange, that.priceRange);
+               Objects.equals(priceRange, that.priceRange) &&
+               Objects.equals(websiteUri, that.websiteUri);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, photoUrl, type, address, location, rating, priceRange);
+        return Objects.hash(name, photoUrl, type, address, location, rating, priceRange, websiteUri);
     }
 
     @Override
@@ -43,6 +45,7 @@ public record PlacesDTO(
                ", location=" + location +
                ", rating=" + rating +
                ", priceRange=" + priceRange +
+                ", websiteUri=" + websiteUri +
                "]";
     }
 }
