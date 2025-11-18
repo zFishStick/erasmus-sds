@@ -2,12 +2,12 @@ package com.sds2.dto;
 
 import java.util.Objects;
 
-public record CityDTO(String name, String country, double latitude, double longitude) {
+public record CityDTO(String name, String country, double latitude, double longitude, String iataCode) {
 	
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof CityDTO(String otherName, String otherCountry, double otherLatitude, double otherLongitude))) return false;
+		if (!(o instanceof CityDTO(String otherName, String otherCountry, double otherLatitude, double otherLongitude, String otherIataCode))) return false;
 		return Objects.equals(name, otherName)
 				&& Objects.equals(country, otherCountry)
 				&& Double.compare(latitude, otherLatitude) == 0

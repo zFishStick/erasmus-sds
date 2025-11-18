@@ -36,6 +36,7 @@ public class HotelController {
         HotelRequest hotelRequest, 
         HttpSession session
         ) {
+            Logger.getLogger(HotelController.class.getName()).info("Searching hotels for coordinates: (" + hotelRequest.getLatitude() + ", " + hotelRequest.getLongitude() + ")");
             List<HotelDTO> hotels = hotelService.getHotelsByCoordinates(
                 hotelRequest.getLatitude(),
                 hotelRequest.getLongitude()
@@ -87,9 +88,7 @@ public class HotelController {
             Model model
     ) {
         List<HotelDetailsDTO> hotelDetails = hotelService.getHotelById(hotelId, adults);
-
-        Logger.getLogger(HotelController.class.getName()).info("Fetched " + hotelDetails.size() + " hotel details for hotel ID: " + hotelId);
-
+        
         HotelDetailsDTO firstHotelDetail = hotelDetails.isEmpty() ? null : hotelDetails.get(0);
 
         if (firstHotelDetail != null) {

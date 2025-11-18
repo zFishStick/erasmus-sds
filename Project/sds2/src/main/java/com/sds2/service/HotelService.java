@@ -142,6 +142,7 @@ public class HotelService {
             offersDTO
         );
     }
+}
 
     // public OffersPreview previewPrices(List<String> hotelIds, String checkIn, String checkOut) {
     //     Map<String, String> priceMap = new HashMap<>();
@@ -216,4 +217,4 @@ public class HotelService {
     //     return out;
     // }
 
-}
+

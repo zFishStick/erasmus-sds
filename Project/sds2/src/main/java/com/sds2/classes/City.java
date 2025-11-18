@@ -17,14 +17,16 @@ public class City {
     private String country;
     private double latitude;
     private double longitude;
+    private String iataCode;
 
     public City() {}
 
-    public City(String name, String country, double latitude, double longitude) {
+    public City(String name, String country, double latitude, double longitude, String iataCode) {
         this.name = name;
         this.country = country;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.iataCode = iataCode;
     }
 
     public String getName() {
@@ -52,10 +54,18 @@ public class City {
         return new GeoCode(latitude, longitude);
     }
 
+    public String getIataCode() {
+        return iataCode;
+    }
+
+    public void setIataCode(String iataCode) {
+        this.iataCode = iataCode;
+    }
+
     @Override
     public String toString() {
-        return "City{name='%s', country='%s', latitude=%f, longitude=%f}".formatted(
-            name, country, latitude, longitude);
+        return "City{name='%s', country='%s', latitude=%f, longitude=%f, iataCode='%s'}".formatted(
+            name, country, latitude, longitude, iataCode);
     }
    
 }

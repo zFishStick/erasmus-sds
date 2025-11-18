@@ -16,8 +16,9 @@
           <form th:action="@{/hotels}" method="post">
             <input type="hidden" name="destination" th:value="${cityName}" />
             <input type="hidden" name="countryCode" th:value="${countryCode}" />
-            <input type="hidden" name="geoLatitude" th:value="${latitude}" />
-            <input type="hidden" name="geoLongitude" th:value="${longitude}" />
+            <input type="hidden" id="latitude" name="latitude" th:value="${latitude}" />
+            <input type="hidden" id="longitude" name="longitude" th:value="${longitude}" />
+            <input type="hidden" name="iataCode" th:value="${iataCode}" />
             <input type="hidden" name="checkInDate" th:if="${checkInDate != null}" th:value="${checkInDate}" />
             <input type="hidden" name="checkOutDate" th:if="${checkOutDate != null}" th:value="${checkOutDate}" />
             <button type="submit" class="btn btn-primary">Want to book a hotel?</button>
@@ -29,7 +30,6 @@
             <p>No activities found.</p>
     </div>
 </header>
-
 <div class="pois-container" th:if="${poisData != null and !#lists.isEmpty(poisData)}" th:each="activity : ${poisData}">
   <h2 th:text="${activity.name}">Activity name</h2>
   <div class="row">

@@ -3,20 +3,30 @@ package com.sds2.classes.request;
 public class POIRequest {
     private String destination;
     private String countryCode;
-    private double geoLatitude;
-    private double geoLongitude;
+    private Double latitude;
+    private Double longitude;
     private String startDate;
     private String endDate;
+    private String iataCode;
 
     public POIRequest() {}
 
-    public POIRequest(String destination, String countryCode, double geoLatitude, double geoLongitude, String startDate, String endDate) {
+    public POIRequest(
+        String destination, 
+        String countryCode, 
+        Double latitude, 
+        Double longitude, 
+        String startDate, 
+        String endDate, 
+        String iataCode
+        ) {
         this.destination = destination;
         this.countryCode = countryCode;
-        this.geoLatitude = geoLatitude;
-        this.geoLongitude = geoLongitude;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.iataCode = iataCode;
     }
 
     public String getDestination() {
@@ -35,20 +45,20 @@ public class POIRequest {
         this.countryCode = countryCode;
     }
 
-    public double getGeoLatitude() {
-        return geoLatitude;
+    public Double getLatitude() {
+        return latitude;
     }
 
-    public void setGeoLatitude(double geoLatitude) {
-        this.geoLatitude = geoLatitude;
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
     }
 
-    public double getGeoLongitude() {
-        return geoLongitude;
+    public Double getLongitude() {
+        return longitude;
     }
 
-    public void setGeoLongitude(double geoLongitude) {
-        this.geoLongitude = geoLongitude;
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 
     public String getStartDate() {
@@ -66,4 +76,9 @@ public class POIRequest {
     public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
+
+    public String getIataCode() {
+        return iataCode;
+    }
+    
 }

@@ -81,7 +81,8 @@ public class CityService {
                             c.getName(),
                             c.getAddress() != null ? c.getAddress().getCountryCode() : "N/A",
                             c.getGeoCode().getLatitude(),
-                            c.getGeoCode().getLongitude()
+                            c.getGeoCode().getLongitude(),
+                            c.getIataCode()
                     );
                     city = cityRepository.save(city);
                     return mapToDTO(city);
@@ -93,7 +94,8 @@ public class CityService {
         String country = (city.getCountry() != null) ? city.getCountry() : "N/A";
         double latitude = city.getCoordinates().getLatitude();
         double longitude = city.getCoordinates().getLongitude();
-        return new CityDTO(city.getName(), country, latitude, longitude);
+        String iataCode = city.getIataCode();
+        return new CityDTO(city.getName(), country, latitude, longitude, iataCode);
     }
 
 }
