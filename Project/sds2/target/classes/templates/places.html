@@ -22,7 +22,7 @@
         <div class="column">
             <h2 th:text="${place.name}">Place Name</h2>
             <div class="row">
-                <img th:if="${place.photoUrl != null}" th:src="${place.photoUrl}" alt="Placeholder"/>
+                <img th:if="${place.photoUrl[0] != null}" th:src="${place.photoUrl[0]}" alt="Placeholder"/>
                 <div class="column">
                     <p><span class="main-text">Address:</span> <span th:text="${place.address}">Place Address</span></p>
                     <p><span class="main-text">Type:</span> <span th:text="${place.type}">Place Type</span></p>
@@ -35,7 +35,7 @@
                     <p th:if="${place.websiteUri != null}">
                     Website: <a th:href="${place.websiteUri}" th:text="${place.websiteUri}">Website Link</a>
                     </p>
-                    <a th:href="@{|/placeDetails/${place.name}|}" class="details-link">See Details</a>
+                    <a th:href="@{|/places/${place.name}|}" class="details-link">See Details</a>
                 </div>
 
             </div>

@@ -2,6 +2,7 @@ package com.sds2.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -10,9 +11,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.sds2.classes.CitySummary;
 import com.sds2.classes.Location;
 import com.sds2.classes.Places;
-
 import com.sds2.classes.response.PhotoResponse;
 import com.sds2.classes.response.PlaceResponse;
+import com.sds2.classes.response.PlaceResponse.Photo;
 import com.sds2.dto.PlacesDTO;
 import com.sds2.repository.PlacesRepository;
 
@@ -99,7 +100,7 @@ public class PlaceService {
                     .citySummary(new CitySummary(city, country))
                     .name(data.getName())
                     .text(data.getDisplayName().getText())
-                    .photoUrl(getPlacePhoto(data.getPhotos()[0].getName()))
+                    .photoUrl(getPlacePhoto(data.getPhotos()))
                     .type(data.getPrimaryType())
                     .address(data.getFormattedAddress())
                     .location(data.getLocation())
@@ -188,7 +189,19 @@ public class PlaceService {
         return mapPlacesToDTOs(response, city, country);
     }
 
-    public String getPlacePhoto(String photoName) {
+    public List<String> getPlacePhoto(Photo[] photos) {
+        if (photos == null || photos.length == 0) {
+            return List.of();
+        }
+
+        return Arrays.stream(photos)
+                    .limit(3)
+                    .map(photo -> fetchPhotoUri(photo.getName()))
+                    .toList();
+    }
+
+
+    private String fetchPhotoUri(String photoName) {
 
         String uriString = String.format(
             "https://places.googleapis.com/v1/%s/media?maxWidthPx=400&key=%s",
@@ -196,26 +209,28 @@ public class PlaceService {
             googleAuthService.getApiKey()
         );
 
-        URI uri;
         try {
-            uri = new URI(uriString);
+            URI uri = new URI(uriString);
+
+            // Chiamata WebClient e mappatura JSON direttamente su PhotoResponse
+            PhotoResponse response = webClientBuilder
+                    .build()
+                    .get()
+                    .uri(uri)
+                    .retrieve()
+                    .bodyToMono(PhotoResponse.class)
+                    .block();
+
+            if (response == null || response.getPhotoUri() == null) {
+                throw new IllegalStateException("Failed to retrieve photoUri from Google API for " + photoName);
+            }
+
+            return response.getPhotoUri();
+
         } catch (URISyntaxException e) {
             throw new IllegalStateException("Invalid URI syntax: " + uriString, e);
         }
-
-        PhotoResponse response = webClientBuilder
-            .build()
-            .get()
-            .uri(uri)
-            .retrieve()
-            .bodyToMono(PhotoResponse.class)
-            .block();
-
-        if (response == null) {
-            throw new IllegalStateException("Failed to retrieve place photo from Google Places API");
-        }
-
-        return response.getPhotoUri();
     }
+
 
 }
