@@ -4,11 +4,12 @@ import com.sds2.classes.Location;
 import com.sds2.classes.price.PriceRange;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 public record PlacesDTO(
     String name,
-    String photoUrl,
+    List<String> photoUrl,
     String type,
     String address,
     Location location,
