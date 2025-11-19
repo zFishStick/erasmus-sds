@@ -77,12 +77,11 @@ public class PlacesController {
         return PLACESDATA;
     }
     
-    @GetMapping("{name}")
+    @GetMapping("/{name}")
     public String getPlace(@PathVariable String name, Model model) {
         PlacesDTO place = placeService.findPlaceByName(name);
         model.addAttribute("place", place);
-        return PLACESDATA;
+        return "placeDetails";
     }
-    
     
 }
