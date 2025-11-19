@@ -205,11 +205,9 @@ function assignValuesToHiddenInputs(city, hiddenInputs) {
     switch (element.id) {
       case "geo-latitude":
         document.getElementById(element.id).value = city.latitude;
-        alert(city.latitude);
         break;
       case "geo-longitude":
         document.getElementById(element.id).value = city.longitude;
-        alert(city.longitude);
         break;
       case "iata-code":
         document.getElementById(element.id).value = city.iataCode;
