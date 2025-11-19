@@ -1,167 +1,220 @@
+/* -------------------------------------------------------------------------- */
+/* INITIALIZATION                                                             */
+/* -------------------------------------------------------------------------- */
+
+const hiddenInputs = [
+  { id: "geo-latitude",  name: "latitude" },
+  { id: "geo-longitude", name: "longitude" },
+  { id: "iata-code",  name: "iataCode" },
+  { id: "country-code",  name: "countryCode" }
+];
+
+function createHiddenInput(form) {
+    hiddenInputs.forEach(id => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = id.name;
+      input.id = id.id;
+      form.appendChild(input);
+    });
+  }
 
 let selectedCity = null;
 
 function normalizeText(s) {
   try {
-    return s.normalize('NFD').replaceAll(/\p{Diacritic}/gu, '').toLowerCase();
+    return s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
   } catch (_) {
     return s.toLowerCase();
   }
 }
 
-globalThis.addEventListener('DOMContentLoaded', () => {
-  const the_input = document.getElementById('destination');
-  const the_form = document.getElementById('planner-form');
-  const datalist = document.getElementById('city-suggestions');
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("destination");
+  const form = document.getElementById("planner-form");
+  const datalist = document.getElementById("city-suggestions");
+
+  createHiddenInput(form);
+
   let debounceTimer;
   let lastItems = [];
   let labelMap = new Map();
 
-  function updateDatalist(items, query) {
-    while (datalist.firstChild) datalist.firstChild.remove();
+  /* ---------------------------------------------------------------------- */
+  /*  HELPERS                                                               */
+  /* ---------------------------------------------------------------------- */
+
+  function clearDatalist() {
+    datalist.innerHTML = "";
     labelMap.clear();
-
-    const q = normalizeText(query);
-    const filtered = (items || []).filter(it => {
-      const name = it?.name || '';
-      return normalizeText(name).startsWith(q);
-    }).slice(0, 8);
-
-    for (const it of filtered) {
-      const country = it.country || '';
-      const label = country ? `${it.name}, ${country}` : it.name;
-      const opt = document.createElement('option');
-      opt.value = label;
-      datalist.appendChild(opt);
-      labelMap.set(label, it);
-    }
-    lastItems = filtered;
   }
 
-  the_input.addEventListener('input', function () {
-    clearTimeout(debounceTimer);
+  function matchCityFromText(text) {
+    if (!text) return null;
 
-    const value = the_input.value.trim();
-    if (value.length < 2) {
-      while (datalist.firstChild) datalist.firstChild.remove();
-      selectedCity = null;
-      return;
-    }
+    const trimmed = text.trim();
+    const normLabel = normalizeText(trimmed);
 
-    const immediate = (function () {
-      const label = value;
-      if (labelMap.has(label)) return labelMap.get(label);
-      const normLabel = normalizeText(label);
-      for (const [k, v] of labelMap.entries()) {
-        if (normalizeText(k) === normLabel) return v;
-      }
-      const cityOnly = label.split(',')[0].trim();
-      const normCity = normalizeText(cityOnly);
-      const byNameEq = lastItems.find(it => normalizeText(it.name || '') === normCity);
-      if (byNameEq) return byNameEq;
-      return lastItems.find(it => normalizeText(it.name || '').startsWith(normCity)) || null;
-    })();
-    if (immediate) {
-      selectedCity = immediate;
-      if (value.includes(',')) {
-        return;
-      }
-    }
+    // 1. match exact label
+    if (labelMap.has(trimmed)) return labelMap.get(trimmed);
 
-    debounceTimer = setTimeout(() => {
-      const queryForAPI = value.includes(',') ? value.split(',')[0].trim() : value;
-      if (queryForAPI.length < 2) { return ; }
-      fetch(`/city/${encodeURIComponent(queryForAPI)}`)
-        .then(res => res.json())
-        .then(data => {
-          const items = Array.isArray(data) ? data : [];          
-          updateDatalist(items, value);
-
-          const label = the_input.value.trim();
-          const cityOnly = label.split(',')[0].trim();
-          const normCity = normalizeText(cityOnly);
-          selectedCity = items.find(it => normalizeText(it.name || '') === normCity) || items[0] || null;
-
-        })
-        .catch(err => {
-          console.error("Error fetching location data:", err);
-          while (datalist.firstChild)  datalist.firstChild.remove();
-        });
-    }, 300);
-  });
-
-  function resolveFromInputValue() {
-    const label = the_input.value.trim();
-    if (!label) return null;
-    if (labelMap.has(label)) return labelMap.get(label);
-
-    // try case/diacritics-insensitive label match
-    const normLabel = normalizeText(label);
+    // 2. match label ignoring diacritics
     for (const [k, v] of labelMap.entries()) {
       if (normalizeText(k) === normLabel) return v;
     }
 
-    const cityOnly = label.split(',')[0].trim();
+    // 3. match only city name
+    const cityOnly = trimmed.split(",")[0].trim();
     const normCity = normalizeText(cityOnly);
-    const byEq = lastItems.find(it => normalizeText(it.name || '') === normCity);
-    if (byEq) return byEq;
-    const byPrefix = lastItems.find(it => normalizeText(it.name || '').startsWith(normCity));
-    return byPrefix || null;
+
+    return (
+      lastItems.find(it => normalizeText(it.name) === normCity) ||
+      lastItems.find(it => normalizeText(it.name).startsWith(normCity)) ||
+      null
+    );
   }
 
-  the_input.addEventListener('change', function () {
-    const match = resolveFromInputValue();
-    if (match) selectedCity = match;
-  });
+  function updateDatalist(items, query) {
+    clearDatalist();
 
-the_form.addEventListener('submit', async function (event) {
-  event.preventDefault();
+    const q = normalizeText(query);
 
-  if (!selectedCity) {
-    const match = resolveFromInputValue();
+    const filtered = items
+      .filter(it => normalizeText(it.name).startsWith(q))
+      .slice(0, 8);
 
-    if (match) {
-      selectedCity = match;
-    } else {
-      const value = the_input.value.trim();
+    filtered.forEach(it => {
+      const label = it.country ? `${it.name}, ${it.country}` : it.name;
+      const opt = document.createElement("option");
+      opt.value = label;
+      datalist.appendChild(opt);
+      labelMap.set(label, it);
+    });
 
-      if (value.length >= 2) {
-        try {
-          const res = await fetch(`/city/${encodeURIComponent(value)}`);
-          const data = await res.json();
-          const items = data?.data ?? [];
-          selectedCity = items.length > 0 ? items[0] : null;
-        } catch (e) {
-          console.error("Error fetching city data:", e);
-        }
+    lastItems = filtered;
+  }
+
+  async function fetchCities(query) {
+    try {
+      const res = await fetch(`/city/${encodeURIComponent(query)}`);
+
+      if (!res.ok) {
+        console.error("Server returned error:", res.status);
+        return [];
       }
+
+      const data = await res.json();
+      console.log("Data: " + JSON.stringify(data));
+      
+      return Array.isArray(data) ? data : [];
+    } catch (err) {
+      console.error("Error fetching location data:", err);
+      return [];
     }
   }
 
-  if (!selectedCity) {
-    alert("Please select a valid city.");
-    return;
-  }
+  /* ---------------------------------------------------------------------- */
+  /*  INPUT LISTENER                                                        */
+  /* ---------------------------------------------------------------------- */
 
-  document.getElementById('destination').value = selectedCity.name;
-  document.getElementById('geo-latitude').value = selectedCity.latitude;
-  document.getElementById('geo-longitude').value = selectedCity.longitude;
-  document.getElementById('country-code').value = codeToCountryName(selectedCity.country);
+  input.addEventListener("input", () => {
+    clearTimeout(debounceTimer);
 
-  console.log(
-    "Info:",
-    selectedCity.name,
-    selectedCity.latitude,
-    selectedCity.longitude,
-    selectedCity.country
-  );
+    const value = input.value.trim();
+    if (value.length < 2) {
+      clearDatalist();
+      selectedCity = null;
+      return;
+    }
 
-  the_form.submit();
+      const localMatch = matchCityFromText(value);
+    if (localMatch) {
+      selectedCity = localMatch;
+      if (value.includes(",")) return;
+    }
+
+    debounceTimer = setTimeout(async () => {
+      const queryForAPI = value.split(",")[0].trim();
+      if (queryForAPI.length < 2) return;
+
+      const items = await fetchCities(queryForAPI);
+      updateDatalist(items, value);
+
+      const cityOnly = value.split(",")[0].trim();
+      const normCity = normalizeText(cityOnly);
+
+      selectedCity =
+        items.find(it => normalizeText(it.name) === normCity) ||
+        items[0] ||
+        null;
+    }, 300);
+  });
+
+  /* ---------------------------------------------------------------------- */
+  /*  CHANGE LISTENER                                                       */
+  /* ---------------------------------------------------------------------- */
+
+  input.addEventListener("change", () => {
+    const match = matchCityFromText(input.value);
+    if (match) selectedCity = match;
+  });
+
+  /* ---------------------------------------------------------------------- */
+  /*  FORM SUBMIT                                                           */
+  /* ---------------------------------------------------------------------- */
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    if (!selectedCity) {
+      selectedCity = matchCityFromText(input.value);
+
+      if (!selectedCity) {
+        const value = input.value.trim();
+
+        if (value.length >= 2) {
+          const items = await fetchCities(value);
+          selectedCity = items[0] || null;
+        }
+      }
+    }
+
+    if (!selectedCity) {
+      alert("Please select a valid city.");
+      return;
+    }
+
+    document.getElementById("destination").value = selectedCity.name;
+
+    assignValuesToHiddenInputs(selectedCity, hiddenInputs);
+
+    form.submit();
+  });
+
 });
 
-});
+/* -------------------------------------------------------------------------- */
 
 function codeToCountryName(code) {
-  const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
+  const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
   return regionNames.of(code);
+}
+
+function assignValuesToHiddenInputs(city, hiddenInputs) {
+  hiddenInputs.forEach(element => {
+    switch (element.id) {
+      case "geo-latitude":
+        document.getElementById(element.id).value = city.latitude;
+        break;
+      case "geo-longitude":
+        document.getElementById(element.id).value = city.longitude;
+        break;
+      case "iata-code":
+        document.getElementById(element.id).value = city.iataCode;
+        break;
+      case "country-code":
+        document.getElementById(element.id).value = codeToCountryName(city.country);
+        break;
+    }
+  });
 }

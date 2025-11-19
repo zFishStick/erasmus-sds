@@ -4,6 +4,7 @@ let filters = ['museum', 'park', 'historical', 'art'];
 
 
 window.addEventListener('DOMContentLoaded', () => {
+    alert("Latitude and Longitude: " + document.getElementById("latitude").value + ", " + document.getElementById("longitude").value);
     removeNotMatchingActivities();
 });
 
@@ -17,3 +18,4 @@ function removeNotMatchingActivities() {
         }
     });
 }
+
