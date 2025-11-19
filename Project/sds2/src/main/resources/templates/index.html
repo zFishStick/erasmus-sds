@@ -28,7 +28,7 @@
           Enter a destination and a date range. Click
           <strong>Search</strong> to continue.
         </p>
-        <form id="planner-form" class="form" autocomplete="off" th:action="@{/pois}" method="post">
+        <form id="planner-form" class="form" autocomplete="off" th:action="@{/places}" method="post">
           <div class="form-row">
             <label for="destination">Destination</label>
             <div class="form-filter">
@@ -42,10 +42,6 @@
                 autocomplete="address-line1"
                 required
               />
-              <input type="hidden" id="country-code" name="countryCode" />
-              <input type="hidden" id="geo-latitude" name="geoLatitude" />
-              <input type="hidden" id="geo-longitude" name="geoLongitude" />
-
             <i class="fa fa-filter" style="font-size:24px" id="filter-btn"></i>
             </div>
             <datalist id="city-suggestions"></datalist>

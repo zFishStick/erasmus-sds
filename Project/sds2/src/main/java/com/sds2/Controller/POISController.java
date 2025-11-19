@@ -1,7 +1,6 @@
 package com.sds2.controller;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +29,7 @@ public class POISController {
     private static final String CHECKIN = "checkInDate";
     private static final String CHECKOUT = "checkOutDate";
     private static final String COUNTRY = "countryCode";
+    private static final String IATA = "iataCode";
     private static final String CITY = "cityName";
 
 
@@ -40,15 +40,15 @@ public class POISController {
     @PostMapping
     public String searchCityByCoordinates(
         POIRequest poiRequest, HttpSession session) {
-        Logger.getLogger(POISController.class.getName()).info("Received POI Request: " + poiRequest.getDestination() + ", " + poiRequest.getCountryCode());
-        GeoCode geoCode = new GeoCode(poiRequest.getGeoLatitude(), poiRequest.getGeoLongitude());
+        GeoCode geoCode = new GeoCode(poiRequest.getLatitude(), poiRequest.getLongitude());
         List<POIDTO> activities = poiService.getPointOfInterests(geoCode, poiRequest.getDestination(), poiRequest.getCountryCode());
         session.setAttribute(CITY, poiRequest.getDestination());
         session.setAttribute(COUNTRY, poiRequest.getCountryCode());
-        session.setAttribute(LATITUDE, poiRequest.getGeoLatitude());
-        session.setAttribute(LONGITUDE, poiRequest.getGeoLongitude());
+        session.setAttribute(LATITUDE, poiRequest.getLatitude());
+        session.setAttribute(LONGITUDE, poiRequest.getLongitude());
         session.setAttribute(CHECKIN, poiRequest.getStartDate());
         session.setAttribute(CHECKOUT, poiRequest.getEndDate());
+        session.setAttribute(IATA, poiRequest.getIataCode());
         session.setAttribute(POISDATA, activities);
         return "redirect:/pois/" + poiRequest.getCountryCode() + "/" + poiRequest.getDestination();
     }

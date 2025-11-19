@@ -8,7 +8,7 @@ class CityTest {
 
     @Test
     void constructorAndGetters() {
-        City city = new City("Paris", "FR", 48.8566, 2.3522);
+        City city = new City("Paris", "FR", 48.8566, 2.3522, null);
         assertEquals("Paris", city.getName());
         assertEquals("FR", city.getCountry());
         GeoCode coords = city.getCoordinates();
