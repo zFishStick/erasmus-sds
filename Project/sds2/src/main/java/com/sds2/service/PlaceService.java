@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -57,15 +58,12 @@ public class PlaceService {
 
         String[] headerInfo = {
             "places.id",
-            "places.name",
-            "places.displayName.text",
-            "places.primaryType",
+            "places.displayName",
             "places.formattedAddress",
             "places.location",
-            "places.addressComponents",
+            "places.primaryType",
             "places.rating",
-            "places.photos.name",
-            "places.priceRange",
+            "places.photos",
             "places.websiteUri"
         };
 
@@ -145,36 +143,33 @@ public class PlaceService {
 
         String[] headerInfo = {
             "places.id",
-            "places.name",
-            "places.displayName.text",
-            "places.primaryType",
+            "places.displayName",
             "places.formattedAddress",
             "places.location",
-            "places.addressComponents",
+            "places.primaryType",
             "places.rating",
-            "places.photos.name", // photoReference
-            "places.priceRange",
+            "places.photos",
             "places.websiteUri"
         };
 
-        String body = """
+        String body = String.format(Locale.US, """
         {
-        "locationRestriction": {
+          "includedTypes": ["tourist_attraction", "museum", "park", "shopping_mall", "restaurant"],
+          "maxResultCount": 20,
+          "languageCode": "en",
+          "locationRestriction": {
             "circle": {
-            "center": {
-                "latitude": %f,
-                "longitude": %f
-            },
-            "radius": 1000.0
+              "center": { "latitude": %f, "longitude": %f },
+              "radius": 5000.0
             }
+          }
         }
-        }
-        """.formatted(latitude, longitude);
+        """, latitude, longitude);
 
         PlaceResponse response = webClientBuilder.build()
                 .post()
                 .uri(url)
-                .header("Content-Type", "application/json")
+                .header("Content-Type", "application/json; charset=UTF-8")
                 .header("X-Goog-Api-Key", googleAuthService.getApiKey())
                 .header("X-Goog-FieldMask", String.join(",", headerInfo))
                 .bodyValue(body)

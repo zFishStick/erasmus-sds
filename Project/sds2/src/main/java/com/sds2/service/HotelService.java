@@ -28,10 +28,10 @@ public class HotelService {
     private final WebClient.Builder webClientBuilder;
 
     public HotelService(
-        AmadeusAuthService amadeusAuthService, 
-        HotelOfferService hotelOfferService,
-        HotelRepository hotelRepository, 
-        WebClient.Builder webClientBuilder
+            AmadeusAuthService amadeusAuthService,
+            HotelOfferService hotelOfferService,
+            HotelRepository hotelRepository,
+            WebClient.Builder webClientBuilder
     ) {
         this.amadeusAuthService = amadeusAuthService;
         this.hotelOfferService = hotelOfferService;
@@ -62,12 +62,12 @@ public class HotelService {
         }
 
         List<HotelOfferDTO> offers = hotelOfferService.getOffersByHotelId(hotelId, adults, checkInDate, checkOutDate);
-        
+
         HotelDTO hotelDTO = mapToDTO(hotel);
 
         List<HotelDetailsDTO> details = offers.stream()
-            .map(offer -> new HotelDetailsDTO(hotelDTO.withOffer(offer), offer))
-            .toList();
+                .map(offer -> new HotelDetailsDTO(hotelDTO.withOffer(offer), offer))
+                .toList();
 
         if (details.isEmpty()) {
             return List.of(new HotelDetailsDTO(hotelDTO, null));
@@ -79,10 +79,10 @@ public class HotelService {
     public Price getLowestPriceForHotel(String hotelId, int adults, String checkInDate, String checkOutDate) {
         List<HotelOfferDTO> offers = hotelOfferService.getOffersByHotelId(hotelId, adults, checkInDate, checkOutDate);
         return offers.stream()
-            .map(HotelOfferDTO::price)
-            .filter(price -> price != null && price.getAmount() > 0)
-            .min((p1, p2) -> Double.compare(p1.getAmount(), p2.getAmount()))
-            .orElse(null);
+                .map(HotelOfferDTO::price)
+                .filter(price -> price != null && price.getAmount() > 0)
+                .min((p1, p2) -> Double.compare(p1.getAmount(), p2.getAmount()))
+                .orElse(null);
     }
 
     public List<HotelDTO> getHotelsByCoordinates(Double latitude, Double longitude, String cityName, String countryCode) {
@@ -110,8 +110,8 @@ public class HotelService {
 
         if (!hotels.isEmpty()) {
             return hotels.stream()
-                .map(this::mapToDTO)
-                .toList();
+                    .map(this::mapToDTO)
+                    .toList();
         }
 
         Logger.getLogger(HotelService.class.getName()).info("No hotels found in database for given destination.");
@@ -123,7 +123,7 @@ public class HotelService {
     private List<HotelDTO> getHotelsByCoordinatesFromAPI(Double latitude, Double longitude, String cityName, String countryCode) {
 
         String url = String.format(Locale.US,
-         "https://api.amadeus.com/v1/reference-data/locations/hotels/by-geocode?latitude=%f&longitude=%f&radius=2", latitude, longitude);
+                "https://api.amadeus.com/v1/reference-data/locations/hotels/by-geocode?latitude=%f&longitude=%f&radius=2", latitude, longitude);
 
         URI uri;
         try {
@@ -134,50 +134,50 @@ public class HotelService {
         }
 
         HotelResponse response = webClientBuilder
-            .build()
-            .get()
-            .uri(uri)
-            .header("Authorization", "Bearer " + amadeusAuthService.getAccessToken())
-            .retrieve()
-            .bodyToMono(HotelResponse.class)
-            .block();
+                .build()
+                .get()
+                .uri(uri)
+                .header("Authorization", "Bearer " + amadeusAuthService.getAccessToken())
+                .retrieve()
+                .bodyToMono(HotelResponse.class)
+                .block();
 
         if (response == null || response.getData() == null) {
             throw new IllegalStateException("Failed to retrieve hotels from API: response data is null");
         }
-        
+
         return mapToDTOs(response, latitude, longitude, cityName, countryCode);
     }
 
     private List<HotelDTO> mapToDTOs(HotelResponse response, Double defaultLat, Double defaultLon, String defaultCity, String defaultCountry) {
         return response.getData().stream()
-            .map(data -> {
-                GeoCode geoCode = resolveCoordinates(data, defaultLat, defaultLon);
-        HotelAddress address = mapHotelAddress(data.getAddress(), defaultCity, defaultCountry);
-                Hotel hotel = new Hotel(
-                    data.getHotelId(),
-                    data.getName(),
-                    data.getIataCode(),
-                    address,
-                    geoCode
-                );
-                addHotel(hotel);
-                return mapToDTO(hotel);
-            })
-            .toList();
+                .map(data -> {
+                    GeoCode geoCode = resolveCoordinates(data, defaultLat, defaultLon);
+                    HotelAddress address = mapHotelAddress(data.getAddress(), defaultCity, defaultCountry);
+                    Hotel hotel = new Hotel(
+                            data.getHotelId(),
+                            data.getName(),
+                            data.getIataCode(),
+                            address,
+                            geoCode
+                    );
+                    addHotel(hotel);
+                    return mapToDTO(hotel);
+                })
+                .toList();
     }
 
     private HotelDTO mapToDTO(Hotel hotel) {
 
         return new HotelDTO(
-            hotel.getHotelId(),
-            hotel.getName(),
-            hotel.getCoordinates(),
-            hotel.getAddress(),
-            List.of()
+                hotel.getHotelId(),
+                hotel.getName(),
+                hotel.getCoordinates(),
+                hotel.getAddress(),
+                List.of()
         );
     }
-}
+
 
     private GeoCode resolveCoordinates(HotelResponse.HotelData data, Double defaultLat, Double defaultLon) {
         if (data.getGeoCode() != null) {
@@ -201,13 +201,13 @@ public class HotelService {
         String url = "https://api.amadeus.com/v1/reference-data/locations/hotels/" + hotelId;
         try {
             HotelDetailResponse response = webClientBuilder
-                .build()
-                .get()
-                .uri(url)
-                .header("Authorization", "Bearer " + amadeusAuthService.getAccessToken())
-                .retrieve()
-                .bodyToMono(HotelDetailResponse.class)
-                .block();
+                    .build()
+                    .get()
+                    .uri(url)
+                    .header("Authorization", "Bearer " + amadeusAuthService.getAccessToken())
+                    .retrieve()
+                    .bodyToMono(HotelDetailResponse.class)
+                    .block();
             if (response != null && response.data != null) {
                 GeoCode code = response.data.getGeoCode();
                 if (code != null) {
@@ -216,7 +216,7 @@ public class HotelService {
             }
         } catch (Exception ex) {
             Logger.getLogger(HotelService.class.getName())
-                .warning("Unable to enrich coordinates for hotel " + hotelId + ": " + ex.getMessage());
+                    .warning("Unable to enrich coordinates for hotel " + hotelId + ": " + ex.getMessage());
         }
         return null;
     }
@@ -230,9 +230,9 @@ public class HotelService {
             firstLine = source.getLines().get(0);
         }
         return new HotelAddress(
-            firstLine,
-            normalize(source.getCityName() != null ? source.getCityName() : defaultCity),
-            normalize(source.getCountryCode() != null ? source.getCountryCode() : defaultCountry)
+                firstLine,
+                normalize(source.getCityName() != null ? source.getCityName() : defaultCity),
+                normalize(source.getCountryCode() != null ? source.getCountryCode() : defaultCountry)
         );
     }
 
@@ -251,6 +251,7 @@ public class HotelService {
             this.data = data;
         }
     }
+}
 
     // public OffersPreview previewPrices(List<String> hotelIds, String checkIn, String checkOut) {
     //     Map<String, String> priceMap = new HashMap<>();
