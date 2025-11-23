@@ -2,8 +2,10 @@ package com.sds2.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -14,6 +16,7 @@ import com.sds2.classes.Places;
 import com.sds2.classes.response.PhotoResponse;
 import com.sds2.classes.response.PlaceResponse;
 import com.sds2.classes.response.PlaceResponse.Photo;
+import com.sds2.classes.response.PlaceResponse.PlacesData;
 import com.sds2.dto.PlacesDTO;
 import com.sds2.repository.PlacesRepository;
 
@@ -50,8 +53,6 @@ public class PlaceService {
     }
 
     public PlaceResponse searchText(String query) {
-
-        
 
         String url = "https://places.googleapis.com/v1/places:searchText";
 
@@ -95,6 +96,7 @@ public class PlaceService {
 
     private List<PlacesDTO> mapPlacesToDTOs(PlaceResponse response, String city, String country) {
         return response.getPlaces().stream()
+            .filter(data -> matchesCityAndCountry(data, city, country))
             .map(data -> {                
                 Places places = Places.builder()
                     .citySummary(new CitySummary(city, country))
@@ -109,11 +111,12 @@ public class PlaceService {
                     .websiteUri(data.getWebsiteUri())
                     .build();
 
-            addPlace(places);
-            return mapToDTO(places);
-        })
+                addPlace(places);
+                return mapToDTO(places);
+            })
             .toList();
     }
+
 
     private PlacesDTO mapToDTO(Places places) {
         return new PlacesDTO(
@@ -157,6 +160,9 @@ public class PlaceService {
             "places.websiteUri"
         };
 
+        // radius in meters
+        double radius = 10000.0;
+
         String body = """
         {
         "locationRestriction": {
@@ -165,11 +171,11 @@ public class PlaceService {
                 "latitude": %f,
                 "longitude": %f
             },
-            "radius": 1000.0
+            "radius": %f
             }
         }
         }
-        """.formatted(latitude, longitude);
+        """.formatted(latitude, longitude, radius);
 
         PlaceResponse response = webClientBuilder.build()
                 .post()
@@ -231,6 +237,100 @@ public class PlaceService {
             throw new IllegalStateException("Invalid URI syntax: " + uriString, e);
         }
     }
+
+    private static String normalize(String s) {
+        if (s == null) return "";
+        return Normalizer.normalize(s, Normalizer.Form.NFD)
+                        .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                        .toLowerCase();
+    }
+
+    private boolean matchesCityAndCountry(PlacesData data, String city, String country) {
+        if (data.getAddressComponents() == null) return false;
+
+        String normCity = normalize(city);
+        String normCountry = normalize(country);
+
+        boolean cityMatch = Arrays.stream(data.getAddressComponents())
+            .filter(Objects::nonNull)
+            .anyMatch(ac ->
+                ac.getTypes() != null &&    
+                ac.getLongText() != null && 
+                Arrays.stream(ac.getTypes())
+                    .filter(Objects::nonNull) 
+                    .anyMatch(t -> t.equals("locality")) &&
+                normalize(ac.getLongText()).equals(normCity)
+            );
+
+        boolean countryMatch = Arrays.stream(data.getAddressComponents())
+            .filter(Objects::nonNull)
+            .anyMatch(ac ->
+                ac.getTypes() != null &&
+                ac.getLongText() != null &&
+                Arrays.stream(ac.getTypes())
+                    .filter(Objects::nonNull)
+                    .anyMatch(t -> t.equals("country")) &&
+                normalize(ac.getLongText()).equals(normCountry)
+            );
+
+        return cityMatch && countryMatch;
+    }
+
+    public List<PlacesDTO> addRemainingNearbyPlaces(Location location, String city, String country) {
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+
+        String url = "https://places.googleapis.com/v1/places:searchNearby";
+
+        String[] headerInfo = {
+            "places.id",
+            "places.name",
+            "places.displayName.text",
+            "places.primaryType",
+            "places.formattedAddress",
+            "places.location",
+            "places.addressComponents",
+            "places.rating",
+            "places.photos.name", // photoReference
+            "places.priceRange",
+            "places.websiteUri"
+        };
+
+        // radius in meters
+        double radius = 10000.0;
+
+        String body = """
+        {
+        "locationRestriction": {
+            "circle": {
+            "center": {
+                "latitude": %f,
+                "longitude": %f
+            },
+            "radius": %f
+            }
+        }
+        }
+        """.formatted(latitude, longitude, radius);
+
+        PlaceResponse response = webClientBuilder.build()
+                .post()
+                .uri(url)
+                .header("Content-Type", "application/json")
+                .header("X-Goog-Api-Key", googleAuthService.getApiKey())
+                .header("X-Goog-FieldMask", String.join(",", headerInfo))
+                .bodyValue(body)
+                .retrieve()
+                .bodyToMono(PlaceResponse.class)
+                .block();
+
+        if (response == null) {
+            throw new IllegalStateException("Failed to retrieve nearby places from Google Places API");
+        }
+
+        return mapPlacesToDTOs(response, city, country);
+    }
+
 
 
 }

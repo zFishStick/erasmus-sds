@@ -30,6 +30,7 @@ public class PlaceResponse {
         private DisplayName displayName;
         private String primaryType;
         private String formattedAddress;
+        private AddressComponent[] addressComponents;
         private Location location;
         private Double rating;
         private Photo[] photos;
@@ -48,5 +49,13 @@ public class PlaceResponse {
         private int height;
         private int width;
         private String name;
+    }
+
+    @Getter @Setter
+    public static class AddressComponent {
+        private String longText;
+        private String shortText;
+        private String[] types;
+        private String languageCode;
     }
 }
