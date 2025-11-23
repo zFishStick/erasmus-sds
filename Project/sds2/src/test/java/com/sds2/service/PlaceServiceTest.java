@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.sds2.classes.Location;
 import com.sds2.classes.Photos;
@@ -18,6 +19,10 @@ class PlaceServiceTest {
 
     @Autowired
     private PlaceService placeService;
+    @Autowired
+    private WebClient.Builder webClientBuilder;
+    @Autowired
+    private GoogleAuthService googleAuthService;
 
     @Test
     void findPlaceFromTextTest() {
@@ -51,5 +56,12 @@ class PlaceServiceTest {
         List<PlacesDTO> response = placeService.searchNearby(location, "Poznan", "Poland");
         assertNotNull(response);
         System.out.println(response);
+    }
+
+    @Test
+    void addRemainingPlacesTest() {
+        Location location = new Location(52.405678599999995, 16.9312766);
+        List<PlacesDTO> remainingPlaces = placeService.addRemainingNearbyPlaces(location, "Poznan", "Poland");
+        assertNotNull(remainingPlaces);
     }
 }

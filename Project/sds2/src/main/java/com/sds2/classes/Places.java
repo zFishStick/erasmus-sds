@@ -36,6 +36,7 @@ public class Places {
     private Long id;
     @Embedded
     private CitySummary citySummary;
+    @Column(unique = true)
     private String name;
     private String text;
     

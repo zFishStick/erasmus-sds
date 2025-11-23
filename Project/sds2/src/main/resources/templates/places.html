@@ -5,9 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/./style/style.css"/>
     <link rel="stylesheet" href="/./style/places.css"/>
+    <script src="/./scripts/place_manager.js" defer></script>
     <title>Travel Planner</title>
 </head>
 <body>
+
+    <form action="">
+        <input type="hidden" name="city" th:value="${request.destination}" id="city"/>
+    </form>
 
 <h1 th:text="|Here's what you can see in ${request.destination}, ${request.countryCode}|" class="place-header">
     Places to visit
@@ -17,7 +22,7 @@
     <p>No places found.</p>
 </div>
 
-<div th:if="${places != null and !#lists.isEmpty(places)}" th:each="place : ${places}" class="container">
+<div th:if="${places != null and !#lists.isEmpty(places)}" th:each="place : ${places}" class="container place-item">
     <div class="row">
         <div class="column">
             <h2 th:text="${place.name}">Place Name</h2>
@@ -25,22 +30,36 @@
                 <img th:if="${place.photoUrl[0] != null}" th:src="${place.photoUrl[0]}" alt="Placeholder"/>
                 <div class="column">
                     <p><span class="main-text">Address:</span> <span th:text="${place.address}">Place Address</span></p>
-                    <p><span class="main-text">Type:</span> <span th:text="${place.type}">Place Type</span></p>
+                    <p hidden><span class="main-text">Type:</span> <span th:text="${place.type}" class="place-type">Place Type</span></p>
                     <p th:if="${place.priceRange != null}">
                         <span class="main-text">Price Range:</span>
-                        <span th:text="${place.priceRange}">Price Range</span>
+                        <span th:text="|From ${place.priceRange.startPrice.units} ${place.priceRange.startPrice.currencyCode} to ${place.priceRange.endPrice.units} ${place.priceRange.endPrice.currencyCode}|">Price Range</span>
                     </p>
-                    <p th:unless="${place.priceRange != null}">Free visit!</p>
                     <p><span class="main-text">Rating:</span> <span th:text="${place.rating}">Place Rating</span></p>
                     <p th:if="${place.websiteUri != null}">
-                    Website: <a th:href="${place.websiteUri}" th:text="${place.websiteUri}">Website Link</a>
+                    <span class="main-text">Website:</span> <a th:href="${place.websiteUri}" th:text="${place.websiteUri}" class="link website">Website Link</a>
                     </p>
-                    <a th:href="@{|/places/${place.name}|}" class="details-link">See Details</a>
+                    <a th:href="@{|/places/${place.name}|}" class="link details">See more details</a>
                 </div>
 
             </div>
         </div>
     </div>
+</div>
+
+<!-- Next and previous page -->
+<div th:if="${places != null and !#lists.isEmpty(places)}" class="pagination">
+    <a th:if="${currentPage > 0}" 
+       th:href="@{'/places/' + ${request.countryCode} + '/' + ${request.destination} + '?page=' + (${currentPage} - 1) + '&size=' + ${pageSize}}">
+       Previous
+    </a>
+
+    <span>Page <span th:text="${currentPage + 1}">1</span> of <span th:text="${totalPages}">1</span></span>
+
+    <a th:if="${currentPage + 1 < totalPages}" 
+       th:href="@{'/places/' + ${request.countryCode} + '/' + ${request.destination} + '?page=' + (${currentPage} + 1) + '&size=' + ${pageSize}}">
+       Next
+    </a>
 </div>
 
     <footer class="site-footer">

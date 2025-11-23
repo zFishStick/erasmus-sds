@@ -22,7 +22,7 @@
   <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.7</version>
+        <version>3.5.8</version>
   </parent>
 
 <repositories>
@@ -107,7 +107,6 @@
     <dependency>
         <groupId>org.postgresql</groupId>
         <artifactId>postgresql</artifactId>
-        <version>42.7.8</version>
     </dependency>
 
     <dependency>
@@ -136,7 +135,6 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>1.7.25</version>
     </dependency>
 
     <dependency>
@@ -149,7 +147,6 @@
     <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
-        <version>1.18.42</version>
     </dependency>
   </dependencies>
 
@@ -161,8 +158,6 @@
         
       </plugins>
     </pluginManagement>
-    <plugins>
-    </plugins>
   </build>
 
   <pluginRepositories>

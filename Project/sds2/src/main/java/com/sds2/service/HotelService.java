@@ -177,7 +177,6 @@ public class HotelService {
             List.of()
         );
     }
-}
 
     private GeoCode resolveCoordinates(HotelResponse.HotelData data, Double defaultLat, Double defaultLon) {
         if (data.getGeoCode() != null) {
@@ -251,6 +250,7 @@ public class HotelService {
             this.data = data;
         }
     }
+}
 
     // public OffersPreview previewPrices(List<String> hotelIds, String checkIn, String checkOut) {
     //     Map<String, String> priceMap = new HashMap<>();
