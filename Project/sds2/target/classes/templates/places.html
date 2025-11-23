@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="/./style/places.css"/>
     <script src="/./scripts/place_manager.js" defer></script>
     <title>Travel Planner</title>
+    <style>
+        body { background: linear-gradient(180deg, #0b1024 0%, #0f142d 60%, #0b1024 100%); }
+        .container { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 16px; margin-bottom: 18px; border: 1px solid rgba(255,255,255,0.05); }
+        .details-link { color: #7fb2ff; }
+        .details-link:hover { text-decoration: underline; }
+    </style>
 </head>
 <body>
 
@@ -17,6 +23,27 @@
 <h1 th:text="|Here's what you can see in ${request.destination}, ${request.countryCode}|" class="place-header">
     Places to visit
 </h1>
+
+<div class="actions" style="text-align:center; margin: 12px 0 24px; display:flex; gap:12px; align-items:center; justify-content:center; flex-wrap:wrap;">
+    <form th:if="${request != null}" th:action="@{/pois}" method="post" style="display:inline-block;">
+        <input type="hidden" name="destination" th:value="${request.destination}" />
+        <input type="hidden" name="countryCode" th:value="${request.countryCode}" />
+        <input type="hidden" name="latitude" th:value="${request.latitude}" />
+        <input type="hidden" name="longitude" th:value="${request.longitude}" />
+        <input type="hidden" name="startDate" th:value="${request.startDate}" />
+        <input type="hidden" name="endDate" th:value="${request.endDate}" />
+        <button type="submit" class="btn btn-primary">Look at guided visit?</button>
+    </form>
+    <form th:if="${request != null}" th:action="@{/hotels}" method="post" style="display:inline-block;">
+        <input type="hidden" name="destination" th:value="${request.destination}" />
+        <input type="hidden" name="countryCode" th:value="${request.countryCode}" />
+        <input type="hidden" name="latitude" th:value="${request.latitude}" />
+        <input type="hidden" name="longitude" th:value="${request.longitude}" />
+        <input type="hidden" name="checkInDate" th:value="${request.startDate}" />
+        <input type="hidden" name="checkOutDate" th:value="${request.endDate}" />
+        <button type="submit" class="btn btn-primary">Want to book a hotel?</button>
+    </form>
+</div>
 
 <div th:if="${places == null or #lists.isEmpty(places)}">
     <p>No places found.</p>
@@ -37,9 +64,14 @@
                     </p>
                     <p><span class="main-text">Rating:</span> <span th:text="${place.rating}">Place Rating</span></p>
                     <p th:if="${place.websiteUri != null}">
-                    <span class="main-text">Website:</span> <a th:href="${place.websiteUri}" th:text="${place.websiteUri}" class="link website">Website Link</a>
+                    Website: <a th:href="${place.websiteUri}" th:text="${place.websiteUri}" style="color:#7fb2ff; font-weight:600;">Website Link</a>
                     </p>
-                    <a th:href="@{|/places/${place.name}|}" class="link details">See more details</a>
+                    <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+                        <a th:href="@{|/places/${place.name}|}" class="btn btn-primary" style="text-decoration:none;">See Details</a>
+                        <a class="btn btn-ghost" th:if="${place.location != null}"
+                           th:href="${'https://www.google.com/maps/search/?api=1&query=' + place.location.latitude + ',' + place.location.longitude}"
+                           target="_blank" rel="noopener">Open in Maps</a>
+                    </div>
                 </div>
 
             </div>

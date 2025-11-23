@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
@@ -23,6 +24,11 @@ import com.sds2.repository.PlacesRepository;
 @Service
 public class PlaceService {
 
+    private static final String CONTENTTYPE = "Content-Type";
+    private static final String APPLICATIONJSON = "application/json; charset=UTF-8";
+    private static final String X_GOOG_API_KEY = "X-Goog-Api-Key";
+    private static final String X_GOOG_FIELD_MASK = "X-Goog-FieldMask";
+
     private final PlacesRepository placesRepository;
     private final GoogleAuthService googleAuthService;
     private final WebClient.Builder webClientBuilder;
@@ -36,6 +42,20 @@ public class PlaceService {
         this.googleAuthService = googleAuthService;
         this.webClientBuilder = webClientBuilder;
     }
+
+    private String [] headerInfo = {
+        "places.id",
+        "places.name",
+        "places.displayName.text",
+        "places.primaryType",
+        "places.formattedAddress",
+        "places.location",
+        "places.addressComponents",
+        "places.rating",
+        "places.photos.name",
+        "places.priceRange",
+        "places.websiteUri"
+    };
 
     public void addPlace(Places place) {
         if (place == null) {
@@ -56,20 +76,6 @@ public class PlaceService {
 
         String url = "https://places.googleapis.com/v1/places:searchText";
 
-        String[] headerInfo = {
-            "places.id",
-            "places.name",
-            "places.displayName.text",
-            "places.primaryType",
-            "places.formattedAddress",
-            "places.location",
-            "places.addressComponents",
-            "places.rating",
-            "places.photos.name",
-            "places.priceRange",
-            "places.websiteUri"
-        };
-
         String textQueryBody = """
         {
             "textQuery": "%s"
@@ -79,9 +85,9 @@ public class PlaceService {
         PlaceResponse response = webClientBuilder.build()
                 .post()
                 .uri(url)
-                .header("Content-Type", "application/json; charset=UTF-8")
-                .header("X-Goog-Api-Key", googleAuthService.getApiKey())
-                .header("X-Goog-FieldMask", String.join(",", headerInfo))
+                .header(CONTENTTYPE, APPLICATIONJSON)
+                .header(X_GOOG_API_KEY, googleAuthService.getApiKey())
+                .header(X_GOOG_FIELD_MASK, String.join(",", headerInfo))
                 .bodyValue(textQueryBody)
                 .retrieve()
                 .bodyToMono(PlaceResponse.class)
@@ -146,26 +152,12 @@ public class PlaceService {
 
         String url = "https://places.googleapis.com/v1/places:searchNearby";
 
-        String[] headerInfo = {
-            "places.id",
-            "places.name",
-            "places.displayName.text",
-            "places.primaryType",
-            "places.formattedAddress",
-            "places.location",
-            "places.addressComponents",
-            "places.rating",
-            "places.photos.name", // photoReference
-            "places.priceRange",
-            "places.websiteUri"
-        };
-
         // radius in meters
         double radius = 10000.0;
 
-        String body = """
+        String body = String.format(Locale.US, """
         {
-        "locationRestriction": {
+          "locationRestriction": {
             "circle": {
             "center": {
                 "latitude": %f,
@@ -173,16 +165,17 @@ public class PlaceService {
             },
             "radius": %f
             }
+          }
         }
         }
-        """.formatted(latitude, longitude, radius);
+        """.formatted(latitude, longitude, radius));
 
         PlaceResponse response = webClientBuilder.build()
                 .post()
                 .uri(url)
-                .header("Content-Type", "application/json")
-                .header("X-Goog-Api-Key", googleAuthService.getApiKey())
-                .header("X-Goog-FieldMask", String.join(",", headerInfo))
+                .header(CONTENTTYPE, APPLICATIONJSON)
+                .header(X_GOOG_API_KEY, googleAuthService.getApiKey())
+                .header(X_GOOG_FIELD_MASK, String.join(",", headerInfo))
                 .bodyValue(body)
                 .retrieve()
                 .bodyToMono(PlaceResponse.class)
@@ -217,8 +210,6 @@ public class PlaceService {
 
         try {
             URI uri = new URI(uriString);
-
-            // Chiamata WebClient e mappatura JSON direttamente su PhotoResponse
             PhotoResponse response = webClientBuilder
                     .build()
                     .get()
@@ -281,21 +272,7 @@ public class PlaceService {
         double longitude = location.getLongitude();
 
         String url = "https://places.googleapis.com/v1/places:searchNearby";
-
-        String[] headerInfo = {
-            "places.id",
-            "places.name",
-            "places.displayName.text",
-            "places.primaryType",
-            "places.formattedAddress",
-            "places.location",
-            "places.addressComponents",
-            "places.rating",
-            "places.photos.name", // photoReference
-            "places.priceRange",
-            "places.websiteUri"
-        };
-
+        
         // radius in meters
         double radius = 10000.0;
 
@@ -316,9 +293,9 @@ public class PlaceService {
         PlaceResponse response = webClientBuilder.build()
                 .post()
                 .uri(url)
-                .header("Content-Type", "application/json")
-                .header("X-Goog-Api-Key", googleAuthService.getApiKey())
-                .header("X-Goog-FieldMask", String.join(",", headerInfo))
+                .header(CONTENTTYPE, APPLICATIONJSON)
+                .header(X_GOOG_API_KEY, googleAuthService.getApiKey())
+                .header(X_GOOG_FIELD_MASK, String.join(",", headerInfo))
                 .bodyValue(body)
                 .retrieve()
                 .bodyToMono(PlaceResponse.class)
