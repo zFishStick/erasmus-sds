@@ -45,7 +45,6 @@ public class HotelOfferService {
         }
 
         String url = urlBuilder.toString();
-        Logger.getLogger(HotelOfferService.class.getName()).info("URI for Hotel Offers API: " + url);
 
         URI uri;
         try {
@@ -74,13 +73,6 @@ public class HotelOfferService {
         if (response == null || response.getData() == null) {
             throw new IllegalStateException("Failed to retrieve hotel offers from API: response data is null");
         }
-
-        int fetchedOffers = response.getData().stream()
-            .mapToInt(data -> data.getOffers() != null ? data.getOffers().size() : 0)
-            .sum();
-
-        Logger.getLogger(HotelOfferService.class.getName())
-            .info("Fetched " + fetchedOffers + " offers from API for hotel ID: " + hotelId);
 
         return mapToDTOs(response, adultsNum, checkInDate, checkOutDate);
     }
