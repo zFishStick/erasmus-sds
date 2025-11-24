@@ -3,7 +3,6 @@ package com.sds2.classes.hotel;
 import jakarta.persistence.Embeddable;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class HotelAddress {
