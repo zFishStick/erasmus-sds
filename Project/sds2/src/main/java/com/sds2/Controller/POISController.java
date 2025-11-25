@@ -62,7 +62,18 @@ public class POISController {
             Model model,
             HttpSession session) {
 
-        List<POIDTO> activities = (List<POIDTO>) session.getAttribute(POISDATA);
+            Object obj = session.getAttribute(POISDATA);
+            List<POIDTO> activities;
+
+            if (obj instanceof List<?>) {
+                activities = ((List<?>) obj).stream()
+                            .filter(POIDTO.class::isInstance)
+                            .map(POIDTO.class::cast)
+                            .toList();
+            } else {
+                activities = List.of();
+            }
+
         
         if (activities == null) {
             model.addAttribute(POISDATA, List.of());

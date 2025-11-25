@@ -1,8 +1,6 @@
 package com.sds2.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.stereotype.Controller;
@@ -11,10 +9,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.sds2.classes.Pagination;
+import com.sds2.classes.hotel.HotelSearchContext;
 import com.sds2.classes.request.HotelRequest;
 import com.sds2.dto.HotelDTO;
 import com.sds2.dto.HotelDetailsDTO;
 import com.sds2.dto.HotelOfferDTO;
+import com.sds2.service.HotelAvailabilityService;
 import com.sds2.service.HotelService;
 
 import jakarta.servlet.http.HttpSession;
@@ -25,29 +26,28 @@ public class HotelController {
 
     private static final String HOTELS_DATA = "hotels";
     private static final String SEARCH_CONTEXT = "hotelSearchContext";
-    private static final String CURRENT_PAGE = "hotelCurrentPage";
+    private static final String CURRENT_PAGE = "currentPage";
+    private static final String TOTAL_PAGES = "totalPages";
+    private static final String PAGE_SIZE = "pageSize";
     private static final int DEFAULT_PAGE_SIZE = 5;
 
     private final HotelService hotelService;
+    private final HotelAvailabilityService availabilityService;
 
-    public HotelController(HotelService hotelService) {
+    public HotelController(HotelService hotelService, HotelAvailabilityService availabilityService) {
         this.hotelService = hotelService;
+        this.availabilityService = availabilityService;
     }
 
     @PostMapping
-    public String searchHotels(
+    public String searchHotels (
         HotelRequest hotelRequest,
         @RequestParam(value = "size", defaultValue = "5") int size,
         Model model,
         HttpSession session
     ) {
         if (hotelRequest.getLatitude() == null || hotelRequest.getLongitude() == null) {
-            model.addAttribute("errorMessage", "Missing coordinates for the destination.");
-            model.addAttribute(HOTELS_DATA, List.of());
-            model.addAttribute("currentPage", 0);
-            model.addAttribute("totalPages", 0);
-            model.addAttribute("pageSize", DEFAULT_PAGE_SIZE);
-            return HOTELS_DATA;
+            return "error";
         }
 
         List<HotelDTO> hotels = hotelService.getHotelsByCoordinates(
@@ -80,7 +80,7 @@ public class HotelController {
     }
 
     @PostMapping("/page")
-    public String changePage(
+    public String changePage (
         @RequestParam("page") int requestedPage,
         @RequestParam(value = "size", required = false) Integer size,
         Model model,
@@ -90,12 +90,7 @@ public class HotelController {
         HotelSearchContext context = (HotelSearchContext) session.getAttribute(SEARCH_CONTEXT);
 
         if (hotels == null || context == null) {
-            model.addAttribute("errorMessage", "No active hotel search. Please start a new search.");
-            model.addAttribute(HOTELS_DATA, List.of());
-            model.addAttribute("currentPage", 0);
-            model.addAttribute("totalPages", 0);
-            model.addAttribute("pageSize", DEFAULT_PAGE_SIZE);
-            return HOTELS_DATA;
+            return "error";
         }
 
         HotelSearchContext effectiveContext = context;
@@ -149,7 +144,7 @@ public class HotelController {
         model.addAttribute("hotel", hotel);
         model.addAttribute("offers", offers);
         model.addAttribute("adults", adults);
-        model.addAttribute("currentPage", currentPage);
+        model.addAttribute(CURRENT_PAGE, currentPage);
         model.addAttribute("hotelId", hotelId);
         model.addAttribute("checkInDate", effectiveCheckIn);
         model.addAttribute("checkOutDate", effectiveCheckOut);
@@ -162,63 +157,30 @@ public class HotelController {
         return "hotel_details";
     }
 
-    private int populateHotelsModel(Model model, List<HotelDTO> hotels, int requestedPage, HotelSearchContext context) {
-        List<HotelDTO> source = hotels != null ? hotels : List.of();
-        int pageSize = context != null ? context.pageSize() : DEFAULT_PAGE_SIZE;
-        if (pageSize <= 0) {
-            pageSize = DEFAULT_PAGE_SIZE;
-        }
+    private int populateHotelsModel(
+            Model model,
+            List<HotelDTO> hotels,
+            int requestedPage,
+            HotelSearchContext context
+    ) {
+        var pagination = new Pagination<>(hotels, requestedPage,
+                context != null ? context.pageSize() : DEFAULT_PAGE_SIZE);
 
-        int total = source.size();
-        int totalPages = pageSize > 0 ? (int) Math.ceil((double) total / pageSize) : 0;
-        int safePage = totalPages == 0 ? 0 : Math.min(Math.max(requestedPage, 0), totalPages - 1);
+        var availability = availabilityService.loadAvailability(
+                pagination.items(), 
+                context
+        );
 
-        int fromIndex = pageSize > 0 ? safePage * pageSize : 0;
-        int toIndex = pageSize > 0 ? Math.min(fromIndex + pageSize, total) : total;
-        List<HotelDTO> pagedHotels = source.subList(fromIndex, toIndex);
+        model.addAttribute(HOTELS_DATA, pagination.items());
+        model.addAttribute("totalHotels", hotels == null ? 0 : hotels.size());
+        model.addAttribute(CURRENT_PAGE, pagination.page());
+        model.addAttribute(TOTAL_PAGES, pagination.totalPages());
+        model.addAttribute(PAGE_SIZE, pagination.pageSize());
 
-        Map<String, String> availabilityStatus = new HashMap<>();
-        Map<String, Double> availabilityAmounts = new HashMap<>();
-        Map<String, String> availabilityCurrency = new HashMap<>();
-
-        int availabilityAdults = 1;
-        String availabilityCheckIn = null;
-        String availabilityCheckOut = null;
-
-        if (context != null) {
-            availabilityCheckIn = context.checkInDate();
-            availabilityCheckOut = context.checkOutDate();
-        }
-
-        for (HotelDTO hotel : pagedHotels) {
-            if (hotel.hotelId() == null) {
-                continue;
-            }
-            var price = hotelService.getLowestPriceForHotel(
-                hotel.hotelId(),
-                availabilityAdults,
-                availabilityCheckIn,
-                availabilityCheckOut
-            );
-
-            if (price != null) {
-                availabilityStatus.put(hotel.hotelId(), "available");
-                availabilityAmounts.put(hotel.hotelId(), price.getAmount());
-                availabilityCurrency.put(hotel.hotelId(), price.getCurrencyCode());
-            } else {
-                availabilityStatus.put(hotel.hotelId(), "unavailable");
-            }
-        }
-
-        model.addAttribute(HOTELS_DATA, pagedHotels);
-        model.addAttribute("totalHotels", total);
-        model.addAttribute("currentPage", safePage);
-        model.addAttribute("totalPages", totalPages);
-        model.addAttribute("pageSize", pageSize);
-        model.addAttribute("availabilityStatus", availabilityStatus);
-        model.addAttribute("availabilityAmounts", availabilityAmounts);
-        model.addAttribute("availabilityCurrency", availabilityCurrency);
-        model.addAttribute("availabilityHasDates", availabilityCheckIn != null && availabilityCheckOut != null);
+        model.addAttribute("availability", availability);
+        model.addAttribute("availabilityHasDates",
+                context != null && context.checkInDate() != null && context.checkOutDate() != null
+        );
 
         if (context != null) {
             model.addAttribute("cityName", context.destination());
@@ -229,33 +191,25 @@ public class HotelController {
             model.addAttribute("checkOutDate", context.checkOutDate());
         }
 
-        return safePage;
+        return pagination.page();
     }
 
-    @SuppressWarnings("unchecked")
+
     private List<HotelDTO> getHotelsFromSession(HttpSession session) {
         Object attribute = session.getAttribute(HOTELS_DATA);
-        if (attribute instanceof List<?>) {
-            return (List<HotelDTO>) attribute;
+        if (attribute instanceof List) {
+            List<?> raw = (List<?>) attribute;
+            return raw.stream()
+                    .filter(Objects::nonNull)
+                    .filter(HotelDTO.class::isInstance)
+                    .map(HotelDTO.class::cast)
+                    .toList();
         }
-        return null;
+        return List.of();
     }
 
     private int normalizePageSize(int size) {
         return size <= 0 ? DEFAULT_PAGE_SIZE : size;
     }
 
-    private record HotelSearchContext(
-        String destination,
-        String countryCode,
-        Double latitude,
-        Double longitude,
-        String checkInDate,
-        String checkOutDate,
-        int pageSize
-    ) {
-        HotelSearchContext withPageSize(int newSize) {
-            return new HotelSearchContext(destination, countryCode, latitude, longitude, checkInDate, checkOutDate, newSize);
-        }
-    }
 }

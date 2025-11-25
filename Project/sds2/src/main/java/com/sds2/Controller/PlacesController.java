@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.sds2.classes.Location;
 import com.sds2.classes.request.POIRequest;
-
 import com.sds2.dto.PlacesDTO;
 import com.sds2.service.PlaceService;
 
@@ -55,8 +54,18 @@ public class PlacesController {
         POIRequest req = (POIRequest) session.getAttribute(REQUEST);
         model.addAttribute(REQUEST, req);
 
+        Object obj = session.getAttribute(PLACESDATA);
+            List<PlacesDTO> places;
 
-        List<PlacesDTO> places = (List<PlacesDTO>) session.getAttribute(PLACESDATA);
+            if (obj instanceof List<?>) {
+                places = ((List<?>) obj).stream()
+                            .filter(PlacesDTO.class::isInstance)
+                            .map(PlacesDTO.class::cast)
+                            .toList();
+            } else {
+                places = List.of();
+            }
+
         model.addAttribute(PLACESDATA, places);
         int total = places.size();
         int fromIndex = page * size;
