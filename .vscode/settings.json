@@ -6,10 +6,5 @@
         "connectionId": "http-localhost-9000",
         "projectKey": "Travel-Planner"
     },
-
-    "terminal.integrated.env.windows": {
-        "JAVA_HOME": "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.8-hotspot",
-        "PATH": "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.8-hotspot\\bin;${env:PATH}"
-    }
-
 }
+
