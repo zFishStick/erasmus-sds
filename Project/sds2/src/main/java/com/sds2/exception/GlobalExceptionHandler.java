@@ -1,6 +1,5 @@
 package com.sds2.exception;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,7 +10,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RestClientResponseException.class)
     public String handleRestErrors(RestClientResponseException ex, Model model) {
-        model.addAttribute("error", "Upstream API error: " + ex.getRawStatusCode());
+        model.addAttribute("error", "Upstream API error: " + ex.getMessage());
         model.addAttribute("details", ex.getResponseBodyAsString());
         return "error_page";
     }
