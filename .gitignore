@@ -11,3 +11,7 @@ package-lock.json
 package.json
 airports.json
 sonar-project.properties
+.idea/
+.github/
+.scannerwork/
+project.toml
