@@ -64,12 +64,20 @@ public class PlaceService {
         placesRepository.save(place);
     }
 
-    public PlacesDTO findPlaceByName(String name) {
+    public Places findPlaceByText(String text) {
+        Places p = placesRepository.findByText(text);
+        if (p == null) {
+            throw new IllegalStateException("Place with text " + text + " not found");
+        }
+        return p;
+    }
+
+    public Places findPlaceByName(String name) {
         Places p = placesRepository.findByText(name);
         if (p == null) {
             throw new IllegalStateException("Place with name " + name + " not found");
         }
-        return mapToDTO(p);
+        return p;
     }
 
     public PlaceResponse searchText(String query) {
@@ -124,7 +132,7 @@ public class PlaceService {
     }
 
 
-    private PlacesDTO mapToDTO(Places places) {
+    public PlacesDTO mapToDTO(Places places) {
         return new PlacesDTO(
             places.getText(),
             places.getPhotoUrl(),

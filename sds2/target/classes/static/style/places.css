@@ -1,6 +1,13 @@
 body,html {
     overflow: auto;
-    overflow-y: hidden;
+}
+
+.header-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
 }
 
 .container {
