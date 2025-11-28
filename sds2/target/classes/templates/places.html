@@ -20,9 +20,15 @@
         <input type="hidden" name="city" th:value="${request.destination}" id="city"/>
     </form>
 
-<h1 th:text="|Here's what you can see in ${request.destination}, ${request.countryCode}|" class="place-header">
-    Places to visit
-</h1>
+    <div class="header-section">
+        <h1 th:text="|Here's what you can see in ${request.destination}, ${request.countryCode}|" class="place-header">
+        Places to visit
+        </h1>
+        <form th:action="@{/routes/itinerary}" method="get">
+        <button type="submit" id="view-itinerary-btn" class="btn btn-primary">View Itinerary</button>
+        </form>
+    </div>
+
 
 <div class="actions" style="text-align:center; margin: 12px 0 24px; display:flex; gap:12px; align-items:center; justify-content:center; flex-wrap:wrap;">
     <form th:if="${request != null}" th:action="@{/pois}" method="post" style="display:inline-block;">
@@ -71,9 +77,15 @@
                         <a class="btn btn-ghost" th:if="${place.location != null}"
                            th:href="${'https://www.google.com/maps/search/?api=1&query=' + place.location.latitude + ',' + place.location.longitude}"
                            target="_blank" rel="noopener">Open in Maps</a>
+                        <form method="post" action="/routes/waypoint/add" class="btn btn-ghost add-route-form" style="padding: 0; display: flex;">
+                            <input type="hidden" name="name" th:value="${place.name}">
+                            <input type="hidden" name="address" th:value="${place.address}">
+                            <input type="hidden" name="latitude" th:value="${place.location?.latitude}">
+                            <input type="hidden" name="longitude" th:value="${place.location?.longitude}">
+                            <button type="submit" class="btn btn-ghost" style="border: none; margin: 0;">Add to Itinerary</button>
+                        </form>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -99,5 +111,30 @@
     </footer>
     
 </body>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".add-route-form").forEach(form => {
+            form.addEventListener("submit", function(event) {
+                event.preventDefault();
+
+                const formData = new FormData(this);
+
+                fetch("/routes/waypoint/add", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Aggiunto all'itinerario!");
+                    } else {
+                        alert("Errore durante l'aggiunta");
+                    }
+                });
+            });
+        });
+    });
+</script>
+
 
 </html>

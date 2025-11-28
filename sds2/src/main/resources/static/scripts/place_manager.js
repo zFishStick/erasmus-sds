@@ -20,7 +20,6 @@ const placeTypes = {
     "botanical_garden": "Botanical Garden"
 };
 
-// Funzione per generare descrizioni dinamiche
 function getDescriptions(city) {
     return {
         "shopping_mall": `Looking to make some shopping? Check out the shopping malls in ${city} for a variety of stores and boutiques.`,
@@ -49,31 +48,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const places = Array.from(document.querySelectorAll('.place-item'));
 
-    if (places.length === 0) return; // niente da fare
+    if (places.length === 0) return;
 
-    // Contenitore principale per le sezioni
     const mainContainer = document.createElement('div');
     mainContainer.id = 'places-sections';
 
-    // Mappa tipo -> sezione
     const sections = {};
 
     for (const place of places) {
         const typeElement = place.querySelector('.place-type');
         const type = typeElement.textContent.trim();
 
-        // Sezione inesistente? Creala
         if (!sections[type]) {
             sections[type] = createDivSection(type, descriptions[type]);
             mainContainer.appendChild(sections[type]);
         }
 
-        // Sposta il place-item nella sezione
         sections[type].appendChild(place);
     }
 
-    // Inserisco il mainContainer **dopo il titolo h1**
-    const header = document.querySelector('h1.place-header');
+    const header = document.querySelector('.header-section');
     if (header) {
         header.insertAdjacentElement('afterend', mainContainer);
     }

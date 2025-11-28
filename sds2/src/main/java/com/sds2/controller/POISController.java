@@ -48,7 +48,6 @@ public class POISController {
         session.setAttribute(LONGITUDE, poiRequest.getLongitude());
         session.setAttribute(CHECKIN, poiRequest.getStartDate());
         session.setAttribute(CHECKOUT, poiRequest.getEndDate());
-        session.setAttribute(IATA, poiRequest.getIataCode());
         session.setAttribute(POISDATA, activities);
         return "redirect:/pois/" + poiRequest.getCountryCode() + "/" + poiRequest.getDestination();
     }

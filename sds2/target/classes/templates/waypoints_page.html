@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <div th:if="${waypoints == null or #lists.isEmpty(waypoints)}">
+        <p>No waypoints found.</p>
+    </div>
+
+    <div th:if="${waypoints != null and !#lists.isEmpty(waypoints)}" th:each="waypoint : ${waypoints}" class="container waypoint-item">
+        <div class="row">
+            <div class="column">
+                <h2 th:text="${waypoint.name}">Waypoint Name</h2>
+                <p><strong>Latitude:</strong> <span th:text="${waypoint.location.latitude}">0.0</span></p>
+                <p><strong>Longitude:</strong> <span th:text="${waypoint.location.longitude}">0.0</span></p>
+                <p><strong>Address:</strong> <span th:text="${waypoint.address}">Address here</span></p>
+                <p><strong>Id: </strong><span th:text="${waypoint.id}">0</span></p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.sds2.classes.Location;
+import com.sds2.classes.Places;
 import com.sds2.classes.request.POIRequest;
 import com.sds2.dto.PlacesDTO;
 import com.sds2.service.PlaceService;
@@ -88,8 +89,9 @@ public class PlacesController {
     
     @GetMapping("/{name}")
     public String getPlace(@PathVariable String name, Model model) {
-        PlacesDTO place = placeService.findPlaceByName(name);
-        model.addAttribute("place", place);
+        Places place = placeService.findPlaceByName(name);
+        PlacesDTO placeDTO = placeService.mapToDTO(place);
+        model.addAttribute("place", placeDTO);
         return "placeDetails";
     }
     
