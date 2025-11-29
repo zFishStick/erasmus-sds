@@ -1,6 +1,7 @@
 package com.sds2.classes.request;
 
 import com.google.maps.DirectionsApiRequest.Waypoint;
+import com.sds2.classes.routeclasses.RouteTravelMode;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,8 +15,6 @@ public class RouteRequest {
     private Waypoint origin;
     private Waypoint destination;
     private Waypoint[] intermediates;
-    private String duration;
+    private RouteTravelMode travelMode;
     private String departureTime;
-    private String arrivalTime;
-    private int distanceMeters;
 }
