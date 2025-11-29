@@ -7,8 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.google.api.Http;
 import com.sds2.classes.Places;
+import com.sds2.classes.request.RouteRequest;
 import com.sds2.classes.request.WaypointRequest;
 import com.sds2.classes.routeclasses.Waypoint;
 
@@ -45,8 +45,8 @@ public class RouteController {
     }
 
     @PostMapping("/create")
-    public void createRoute(Long originId, Long destinationId) {
-        
+    public void createRoute(RouteRequest routeRequest) {
+        //routesService.createRoute(routeRequest);
     }
 
     @GetMapping("/itinerary")

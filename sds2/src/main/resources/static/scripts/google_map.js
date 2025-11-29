@@ -16,7 +16,7 @@ function initMap() {
     const map = new google.maps.Map(mapElement, {
         center: { lat, lng },
         zoom: 15,
-        mapId: 'DEMO_MAP_ID'
+        mapId: '695fdba28dce8975c124de1a'
     });
 
     // const marker = new google.maps.marker.AdvancedMarkerElement ({
