@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.sds2.classes.Pagination;
+import com.sds2.classes.enums.HotelEnum;
 import com.sds2.classes.hotel.HotelSearchContext;
 import com.sds2.classes.request.HotelRequest;
 import com.sds2.dto.HotelDTO;
@@ -24,11 +25,6 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/hotels")
 public class HotelController {
 
-    private static final String HOTELS_DATA = "hotels";
-    private static final String SEARCH_CONTEXT = "hotelSearchContext";
-    private static final String CURRENT_PAGE = "currentPage";
-    private static final String TOTAL_PAGES = "totalPages";
-    private static final String PAGE_SIZE = "pageSize";
     private static final int DEFAULT_PAGE_SIZE = 5;
 
     private final HotelService hotelService;
@@ -70,13 +66,12 @@ public class HotelController {
             normalizePageSize(size)
         );
 
-        session.setAttribute(HOTELS_DATA, hotels);
-        session.setAttribute(SEARCH_CONTEXT, context);
+        session.setAttribute(HotelEnum.HOTELS_DATA.getValue(), hotels);
+        session.setAttribute(HotelEnum.SEARCH_CONTEXT.getValue(), context);
 
         int resolvedPage = populateHotelsModel(model, hotels, 0, context);
-        session.setAttribute(CURRENT_PAGE, resolvedPage);
-
-        return HOTELS_DATA;
+        session.setAttribute(HotelEnum.CURRENT_PAGE.getValue(), resolvedPage);
+        return HotelEnum.HOTELS_DATA.getValue();
     }
 
     @PostMapping("/page")
@@ -87,7 +82,7 @@ public class HotelController {
         HttpSession session
     ) {
         List<HotelDTO> hotels = getHotelsFromSession(session);
-        HotelSearchContext context = (HotelSearchContext) session.getAttribute(SEARCH_CONTEXT);
+        HotelSearchContext context = (HotelSearchContext) session.getAttribute(HotelEnum.SEARCH_CONTEXT.getValue());
 
         if (hotels == null || context == null) {
             return "error";
@@ -96,13 +91,12 @@ public class HotelController {
         HotelSearchContext effectiveContext = context;
         if (size != null && size > 0 && size != context.pageSize()) {
             effectiveContext = context.withPageSize(normalizePageSize(size));
-            session.setAttribute(SEARCH_CONTEXT, effectiveContext);
+            session.setAttribute(HotelEnum.SEARCH_CONTEXT.getValue(), effectiveContext);
         }
 
         int resolvedPage = populateHotelsModel(model, hotels, requestedPage, effectiveContext);
-        session.setAttribute(CURRENT_PAGE, resolvedPage);
-
-        return HOTELS_DATA;
+        session.setAttribute(HotelEnum.CURRENT_PAGE.getValue(), resolvedPage);
+        return HotelEnum.HOTELS_DATA.getValue();
     }
 
     @PostMapping("/details")
@@ -114,7 +108,7 @@ public class HotelController {
         Model model,
         HttpSession session
     ) {
-        HotelSearchContext context = (HotelSearchContext) session.getAttribute(SEARCH_CONTEXT);
+        HotelSearchContext context = (HotelSearchContext) session.getAttribute(HotelEnum.SEARCH_CONTEXT.getValue());
 
         String effectiveCheckIn = checkInDate;
         String effectiveCheckOut = checkOutDate;
@@ -136,7 +130,7 @@ public class HotelController {
             .filter(Objects::nonNull)
             .toList();
 
-        Integer currentPage = (Integer) session.getAttribute(CURRENT_PAGE);
+        Integer currentPage = (Integer) session.getAttribute(HotelEnum.CURRENT_PAGE.getValue());
         if (currentPage == null) {
             currentPage = 0;
         }
@@ -144,7 +138,7 @@ public class HotelController {
         model.addAttribute("hotel", hotel);
         model.addAttribute("offers", offers);
         model.addAttribute("adults", adults);
-        model.addAttribute(CURRENT_PAGE, currentPage);
+        model.addAttribute(HotelEnum.CURRENT_PAGE.getValue(), currentPage);
         model.addAttribute("hotelId", hotelId);
         model.addAttribute("checkInDate", effectiveCheckIn);
         model.addAttribute("checkOutDate", effectiveCheckOut);
@@ -171,12 +165,11 @@ public class HotelController {
                 context
         );
 
-        model.addAttribute(HOTELS_DATA, pagination.items());
+        model.addAttribute(HotelEnum.HOTELS_DATA.getValue(), pagination.items());
         model.addAttribute("totalHotels", hotels == null ? 0 : hotels.size());
-        model.addAttribute(CURRENT_PAGE, pagination.page());
-        model.addAttribute(TOTAL_PAGES, pagination.totalPages());
-        model.addAttribute(PAGE_SIZE, pagination.pageSize());
-
+        model.addAttribute(HotelEnum.CURRENT_PAGE.getValue(), pagination.page());
+        model.addAttribute(HotelEnum.TOTAL_PAGES.getValue(), pagination.totalPages());
+        model.addAttribute(HotelEnum.PAGE_SIZE.getValue(), pagination.pageSize());
         model.addAttribute("availability", availability);
         model.addAttribute("availabilityHasDates",
                 context != null && context.checkInDate() != null && context.checkOutDate() != null
@@ -196,7 +189,7 @@ public class HotelController {
 
 
     private List<HotelDTO> getHotelsFromSession(HttpSession session) {
-        Object attribute = session.getAttribute(HOTELS_DATA);
+        Object attribute = session.getAttribute(HotelEnum.HOTELS_DATA.getValue());
         if (attribute instanceof List) {
             List<?> raw = (List<?>) attribute;
             return raw.stream()
