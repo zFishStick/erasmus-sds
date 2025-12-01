@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.sds2.classes.GeoCode;
+import com.sds2.classes.enums.PoisEnum;
 import com.sds2.classes.request.POIRequest;
 import com.sds2.dto.POIDTO;
 import com.sds2.service.POIService;
@@ -23,15 +24,6 @@ import jakarta.servlet.http.HttpSession;
 public class POISController {
     
     private final POIService poiService;
-    private static final String POISDATA = "poisData";
-    private static final String LATITUDE = "latitude";
-    private static final String LONGITUDE = "longitude";
-    private static final String CHECKIN = "checkInDate";
-    private static final String CHECKOUT = "checkOutDate";
-    private static final String COUNTRY = "countryCode";
-    private static final String IATA = "iataCode";
-    private static final String CITY = "cityName";
-
 
     public POISController(POIService poiService) {
         this.poiService = poiService;
@@ -42,13 +34,13 @@ public class POISController {
         POIRequest poiRequest, HttpSession session) {
         GeoCode geoCode = new GeoCode(poiRequest.getLatitude(), poiRequest.getLongitude());
         List<POIDTO> activities = poiService.getPointOfInterests(geoCode, poiRequest.getDestination(), poiRequest.getCountryCode());
-        session.setAttribute(CITY, poiRequest.getDestination());
-        session.setAttribute(COUNTRY, poiRequest.getCountryCode());
-        session.setAttribute(LATITUDE, poiRequest.getLatitude());
-        session.setAttribute(LONGITUDE, poiRequest.getLongitude());
-        session.setAttribute(CHECKIN, poiRequest.getStartDate());
-        session.setAttribute(CHECKOUT, poiRequest.getEndDate());
-        session.setAttribute(POISDATA, activities);
+        session.setAttribute(PoisEnum.CITY.getValue(), poiRequest.getDestination());
+        session.setAttribute(PoisEnum.COUNTRY.getValue(), poiRequest.getCountryCode());
+        session.setAttribute(PoisEnum.LATITUDE.getValue(), poiRequest.getLatitude());
+        session.setAttribute(PoisEnum.LONGITUDE.getValue(), poiRequest.getLongitude());
+        session.setAttribute(PoisEnum.CHECKIN.getValue(), poiRequest.getStartDate());
+        session.setAttribute(PoisEnum.CHECKOUT.getValue(), poiRequest.getEndDate());
+        session.setAttribute(PoisEnum.POISDATA.getValue(), activities);
         return "redirect:/pois/" + poiRequest.getCountryCode() + "/" + poiRequest.getDestination();
     }
 
@@ -61,7 +53,7 @@ public class POISController {
             Model model,
             HttpSession session) {
 
-            Object obj = session.getAttribute(POISDATA);
+            Object obj = session.getAttribute(PoisEnum.POISDATA.getValue());
             List<POIDTO> activities;
 
             if (obj instanceof List<?>) {
@@ -75,7 +67,7 @@ public class POISController {
 
         
         if (activities == null) {
-            model.addAttribute(POISDATA, List.of());
+            model.addAttribute(PoisEnum.POISDATA.getValue(), List.of());
             model.addAttribute("currentPage", 0);
             model.addAttribute("totalPages", 0);
             model.addAttribute("pageSize", size);
@@ -92,19 +84,18 @@ public class POISController {
             pagedActivities = activities.subList(fromIndex, toIndex);
         }
 
-        model.addAttribute(CITY, destination);
-        model.addAttribute(COUNTRY, countryCode);
-        model.addAttribute(POISDATA, pagedActivities);
+        model.addAttribute(PoisEnum.CITY.getValue(), destination);
+        model.addAttribute(PoisEnum.COUNTRY.getValue(), countryCode);
+        model.addAttribute(PoisEnum.POISDATA.getValue(), pagedActivities);
 
-        Object lat = session.getAttribute(LATITUDE);
-        Object lon = session.getAttribute(LONGITUDE);
-        Object cin = session.getAttribute(CHECKIN);
-        Object cout = session.getAttribute(CHECKOUT);
-        if (lat != null) model.addAttribute(LATITUDE, lat);
-        if (lon != null) model.addAttribute(LONGITUDE, lon);
-        if (cin != null) model.addAttribute(CHECKIN, cin);
-        if (cout != null) model.addAttribute(CHECKOUT, cout);
-
+        Object lat = session.getAttribute(PoisEnum.LATITUDE.getValue());
+        Object lon = session.getAttribute(PoisEnum.LONGITUDE.getValue());
+        Object cin = session.getAttribute(PoisEnum.CHECKIN.getValue());
+        Object cout = session.getAttribute(PoisEnum.CHECKOUT.getValue());
+        if (lat != null) model.addAttribute(PoisEnum.LATITUDE.getValue(), lat);
+        if (lon != null) model.addAttribute(PoisEnum.LONGITUDE.getValue(), lon);
+        if (cin != null) model.addAttribute(PoisEnum.CHECKIN.getValue(), cin);
+        if (cout != null) model.addAttribute(PoisEnum.CHECKOUT.getValue(), cout);
         model.addAttribute("currentPage", page);
         int totalPages = size > 0 ? (int) Math.ceil((double) total / size) : 0;
         model.addAttribute("totalPages", totalPages);

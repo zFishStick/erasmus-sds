@@ -5,9 +5,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "city")
+@Getter @Setter
+@NoArgsConstructor
 public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,8 +22,6 @@ public class City {
     private String country;
     private double latitude;
     private double longitude;
-
-    public City() {}
 
     public City(String name, String country, double latitude, double longitude) {
         this.name = name;

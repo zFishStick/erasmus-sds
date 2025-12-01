@@ -153,18 +153,33 @@
     <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
+        <version>1.18.42</version>
+        <scope>provided</scope>
     </dependency>
   </dependencies>
 
   <build>
-    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
-        <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
-        <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
-        
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>3.11.0</version>
+              <configuration>
+                  <annotationProcessorPaths>
+                      <path>
+                          <groupId>org.projectlombok</groupId>
+                          <artifactId>lombok</artifactId>
+                          <version>1.18.42</version>
+                      </path>
+                  </annotationProcessorPaths>
+                  <compilerArgs>
+                      <arg>-parameters</arg>
+                  </compilerArgs>
+              </configuration>
+          </plugin>
       </plugins>
-    </pluginManagement>
   </build>
+
 
   <pluginRepositories>
 	  <pluginRepository>

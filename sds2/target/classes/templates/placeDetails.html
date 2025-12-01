@@ -43,11 +43,6 @@
                 <p th:if="${place.websiteUri != null}" class="link-strong">
                     Website: <a th:href="${place.websiteUri}" th:text="${place.websiteUri}">Website Link</a>
                 </p>
-                <!-- <div style="margin-top:10px;">
-                    <a class="btn-primary" th:if="${place.location != null}"
-                       th:href="${'https://www.google.com/maps/search/?api=1&query=' + place.location.latitude + ',' + place.location.longitude}"
-                       target="_blank" rel="noopener">Open in Maps</a>
-                </div> -->
 
                 <div class="map" id="gmap"></div>
                     

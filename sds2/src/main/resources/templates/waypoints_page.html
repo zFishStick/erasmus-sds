@@ -49,9 +49,16 @@
                     th:text="${w.name}">
             </option>
         </select>
+        <select id="travel-mode-select" name="travelMode">
+            <option value="DRIVE">Driving</option>
+            <option value="WALK">Walking</option>
+            <option value="BICYCLE">Bicycling</option>
+            <option value="TRANSIT">Transit</option>
+            <option value="TWO_WHEELER">Two Wheeler</option>
+        </select>
+        <input type="time" id="departure-time" name="departureTime">
         <button id="compute-route-btn" type="submit">Compute Route</button>
     </form>
-
 
     <div id="map" style="width: 100%; height: 500px;"></div>
 

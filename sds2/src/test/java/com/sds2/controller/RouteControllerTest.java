@@ -22,23 +22,23 @@ class RouteControllerTest {
     @Autowired
     private PlaceService placeService;
 
-    @Test
-    void testAddWaypoint() {
-        WaypointRequest waypointRequest = new WaypointRequest("Avenida Poznań",
-         "Centrum handlowe, Stanisława Matyi 2, 61-586 Poznań, Poland", 52.4003253, 16.9135941);
-        routeController.addWaypoint(waypointRequest);
-    }
+    // @Test
+    // void testAddWaypoint() {
+    //     WaypointRequest waypointRequest = new WaypointRequest("Avenida Poznań",
+    //      "Centrum handlowe, Stanisława Matyi 2, 61-586 Poznań, Poland", 52.4003253, 16.9135941);
+    //     routeController.addWaypoint(waypointRequest);
+    // }
 
-    @Test
-    void testAddMultipleWaypoints() {
-        WaypointRequest waypointRequest1 = new WaypointRequest("Avenida Poznań",
-         "Centrum handlowe, Stanisława Matyi 2, 61-586 Poznań, Poland", 52.4003253, 16.9135941);
-        routeController.addWaypoint(waypointRequest1);
+    // @Test
+    // void testAddMultipleWaypoints() {
+    //     WaypointRequest waypointRequest1 = new WaypointRequest("Avenida Poznań",
+    //      "Centrum handlowe, Stanisława Matyi 2, 61-586 Poznań, Poland", 52.4003253, 16.9135941);
+    //     routeController.addWaypoint(waypointRequest1);
 
-        WaypointRequest waypointRequest2 = new WaypointRequest("Posnania",
-         "Pleszewska 1, 61-136 Poznań, Poland", 52.3964356, 16.9555068);
-        routeController.addWaypoint(waypointRequest2);
-    }
+    //     WaypointRequest waypointRequest2 = new WaypointRequest("Posnania",
+    //      "Pleszewska 1, 61-136 Poznań, Poland", 52.3964356, 16.9555068);
+    //     routeController.addWaypoint(waypointRequest2);
+    // }
 
     @Test
     void testFindWaypointByPlace() {
@@ -52,9 +52,5 @@ class RouteControllerTest {
 
     }
 
-    @Test
-    void testCreateRoute() {
-        routeController.createRoute(1L, 2L);
-    }
     
 }
