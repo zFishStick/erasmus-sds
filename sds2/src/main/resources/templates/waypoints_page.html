@@ -33,8 +33,9 @@
 
     <h2>Create Route</h2>
 
-    <form th:action="@{/routes/create/{destination}(destination=${city})}" method="post" style="display: flex;" id="route-form">
+    <form th:action="@{/routes/create/{city}/{routeIdentifier}(city=${city}, routeIdentifier=${routeIdentifier})}" method="post" style="display: flex;" id="route-form">
         <input hidden name="destination" id="city-input" th:value="${city}" />
+        <input name="routeIdentifier" id="route-identifier-input" th:value="${routeIdentifier}" type="text" placeholder="Choose a name for your route" required  />
         <div id="autocomplete-div">
             <label>Starting point:</label>
             <button id="use-location-btn" type="button">Use my location</button>

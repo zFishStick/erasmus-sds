@@ -19,49 +19,81 @@ document.getElementById("route-form").addEventListener("submit", (event) => {
     const travelMode = document.getElementById("travel-mode-select").value;
     const departureTime = document.getElementById("departure-time").value;
     const city = document.getElementById("city-input").value;
+    const routeIdentifier = document.getElementById("route-identifier-input").value;
 
     if (!origin) {
         alert("Please select an origin point.");
         return;
     }
+    //  else {
+    //     alert("Origin: " + JSON.stringify(origin));
+    //     return;
+    // }
 
     const body = {
         origin: origin,
         destination: destination,
         intermediates: intermediates,
         travelMode: travelMode,
-        departureTime: departureTime
+        departureTime: departureTime,
+        routeIdentifier: routeIdentifier
     };
-    fetch("/routes/create/" + encodeURIComponent(city), {
+    fetch(`/routes/create/${city}/${routeIdentifier}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)
     })
-    .then(response => response.json())
-    .then(routeDTO => {
-        console.log("RouteDTO:", routeDTO);
-        if (!routeDTO || !routeDTO.encodedPolyline) {
-            console.error("encodedPolyline missing!");
-            return;
-        }
-        drawRoute(routeDTO.encodedPolyline);
-    })
-    .catch(console.error);
+    .then(res => res.json())
+    .then(routeRequest => {
+        alert("Route request: " + JSON.stringify(routeRequest));
+        drawRouteOnMap(routeRequest);
+    }).catch(err => {
+        alert("Error creating route: " + err);
+    });
 });
 
-function drawRoute(encodedPolyline) {
-    const path = google.maps.geometry.encoding.decodePath(encodedPolyline);
+function drawRouteOnMap(routeRequest) {
 
-    const routeLine = new google.maps.Polyline({
-        path: path,
-        geodesic: true,
-        strokeColor: "#FF0000",
-        strokeOpacity: 0.8,
-        strokeWeight: 5
+    const directionsService = new google.maps.DirectionsService();
+    const directionsRenderer = new google.maps.DirectionsRenderer({
+        map: map,
+        suppressMarkers: false // o true se vuoi mettere marker custom
     });
 
-    routeLine.setMap(map);
+    directionsService.route(
+        {
+            origin: {
+                lat: routeRequest.origin.lat,
+                lng: routeRequest.origin.lng
+            },
+            destination: {
+                lat: routeRequest.destination.lat,
+                lng: routeRequest.destination.lng
+            },
+            waypoints: routeRequest.intermediates.map(p => ({
+                location: { lat: p.lat, lng: p.lng },
+                stopover: true
+            })),
+            travelMode: google.maps.TravelMode.DRIVING,
+            optimizeWaypoints: false
+        },
+        (result, status) => {
+            if (status === "OK") {
+                directionsRenderer.setDirections(result);
+
+                // Se ti serve la polyline encoded:
+                const encoded = google.maps.geometry.encoding.encodePath(
+                    result.routes[0].overview_path
+                );
+
+                console.log("Encoded polyline:", encoded);
+            } else {
+                console.error("Directions error:", status);
+            }
+        }
+    );
 }
+
 
 
 
@@ -84,6 +116,7 @@ async function initAutocomplete() {
         selectedPlaceInfo.textContent = JSON.stringify(place.toJSON(), /* replacer */ null, /* space */ 2);
 
         newOrigin = {
+            id : place.id,
             name: place.displayName,
             address: place.formattedAddress,
             lat: place.location.lat(),
@@ -141,6 +174,7 @@ function putMarkerAtLocation(lat, lng) {
     });
 
     origin = {
+        id: "current-location",
         name: "Current Location",
         address: "GPS Position",
         lat: lat,
