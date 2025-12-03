@@ -7,5 +7,5 @@ import com.sds2.classes.routeclasses.Route;
 
 @Repository
 public interface RoutesRepository extends JpaRepository<Route, Long> {
-    
+    Route findByRouteIdentifier(String routeIdentifier);
 }

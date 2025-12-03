@@ -13,4 +13,5 @@ public interface WaypointRepository extends JpaRepository<Waypoint, Long> {
     Waypoint findByPlace(Places place);
     List<Waypoint> findAllByPlaceId(Long placeId);
     List<Waypoint> findByPlaceId(Long placeId);
+    Waypoint findByLocation_LatitudeAndLocation_Longitude(double lat, double lng);
 }

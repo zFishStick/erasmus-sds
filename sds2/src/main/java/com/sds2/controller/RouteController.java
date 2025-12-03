@@ -13,7 +13,6 @@ import com.sds2.classes.Places;
 import com.sds2.classes.request.RouteRequest;
 import com.sds2.classes.request.WaypointRequest;
 import com.sds2.classes.routeclasses.Waypoint;
-import com.sds2.dto.RouteDTO;
 import com.sds2.service.PlaceService;
 import com.sds2.service.RoutesService;
 import com.sds2.service.WaypointService;
@@ -47,12 +46,18 @@ public class RouteController {
         waypointService.removeWaypoint(id);
     }
 
-    @PostMapping("/create/{city}")
+    @PostMapping("/create/{city}/{routeIdentifier}")
     @ResponseBody
-    public RouteDTO createRoute(@PathVariable String city, @RequestBody RouteRequest routeRequest, HttpSession session) throws JsonProcessingException {
-        RouteDTO routeDTO = routesService.computeRoute(routeRequest);
-        session.setAttribute("currentRoute", routeDTO);
-        return routeDTO;
+    public RouteRequest createRoute(@PathVariable String city, @PathVariable String routeIdentifier, @RequestBody RouteRequest routeRequest, HttpSession session) throws JsonProcessingException {
+        boolean response = routesService.saveRoute(routeRequest, routeIdentifier);
+        
+        if (!response) {
+            return null;
+        }
+
+        session.setAttribute("currentRoute", routeRequest);
+        
+        return routeRequest;
 
     }
 

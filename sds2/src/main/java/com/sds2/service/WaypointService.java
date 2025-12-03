@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.sds2.classes.Location;
 import com.sds2.classes.Places;
+import com.sds2.classes.request.WaypointRequest;
 import com.sds2.classes.routeclasses.Waypoint;
 import com.sds2.repository.WaypointRepository;
 
@@ -30,6 +32,17 @@ public class WaypointService {
         }
     }
 
+    public void addWaypoint(WaypointRequest req) {
+        Location location = new Location(req.getLat(), req.getLng());
+        Waypoint waypoint = Waypoint.builder()
+                .name(req.getName())
+                .address(req.getAddress())
+                .location(location)
+                .via(false)
+                .build();
+        waypointRepository.save(waypoint);
+    }
+
     public void removeWaypoint(Long id) {
         waypointRepository.deleteById(id);
     }
@@ -40,6 +53,10 @@ public class WaypointService {
             all.addAll(waypointRepository.findByPlaceId(p.getId()));
         }
         return all;
+    }
+
+    public Waypoint findWaypointByCoordinates(double lat, double lng) {
+        return waypointRepository.findByLocation_LatitudeAndLocation_Longitude(lat, lng);
     }
 
 }
