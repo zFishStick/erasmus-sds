@@ -6,16 +6,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sds2.service.AmadeusAuthService;
 
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/amadeus")
 public class AmadeusPageController {
 
     private final AmadeusAuthService authService;
-
-    public AmadeusPageController(AmadeusAuthService authService) {
-        this.authService = authService;
-    }
 
     @GetMapping("/access-token")
     public String getAccessToken() {

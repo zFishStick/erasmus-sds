@@ -36,4 +36,5 @@ public class Route {
     private String duration;
     private String departureTime;
     private String arrivalTime;
+    private String encodedPolyline;
 }

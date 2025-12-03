@@ -16,21 +16,14 @@ import com.sds2.classes.response.CityResponse;
 import com.sds2.dto.CityDTO;
 import com.sds2.repository.CityRepository;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 @Service
 public class CityService {
     private final CityRepository cityRepository;
     private final AmadeusAuthService amadeusAuthService;
     private final WebClient.Builder webClientBuilder;
-
-    public CityService(
-        CityRepository cityRepository,
-        AmadeusAuthService amadeusAuthService,
-        WebClient.Builder webClientBuilder
-    ) {
-        this.cityRepository = cityRepository;
-        this.amadeusAuthService = amadeusAuthService;
-        this.webClientBuilder = webClientBuilder;
-    }
 
     public List<CityDTO> getCity(String name) throws IOException {
 

@@ -24,7 +24,7 @@
         <h1 th:text="|Here's what you can see in ${request.destination}, ${request.countryCode}|" class="place-header">
         Places to visit
         </h1>
-        <form th:action="@{/routes/itinerary}" method="get">
+        <form th:action="@{/routes/itinerary/{destination}(destination=${request.destination})}" method="get">
         <button type="submit" id="view-itinerary-btn" class="btn btn-primary">View Itinerary</button>
         </form>
     </div>

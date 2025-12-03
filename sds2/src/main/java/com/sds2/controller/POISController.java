@@ -17,17 +17,14 @@ import com.sds2.dto.POIDTO;
 import com.sds2.service.POIService;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
 
-
+@AllArgsConstructor
 @Controller
 @RequestMapping("/pois")
 public class POISController {
     
     private final POIService poiService;
-
-    public POISController(POIService poiService) {
-        this.poiService = poiService;
-    }
 
     @PostMapping
     public String searchCityByCoordinates(

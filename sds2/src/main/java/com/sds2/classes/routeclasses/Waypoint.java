@@ -37,7 +37,7 @@ public class Waypoint {
     public Waypoint(WaypointRequest waypointRequest, Places place) {
         this.via = false;
         this.name = waypointRequest.getName();
-        this.location = new Location(waypointRequest.getLatitude(), waypointRequest.getLongitude());
+        this.location = new Location(waypointRequest.getLat(), waypointRequest.getLng());
         this.address = waypointRequest.getAddress();
         this.place = place;
     }
