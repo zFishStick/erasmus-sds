@@ -13,6 +13,7 @@ import com.sds2.dto.PlacesDTO;
 import com.sds2.service.PlaceService;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,17 +21,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
-
+@AllArgsConstructor
 @Controller
 @RequestMapping("/places")
 public class PlacesController {
     private final PlaceService placeService;
     static final String PLACESDATA = "places";
     static final String REQUEST = "request";
-
-    public PlacesController(PlaceService placeService) {
-        this.placeService = placeService;
-    }
 
     @PostMapping
     public String getPlacesToVisit(POIRequest request, HttpSession session) {

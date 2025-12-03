@@ -1,5 +1,6 @@
 package com.sds2.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -33,7 +34,12 @@ public class WaypointService {
         waypointRepository.deleteById(id);
     }
 
-    public List<Waypoint> getAllWaypoints() {
-        return waypointRepository.findAll();
+    public List<Waypoint> getWaypointsForPlaces(List<Places> places) {
+        List<Waypoint> all = new ArrayList<>();
+        for (Places p : places) {
+            all.addAll(waypointRepository.findByPlaceId(p.getId()));
+        }
+        return all;
     }
+
 }

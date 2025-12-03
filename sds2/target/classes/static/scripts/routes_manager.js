@@ -2,13 +2,68 @@ let map;
 let directionsService;
 let directionsRenderer;
 let placeAutocomplete;
+
 let waypoints = [];
+let waypointMarkers = [];
 
 let origin;
 let destination;
 
 let originMarker = null;
 let newOrigin = null;
+
+document.getElementById("route-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const intermediates = waypoints.filter(wp => wp !== destination);
+    const travelMode = document.getElementById("travel-mode-select").value;
+    const departureTime = document.getElementById("departure-time").value;
+    const city = document.getElementById("city-input").value;
+
+    if (!origin) {
+        alert("Please select an origin point.");
+        return;
+    }
+
+    const body = {
+        origin: origin,
+        destination: destination,
+        intermediates: intermediates,
+        travelMode: travelMode,
+        departureTime: departureTime
+    };
+    fetch("/routes/create/" + encodeURIComponent(city), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+    })
+    .then(response => response.json())
+    .then(routeDTO => {
+        console.log("RouteDTO:", routeDTO);
+        if (!routeDTO || !routeDTO.encodedPolyline) {
+            console.error("encodedPolyline missing!");
+            return;
+        }
+        drawRoute(routeDTO.encodedPolyline);
+    })
+    .catch(console.error);
+});
+
+function drawRoute(encodedPolyline) {
+    const path = google.maps.geometry.encoding.decodePath(encodedPolyline);
+
+    const routeLine = new google.maps.Polyline({
+        path: path,
+        geodesic: true,
+        strokeColor: "#FF0000",
+        strokeOpacity: 0.8,
+        strokeWeight: 5
+    });
+
+    routeLine.setMap(map);
+}
+
+
 
 async function initAutocomplete() {
     let div = document.getElementById("autocomplete-div");
@@ -31,7 +86,8 @@ async function initAutocomplete() {
         newOrigin = {
             name: place.displayName,
             address: place.formattedAddress,
-            location: place.location.toJSON()
+            lat: place.location.lat(),
+            lng: place.location.lng()
         }
 
         if (originMarker) {
@@ -39,7 +95,7 @@ async function initAutocomplete() {
         }
 
         console.log("Origin set to: {" + newOrigin.name + ", " + newOrigin.address + "}");
-        console.log("Origin set to: " + newOrigin.location.lat + ", " + newOrigin.location.lng);
+        console.log("Origin set to: " + newOrigin.lat + ", " + newOrigin.lng);
         
         originMarker = new google.maps.marker.AdvancedMarkerElement({
                 map: map,
@@ -87,7 +143,8 @@ function putMarkerAtLocation(lat, lng) {
     origin = {
         name: "Current Location",
         address: "GPS Position",
-        location: { lat, lng }
+        lat: lat,
+        lng: lng
     };
 
 }
@@ -108,42 +165,7 @@ async function initMap() {
     directionsService = new google.maps.DirectionsService();
     directionsRenderer = new google.maps.DirectionsRenderer({ map: map, suppressMarkers: false });
     await initAutocomplete();
-    initRouteButton();
     await fillWaypointsArray();
-}
-
-function initRouteButton() {
-    document.getElementById("compute-route-btn").addEventListener("click", () => {
-        computeRoute();
-    });
-}
-
-function computeRoute() {
-    const origin = placeAutocomplete.inputElement.value;
-    const destinationSelect = document.getElementById("destination-select");
-    const destination = destinationSelect ? destinationSelect.value : origin;
-    const waypointForms = document.querySelectorAll(".waypoint-form");
-    const waypoints = Array.from(waypointForms).map(f => ({
-        location: {
-            lat: parseFloat(f.querySelector("input[name='latitude']").value),
-            lng: parseFloat(f.querySelector("input[name='longitude']").value)
-        },
-        stopover: true
-    }));
-    const request = {
-        origin: origin,
-        destination: destination,
-        waypoints: waypoints,
-        travelMode: google.maps.TravelMode.DRIVING
-    };
-    directionsService.route(request, (result, status) => {
-        if (status === google.maps.DirectionsStatus.OK) {
-            directionsRenderer.setDirections(result);
-        } else {
-            console.error("Route error:", status);
-            alert("Route could not be computed");
-        }
-    });
 }
 
 async function fillWaypointsArray() {
@@ -157,24 +179,42 @@ async function fillWaypointsArray() {
         waypoints.push({
             name: name,
             address: address,
-            location: { lat: lat, lng: lng }
+            lat: lat,
+            lng: lng
         });
     });
 
-    destination = waypoints.length > 0 ? waypoints[0].location : null;
+    destination = waypoints.length > 0 ? waypoints[0] : null;
 
     waypoints.forEach(element => {
-        putMarkerAtLocation(element.location.lat, element.location.lng);
+        const marker = new google.maps.marker.AdvancedMarkerElement({
+            map: map,
+            position: { lat: element.lat, lng: element.lng },
+            title: element.name,
+            gmpClickable: true
+        });
+        waypointMarkers.push(marker);
         console.log(element);
     });
 
     console.log("Destination: " + waypoints[0].name);
-    
 }
 
+
 document.getElementById("destination-select").addEventListener("change", () => {
+
+    let oldDestination = destination;
+
     const selectedValue = document.getElementById("destination-select").value;
-    destination = selectedValue;
+    destination = waypoints.find(wp => {
+        return (wp.lat + ',' + wp.lng) === selectedValue;
+    });
+
+    waypoints = waypoints.filter(wp => {
+        return !(wp.lat === destination.lat && wp.lng === destination.lng);
+    });
+
+    waypoints.push(oldDestination);
 
     console.log("New destination: " + destination.name);
 

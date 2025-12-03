@@ -11,15 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sds2.dto.CityDTO;
 import com.sds2.service.CityService;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 @RestController
 @RequestMapping("/city")
 public class CityController {
 
     private final CityService cityService;
-
-    public CityController(CityService cityService) {
-        this.cityService = cityService;
-    }
 
     @GetMapping("/{destination}")
     public List<CityDTO> getCityByPattern(@PathVariable String destination) throws IOException {

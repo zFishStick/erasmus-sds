@@ -14,6 +14,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.sds2.classes.CitySummary;
 import com.sds2.classes.Location;
 import com.sds2.classes.Places;
+import com.sds2.classes.enums.GoogleBodyEnum;
 import com.sds2.classes.response.PhotoResponse;
 import com.sds2.classes.response.PlaceResponse;
 import com.sds2.classes.response.PlaceResponse.Photo;
@@ -21,27 +22,15 @@ import com.sds2.classes.response.PlaceResponse.PlacesData;
 import com.sds2.dto.PlacesDTO;
 import com.sds2.repository.PlacesRepository;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 @Service
 public class PlaceService {
-
-    private static final String CONTENTTYPE = "Content-Type";
-    private static final String APPLICATIONJSON = "application/json; charset=UTF-8";
-    private static final String X_GOOG_API_KEY = "X-Goog-Api-Key";
-    private static final String X_GOOG_FIELD_MASK = "X-Goog-FieldMask";
-
+    
     private final PlacesRepository placesRepository;
     private final GoogleAuthService googleAuthService;
     private final WebClient.Builder webClientBuilder;
-
-    public PlaceService(
-        PlacesRepository placesRepository,
-        GoogleAuthService googleAuthService,
-        WebClient.Builder webClientBuilder
-    ) {
-        this.placesRepository = placesRepository;
-        this.googleAuthService = googleAuthService;
-        this.webClientBuilder = webClientBuilder;
-    }
 
     private String [] headerInfo = {
         "places.id",
@@ -72,6 +61,10 @@ public class PlaceService {
         return p;
     }
 
+    public List<Places> findPlacesByCitySummary_City(String city) {
+        return placesRepository.findByCitySummary_CityIgnoreCase(city);
+    }
+
     public Places findPlaceByName(String name) {
         Places p = placesRepository.findByText(name);
         if (p == null) {
@@ -93,9 +86,9 @@ public class PlaceService {
         PlaceResponse response = webClientBuilder.build()
                 .post()
                 .uri(url)
-                .header(CONTENTTYPE, APPLICATIONJSON)
-                .header(X_GOOG_API_KEY, googleAuthService.getApiKey())
-                .header(X_GOOG_FIELD_MASK, String.join(",", headerInfo))
+                .header(GoogleBodyEnum.CONTENTTYPE.getValue(), GoogleBodyEnum.APPLICATIONJSON.getValue())
+                .header(GoogleBodyEnum.X_GOOG_API_KEY.getValue(), googleAuthService.getApiKey())
+                .header(GoogleBodyEnum.X_GOOG_FIELD_MASK.getValue(), String.join(",", headerInfo))
                 .bodyValue(textQueryBody)
                 .retrieve()
                 .bodyToMono(PlaceResponse.class)
@@ -181,9 +174,9 @@ public class PlaceService {
         PlaceResponse response = webClientBuilder.build()
                 .post()
                 .uri(url)
-                .header(CONTENTTYPE, APPLICATIONJSON)
-                .header(X_GOOG_API_KEY, googleAuthService.getApiKey())
-                .header(X_GOOG_FIELD_MASK, String.join(",", headerInfo))
+                .header(GoogleBodyEnum.CONTENTTYPE.getValue(), GoogleBodyEnum.APPLICATIONJSON.getValue())
+                .header(GoogleBodyEnum.X_GOOG_API_KEY.getValue(), googleAuthService.getApiKey())
+                .header(GoogleBodyEnum.X_GOOG_FIELD_MASK.getValue(), String.join(",", headerInfo))
                 .bodyValue(body)
                 .retrieve()
                 .bodyToMono(PlaceResponse.class)
@@ -275,6 +268,7 @@ public class PlaceService {
         return cityMatch && countryMatch;
     }
 
+    // DEBUG METHOD
     public List<PlacesDTO> addRemainingNearbyPlaces(Location location, String city, String country) {
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
@@ -301,9 +295,9 @@ public class PlaceService {
         PlaceResponse response = webClientBuilder.build()
                 .post()
                 .uri(url)
-                .header(CONTENTTYPE, APPLICATIONJSON)
-                .header(X_GOOG_API_KEY, googleAuthService.getApiKey())
-                .header(X_GOOG_FIELD_MASK, String.join(",", headerInfo))
+                .header(GoogleBodyEnum.CONTENTTYPE.getValue(), GoogleBodyEnum.APPLICATIONJSON.getValue())
+                .header(GoogleBodyEnum.X_GOOG_API_KEY.getValue(), googleAuthService.getApiKey())
+                .header(GoogleBodyEnum.X_GOOG_FIELD_MASK.getValue(), String.join(",", headerInfo))
                 .bodyValue(body)
                 .retrieve()
                 .bodyToMono(PlaceResponse.class)
