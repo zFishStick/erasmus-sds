@@ -2,100 +2,13 @@ let map;
 let directionsService;
 let directionsRenderer;
 let placeAutocomplete;
-
 let waypoints = [];
-let waypointMarkers = [];
 
 let origin;
 let destination;
 
 let originMarker = null;
 let newOrigin = null;
-
-document.getElementById("route-form").addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    const intermediates = waypoints.filter(wp => wp !== destination);
-    const travelMode = document.getElementById("travel-mode-select").value;
-    const departureTime = document.getElementById("departure-time").value;
-    const city = document.getElementById("city-input").value;
-    const routeIdentifier = document.getElementById("route-identifier-input").value;
-
-    if (!origin) {
-        alert("Please select an origin point.");
-        return;
-    }
-    //  else {
-    //     alert("Origin: " + JSON.stringify(origin));
-    //     return;
-    // }
-
-    const body = {
-        origin: origin,
-        destination: destination,
-        intermediates: intermediates,
-        travelMode: travelMode,
-        departureTime: departureTime,
-        routeIdentifier: routeIdentifier
-    };
-    fetch(`/routes/create/${city}/${routeIdentifier}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body)
-    })
-    .then(res => res.json())
-    .then(routeRequest => {
-        alert("Route request: " + JSON.stringify(routeRequest));
-        drawRouteOnMap(routeRequest);
-    }).catch(err => {
-        alert("Error creating route: " + err);
-    });
-});
-
-function drawRouteOnMap(routeRequest) {
-
-    const directionsService = new google.maps.DirectionsService();
-    const directionsRenderer = new google.maps.DirectionsRenderer({
-        map: map,
-        suppressMarkers: false // o true se vuoi mettere marker custom
-    });
-
-    directionsService.route(
-        {
-            origin: {
-                lat: routeRequest.origin.lat,
-                lng: routeRequest.origin.lng
-            },
-            destination: {
-                lat: routeRequest.destination.lat,
-                lng: routeRequest.destination.lng
-            },
-            waypoints: routeRequest.intermediates.map(p => ({
-                location: { lat: p.lat, lng: p.lng },
-                stopover: true
-            })),
-            travelMode: google.maps.TravelMode.DRIVING,
-            optimizeWaypoints: false
-        },
-        (result, status) => {
-            if (status === "OK") {
-                directionsRenderer.setDirections(result);
-
-                // Se ti serve la polyline encoded:
-                const encoded = google.maps.geometry.encoding.encodePath(
-                    result.routes[0].overview_path
-                );
-
-                console.log("Encoded polyline:", encoded);
-            } else {
-                console.error("Directions error:", status);
-            }
-        }
-    );
-}
-
-
-
 
 async function initAutocomplete() {
     let div = document.getElementById("autocomplete-div");
@@ -116,11 +29,9 @@ async function initAutocomplete() {
         selectedPlaceInfo.textContent = JSON.stringify(place.toJSON(), /* replacer */ null, /* space */ 2);
 
         newOrigin = {
-            id : place.id,
             name: place.displayName,
             address: place.formattedAddress,
-            lat: place.location.lat(),
-            lng: place.location.lng()
+            location: place.location.toJSON()
         }
 
         if (originMarker) {
@@ -128,7 +39,7 @@ async function initAutocomplete() {
         }
 
         console.log("Origin set to: {" + newOrigin.name + ", " + newOrigin.address + "}");
-        console.log("Origin set to: " + newOrigin.lat + ", " + newOrigin.lng);
+        console.log("Origin set to: " + newOrigin.location.lat + ", " + newOrigin.location.lng);
         
         originMarker = new google.maps.marker.AdvancedMarkerElement({
                 map: map,
@@ -174,11 +85,9 @@ function putMarkerAtLocation(lat, lng) {
     });
 
     origin = {
-        id: "current-location",
         name: "Current Location",
         address: "GPS Position",
-        lat: lat,
-        lng: lng
+        location: { lat, lng }
     };
 
 }
@@ -199,7 +108,42 @@ async function initMap() {
     directionsService = new google.maps.DirectionsService();
     directionsRenderer = new google.maps.DirectionsRenderer({ map: map, suppressMarkers: false });
     await initAutocomplete();
+    initRouteButton();
     await fillWaypointsArray();
+}
+
+function initRouteButton() {
+    document.getElementById("compute-route-btn").addEventListener("click", () => {
+        computeRoute();
+    });
+}
+
+function computeRoute() {
+    const origin = placeAutocomplete.inputElement.value;
+    const destinationSelect = document.getElementById("destination-select");
+    const destination = destinationSelect ? destinationSelect.value : origin;
+    const waypointForms = document.querySelectorAll(".waypoint-form");
+    const waypoints = Array.from(waypointForms).map(f => ({
+        location: {
+            lat: parseFloat(f.querySelector("input[name='latitude']").value),
+            lng: parseFloat(f.querySelector("input[name='longitude']").value)
+        },
+        stopover: true
+    }));
+    const request = {
+        origin: origin,
+        destination: destination,
+        waypoints: waypoints,
+        travelMode: google.maps.TravelMode.DRIVING
+    };
+    directionsService.route(request, (result, status) => {
+        if (status === google.maps.DirectionsStatus.OK) {
+            directionsRenderer.setDirections(result);
+        } else {
+            console.error("Route error:", status);
+            alert("Route could not be computed");
+        }
+    });
 }
 
 async function fillWaypointsArray() {
@@ -213,42 +157,24 @@ async function fillWaypointsArray() {
         waypoints.push({
             name: name,
             address: address,
-            lat: lat,
-            lng: lng
+            location: { lat: lat, lng: lng }
         });
     });
 
-    destination = waypoints.length > 0 ? waypoints[0] : null;
+    destination = waypoints.length > 0 ? waypoints[0].location : null;
 
     waypoints.forEach(element => {
-        const marker = new google.maps.marker.AdvancedMarkerElement({
-            map: map,
-            position: { lat: element.lat, lng: element.lng },
-            title: element.name,
-            gmpClickable: true
-        });
-        waypointMarkers.push(marker);
+        putMarkerAtLocation(element.location.lat, element.location.lng);
         console.log(element);
     });
 
     console.log("Destination: " + waypoints[0].name);
+    
 }
 
-
 document.getElementById("destination-select").addEventListener("change", () => {
-
-    let oldDestination = destination;
-
     const selectedValue = document.getElementById("destination-select").value;
-    destination = waypoints.find(wp => {
-        return (wp.lat + ',' + wp.lng) === selectedValue;
-    });
-
-    waypoints = waypoints.filter(wp => {
-        return !(wp.lat === destination.lat && wp.lng === destination.lng);
-    });
-
-    waypoints.push(oldDestination);
+    destination = selectedValue;
 
     console.log("New destination: " + destination.name);
 

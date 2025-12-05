@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.sds2.classes.GeoCode;
+import com.sds2.classes.coordinates.GeoCode;
 import com.sds2.classes.enums.PoisEnum;
 import com.sds2.classes.request.POIRequest;
 import com.sds2.dto.POIDTO;

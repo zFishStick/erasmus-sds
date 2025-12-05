@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.sds2.classes.Pagination;
 import com.sds2.classes.enums.HotelEnum;
 import com.sds2.classes.hotel.HotelSearchContext;
 import com.sds2.classes.request.HotelRequest;
@@ -18,6 +17,7 @@ import com.sds2.dto.HotelDetailsDTO;
 import com.sds2.dto.HotelOfferDTO;
 import com.sds2.service.HotelAvailabilityService;
 import com.sds2.service.HotelService;
+import com.sds2.util.Pagination;
 
 import jakarta.servlet.http.HttpSession;
 

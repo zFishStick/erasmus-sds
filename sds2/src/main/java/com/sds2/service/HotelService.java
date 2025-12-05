@@ -9,8 +9,8 @@ import java.util.logging.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.sds2.classes.GeoCode;
 import com.sds2.classes.Price;
+import com.sds2.classes.coordinates.GeoCode;
 import com.sds2.classes.hotel.HotelAddress;
 import com.sds2.classes.response.HotelResponse;
 import com.sds2.dto.HotelDTO;

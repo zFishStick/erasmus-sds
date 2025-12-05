@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.sds2.classes.CitySummary;
-import com.sds2.classes.Location;
 import com.sds2.classes.Places;
+import com.sds2.classes.coordinates.Location;
 import com.sds2.classes.enums.GoogleBodyEnum;
 import com.sds2.classes.response.PhotoResponse;
 import com.sds2.classes.response.PlaceResponse;

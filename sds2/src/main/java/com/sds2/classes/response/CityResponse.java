@@ -2,7 +2,7 @@ package com.sds2.classes.response;
 
 import java.util.List;
 
-import com.sds2.classes.GeoCode;
+import com.sds2.classes.coordinates.GeoCode;
 
 public class CityResponse {
     private List<CityData> data;
