@@ -41,10 +41,4 @@ public class Route {
     private List<Waypoint> intermediates = new ArrayList<>();
 
     private RouteTravelMode travelMode;
-    // private int distanceMeters;
-    // private String duration;
-    // private String departureTime;
-    // private String arrivalTime;
-    // @Column(columnDefinition = "TEXT")
-    // private String encodedPolyline;
 }

@@ -2,6 +2,7 @@ package com.sds2.classes;
 
 import java.util.List;
 
+import com.sds2.classes.coordinates.Location;
 import com.sds2.classes.price.PriceRange;
 import com.sds2.classes.price.PriceRangeConverter;
 

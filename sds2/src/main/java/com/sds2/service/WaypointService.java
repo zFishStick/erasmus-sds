@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.sds2.classes.Location;
 import com.sds2.classes.Places;
+import com.sds2.classes.coordinates.Location;
 import com.sds2.classes.request.WaypointRequest;
 import com.sds2.classes.routeclasses.Waypoint;
 import com.sds2.repository.WaypointRepository;

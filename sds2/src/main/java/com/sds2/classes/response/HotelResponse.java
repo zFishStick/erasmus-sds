@@ -2,8 +2,8 @@ package com.sds2.classes.response;
 
 import java.util.List;
 
-import com.sds2.classes.GeoCode;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sds2.classes.coordinates.GeoCode;
 
 public class HotelResponse {
 

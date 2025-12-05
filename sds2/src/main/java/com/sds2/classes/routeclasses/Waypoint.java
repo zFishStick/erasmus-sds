@@ -1,7 +1,7 @@
 package com.sds2.classes.routeclasses;
 
-import com.sds2.classes.Location;
 import com.sds2.classes.Places;
+import com.sds2.classes.coordinates.Location;
 import com.sds2.classes.request.WaypointRequest;
 
 import jakarta.persistence.Entity;

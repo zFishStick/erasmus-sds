@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+import com.sds2.classes.coordinates.GeoCode;
 import com.sds2.classes.hotel.Hotel;
 import com.sds2.classes.hotel.HotelAddress;
 

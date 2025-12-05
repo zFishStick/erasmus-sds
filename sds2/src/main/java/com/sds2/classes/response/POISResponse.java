@@ -2,8 +2,8 @@ package com.sds2.classes.response;
 
 import java.util.List;
 
-import com.sds2.classes.GeoCode;
 import com.sds2.classes.Price;
+import com.sds2.classes.coordinates.GeoCode;
 
 import lombok.Getter;
 import lombok.Setter;

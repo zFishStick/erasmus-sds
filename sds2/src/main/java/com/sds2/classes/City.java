@@ -1,5 +1,7 @@
 package com.sds2.classes;
 
+import com.sds2.classes.coordinates.GeoCode;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

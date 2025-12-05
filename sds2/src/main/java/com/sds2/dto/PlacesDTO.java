@@ -1,6 +1,6 @@
 package com.sds2.dto;
 
-import com.sds2.classes.Location;
+import com.sds2.classes.coordinates.Location;
 import com.sds2.classes.price.PriceRange;
 
 import java.io.Serializable;

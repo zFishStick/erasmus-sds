@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.sds2.classes.GeoCode;
+import com.sds2.classes.coordinates.GeoCode;
 import com.sds2.classes.hotel.HotelAddress;
 
 class HotelDTOTest {

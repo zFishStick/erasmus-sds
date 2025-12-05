@@ -1,4 +1,4 @@
-package com.sds2.classes;
+package com.sds2.util;
 
 import java.util.ArrayList;
 import java.util.List;

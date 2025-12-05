@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+import com.sds2.classes.coordinates.GeoCode;
+
 class GeoCodeTest {
 
     @Test
