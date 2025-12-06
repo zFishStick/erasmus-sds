@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="./style/routes.css">    
+    <link rel="stylesheet" type="text/css" href="/style/routes.css">
     <title>Itinerary</title>
 </head>
 <body>
@@ -19,13 +19,13 @@
             <form class="waypoint-form">
                 <input type="hidden" name="name" th:value="${waypoint.name}">
                 <input type="hidden" name="address" th:value="${waypoint.address}">
-                <input type="hidden" name="latitude" th:value="${waypoint.location.latitude}">
-                <input type="hidden" name="longitude" th:value="${waypoint.location.longitude}">
+                <input type="hidden" name="latitude" th:value="${waypoint.location != null ? waypoint.location.latitude : ''}">
+                <input type="hidden" name="longitude" th:value="${waypoint.location != null ? waypoint.location.longitude : ''}">
             </form>
 
             <h2 th:text="${waypoint.name}"></h2>
-            <p>Lat: <span th:text="${waypoint.location.latitude}"></span></p>
-            <p>Lng: <span th:text="${waypoint.location.longitude}"></span></p>
+            <p>Lat: <span th:text="${waypoint.location != null ? waypoint.location.latitude : 'N/A'}"></span></p>
+            <p>Lng: <span th:text="${waypoint.location != null ? waypoint.location.longitude : 'N/A'}"></span></p>
             <p>Address: <span th:text="${waypoint.address}"></span></p>
             <hr>
         </div>
@@ -35,7 +35,11 @@
 
     <form th:action="@{/routes/create/{city}/{routeIdentifier}(city=${city}, routeIdentifier=${routeIdentifier})}" method="post" style="display: flex;" id="route-form">
         <input hidden name="destination" id="city-input" th:value="${city}" />
-        <input name="routeIdentifier" id="route-identifier-input" th:value="${routeIdentifier}" type="text" placeholder="Choose a name for your route" required  />
+
+        <div class="route-form-row full">
+            <input name="routeIdentifier" id="route-identifier-input" th:value="${routeIdentifier}" type="text" placeholder="Choose a name for your route" required  />
+        </div>
+
         <div id="autocomplete-div">
             <label>Starting point:</label>
             <button id="use-location-btn" type="button">Use my location</button>
@@ -43,7 +47,7 @@
         <label>Destination (choose waypoint):</label>
         <select id="destination-select" name="destination" required>
             <option th:each="w : ${waypoints}"
-                    th:value="${w.location.latitude + ',' + w.location.longitude}"
+                    th:value="${w.location != null ? w.location.latitude + ',' + w.location.longitude : ''}"
                     th:text="${w.name}">
             </option>
         </select>
