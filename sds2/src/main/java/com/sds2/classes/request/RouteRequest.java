@@ -12,6 +12,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class RouteRequest {
+    private String routeIdentifier;
     private WaypointRequest origin;
     private WaypointRequest destination;
     private WaypointRequest[] intermediates;

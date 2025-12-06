@@ -1,8 +1,13 @@
+let innerMap;
+let marker;
+let infoWindow;
+let center;
+
 let map;
 let directionsService;
 let directionsRenderer;
-let placeAutocomplete;
 let waypoints = [];
+let waypointMarkers = [];
 
 let origin;
 let destination;
@@ -10,64 +15,18 @@ let destination;
 let originMarker = null;
 let newOrigin = null;
 
-async function initAutocomplete() {
-    let div = document.getElementById("autocomplete-div");
+let lat,lng;
 
-    placeAutocomplete = new google.maps.places.PlaceAutocompleteElement({});
-    div.appendChild(placeAutocomplete);
+let routeSetted = false;
 
-    const selectedPlaceTitle = document.createElement('p');
-    selectedPlaceTitle.textContent = '';
-    document.body.appendChild(selectedPlaceTitle);
-    const selectedPlaceInfo = document.createElement('pre');
-    selectedPlaceInfo.textContent = '';
-    document.body.appendChild(selectedPlaceInfo);
-    placeAutocomplete.addEventListener('gmp-select', async ({ placePrediction }) => {
-        const place = placePrediction.toPlace();
-        await place.fetchFields({ fields: ['displayName', 'formattedAddress', 'location'] });
-        selectedPlaceTitle.textContent = 'Selected Place:';
-        selectedPlaceInfo.textContent = JSON.stringify(place.toJSON(), /* replacer */ null, /* space */ 2);
-
-        newOrigin = {
-            name: place.displayName,
-            address: place.formattedAddress,
-            location: place.location.toJSON()
-        }
-
-        if (originMarker) {
-            originMarker.map = originMarker.setMap(null);
-        }
-
-        console.log("Origin set to: {" + newOrigin.name + ", " + newOrigin.address + "}");
-        console.log("Origin set to: " + newOrigin.location.lat + ", " + newOrigin.location.lng);
-        
-        originMarker = new google.maps.marker.AdvancedMarkerElement({
-                map: map,
-                position: place.location,
-                title: place.displayName,
-                gmpClickable: true
-        });
-
-        origin = newOrigin;
-
-        originMarker.addListener('gmp-click', () => {
-            const infoWindow = new google.maps.InfoWindow();
-            infoWindow.setContent(
-                `<div><strong>${place.displayName}</strong><br>` +
-                `Address: ${place.formattedAddress}</div>`+
-                `Coordinates: (${place.location.lat()}, ${place.location.lng()})`
-            );
-            infoWindow.setPosition(place.location);
-            infoWindow.open(map, marker);
-        });
-    });    
-
-    document.getElementById("use-location-btn").addEventListener("click", () => {
+function getCurrentPosition() {
+    return new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(pos => {
-            const lat = pos.coords.latitude;
-            const lng = pos.coords.longitude;
-            putMarkerAtLocation(lat, lng);
-        });
+            lat = pos.coords.latitude;
+            lng = pos.coords.longitude;
+            center = { lat: lat, lng: lng };
+            resolve();
+        }, reject);
     });
 }
 
@@ -92,90 +51,208 @@ function putMarkerAtLocation(lat, lng) {
 
 }
 
-async function initMap() {
-    let lat,lon
-
-    navigator.geolocation.getCurrentPosition(pos => {
-        lat = pos.coords.latitude;
-        lon = pos.coords.longitude;
-        map.setCenter({ lat: lat, lng: lon })
-    }),
-
-    map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 12,
-        mapId: '695fdba28dce8975c124de1a'
+function addWaypointMarker(lat, lng, title) {
+    const marker = new google.maps.marker.AdvancedMarkerElement({
+        map: map,
+        position: { lat, lng },
+        title: title,
+        gmpClickable: true
     });
-    directionsService = new google.maps.DirectionsService();
-    directionsRenderer = new google.maps.DirectionsRenderer({ map: map, suppressMarkers: false });
-    await initAutocomplete();
-    initRouteButton();
-    await fillWaypointsArray();
+    waypointMarkers.push(marker);
 }
 
+async function initMap() {
+    
+    await getCurrentPosition();
+
+    await Promise.all([
+        google.maps.importLibrary('marker'),
+        google.maps.importLibrary('places'),
+    ]);
+
+    const mapElement = document.getElementById("map");
+    const autocompleteElement = document.getElementById("map-autocomplete");
+    map = mapElement.innerMap;
+
+    map.setOptions({
+        mapTypeControl: false,
+        zoom: 13,
+        center: center,
+        mapId: "695fdba28dce8975c124de1a",
+        mapTypeId: 'roadmap'
+    });
+
+    placeAutocomplete = autocompleteElement;
+
+    map.addListener("bounds_changed", () => {
+        placeAutocomplete.locationRestriction = map.getBounds();
+    });
+
+    placeAutocomplete.addEventListener('gmp-select', async ({ placePrediction }) => {
+        const place = placePrediction.toPlace();
+        await place.fetchFields({
+            fields: ['displayName', 'formattedAddress', 'location'],
+        });
+
+        setOriginMarker(place.location.lat(), place.location.lng(), place.displayName);
+
+        let content = document.createElement('div');
+        let nameText = document.createElement('span');
+        nameText.textContent = place.displayName;
+        content.appendChild(nameText);
+        content.appendChild(document.createElement('br'));
+        let addressText = document.createElement('span');
+        addressText.textContent = place.formattedAddress;
+        content.appendChild(addressText);
+        updateInfoWindow(content, place.location);
+        marker.position = place.location;
+    });
+
+
+    marker = new google.maps.marker.AdvancedMarkerElement({
+        map: innerMap,
+    });
+    
+    infoWindow = new google.maps.InfoWindow({});
+
+    fillWaypointsArray();
+    initRouteButton();
+}
+
+function updateInfoWindow(content, center) {
+    infoWindow.setContent(content);
+    infoWindow.setPosition(center);
+    infoWindow.open({
+        map: innerMap,
+        anchor: marker,
+        shouldFocus: false,
+    });
+}
+
+initMap();
+
 function initRouteButton() {
-    document.getElementById("compute-route-btn").addEventListener("click", () => {
+    document.getElementById("route-form").addEventListener("submit", (event) => {
+        event.preventDefault();
         computeRoute();
     });
 }
 
 function computeRoute() {
-    const origin = placeAutocomplete.inputElement.value;
+    if (!originMarker) {
+        alert("Select an origin first!");
+        return;
+    }
+
+    const originObj = origin.location;
+    
     const destinationSelect = document.getElementById("destination-select");
-    const destination = destinationSelect ? destinationSelect.value : origin;
-    const waypointForms = document.querySelectorAll(".waypoint-form");
-    const waypoints = Array.from(waypointForms).map(f => ({
-        location: {
-            lat: parseFloat(f.querySelector("input[name='latitude']").value),
-            lng: parseFloat(f.querySelector("input[name='longitude']").value)
-        },
+    const destCoords = destinationSelect.value.split(',').map(parseFloat);
+    const destinationObj = { lat: destCoords[0], lng: destCoords[1] };
+
+    const waypointsArr = waypointMarkers.map(marker => ({
+        location: marker.position,
         stopover: true
     }));
+
+    const travelModeSelect = document.getElementById("travel-mode-select");
+
     const request = {
-        origin: origin,
-        destination: destination,
-        waypoints: waypoints,
-        travelMode: google.maps.TravelMode.DRIVING
+        origin: originObj,
+        destination: destinationObj,
+        waypoints: waypointsArr,
+        travelMode: travelModeSelect.value
     };
+
+    if (routeSetted) {
+        directionsRenderer.setMap(null);
+    }
+
+    directionsService = new google.maps.DirectionsService();
+    directionsRenderer = new google.maps.DirectionsRenderer({
+        map: map,
+        suppressMarkers: false
+    });
+
     directionsService.route(request, (result, status) => {
-        if (status === google.maps.DirectionsStatus.OK) {
+        if (status === "OK") {
+            routeSetted = true;
+            hideMarkers();
             directionsRenderer.setDirections(result);
         } else {
             console.error("Route error:", status);
-            alert("Route could not be computed");
+            alert("Route could not be computed: " + status);
         }
     });
 }
 
+function hideMarkers() {
+    if (originMarker) {
+        originMarker.setMap(null);
+    }
+
+    waypointMarkers.forEach(marker => {
+        marker.setMap(null);
+    });
+}
+
+
 async function fillWaypointsArray() {
     const waypointForms = document.querySelectorAll(".waypoint-form");
+
+    waypoints = [];
+    waypointMarkers = [];
 
     waypointForms.forEach((form) => {
         const name = form.querySelector("input[name='name']").value;
         const address = form.querySelector("input[name='address']").value;
         const lat = parseFloat(form.querySelector("input[name='latitude']").value);
         const lng = parseFloat(form.querySelector("input[name='longitude']").value);
-        waypoints.push({
+
+        const waypoint = {
             name: name,
             address: address,
             location: { lat: lat, lng: lng }
-        });
+        };
+
+        waypoints.push(waypoint);
+
+        addWaypointMarker(lat, lng, name);
+
+        console.log(waypoint);
     });
 
     destination = waypoints.length > 0 ? waypoints[0].location : null;
 
-    waypoints.forEach(element => {
-        putMarkerAtLocation(element.location.lat, element.location.lng);
-        console.log(element);
-    });
-
-    console.log("Destination: " + waypoints[0].name);
-    
+    if (destination) {
+        console.log("Destination: " + waypoints[0].name);
+    }
 }
 
-document.getElementById("destination-select").addEventListener("change", () => {
-    const selectedValue = document.getElementById("destination-select").value;
-    destination = selectedValue;
+function addWaypointMarker(lat, lng, title) {
+    const marker = new google.maps.marker.AdvancedMarkerElement({
+        map: map,
+        position: { lat, lng },
+        title: title,
+        gmpClickable: true
+    });
+    waypointMarkers.push(marker);
+}
 
-    console.log("New destination: " + destination.name);
+function setOriginMarker(lat, lng, title) {
+    if (originMarker) {
+        originMarker.setMap(null);
+    }
 
-});
+    originMarker = new google.maps.marker.AdvancedMarkerElement({
+        map: map,
+        position: { lat, lng },
+        title: title,
+        gmpClickable: true
+    });
+
+    origin = {
+        name: title,
+        location: { lat, lng }
+    };
+}

@@ -127,6 +127,7 @@ public class PlaceService {
 
     public PlacesDTO mapToDTO(Places places) {
         return new PlacesDTO(
+            places.getId(),
             places.getText(),
             places.getPhotoUrl(),
             places.getType(),

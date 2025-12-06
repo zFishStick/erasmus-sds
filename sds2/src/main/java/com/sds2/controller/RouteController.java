@@ -2,22 +2,19 @@ package com.sds2.controller;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sds2.classes.Places;
 import com.sds2.classes.request.RouteRequest;
 import com.sds2.classes.request.WaypointRequest;
 import com.sds2.classes.routeclasses.Waypoint;
+import com.sds2.dto.WaypointDTO;
 import com.sds2.service.PlaceService;
 import com.sds2.service.RoutesService;
 import com.sds2.service.WaypointService;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,46 +30,32 @@ public class RouteController {
     private final WaypointService waypointService;
     private final PlaceService placesService;
 
-    @PostMapping("/waypoint/add")
-    public ResponseEntity<Void> addWaypoint(WaypointRequest waypointRequest) {
-        Places place = placesService.findPlaceByText(waypointRequest.getName());
-        Waypoint waypoint = new Waypoint(waypointRequest, place);
-        waypointService.addWaypoint(waypoint);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/waypoint/remove")
-    public void removeWaypoint(Long id) {
-        waypointService.removeWaypoint(id);
-    }
-
-    @PostMapping("/create/{city}/{routeIdentifier}")
+    @PostMapping("/waypoint/add/{id}")
     @ResponseBody
-    public RouteRequest createRoute(@PathVariable String city, @PathVariable String routeIdentifier, @RequestBody RouteRequest routeRequest, HttpSession session) throws JsonProcessingException {
-        boolean response = routesService.saveRoute(routeRequest, routeIdentifier);
-        
-        if (!response) {
-            return null;
-        }
-
-        session.setAttribute("currentRoute", routeRequest);
-        
-        return routeRequest;
-
+    public String addWaypoint(@PathVariable Long id, @RequestBody WaypointRequest waypointRequest) {
+        Waypoint waypoint = new Waypoint(waypointRequest, id);
+        return waypointService.addWaypoint(waypoint);
     }
 
+    @PostMapping("/waypoint/remove/{id}")
+    @ResponseBody
+    public String removeWaypoint(@PathVariable Long id) {
+        return waypointService.removeWaypoint(id);
+    }
 
-    @GetMapping("/itinerary/{destination}")
-    public String viewItinerary(@PathVariable String destination, Model model) {
+    @PostMapping("/create/{city}")
+    @ResponseBody
+    public String createRoute(@PathVariable String city, RouteRequest routeRequest) {
+        return routesService.saveRoute(routeRequest);     
+    }
 
-        List<Places> places = placesService.findPlacesByCitySummary_City(destination);
-        if (places.isEmpty()) {
-            return "error/404"; 
-        }
+    @GetMapping("/itinerary/{country}/{destination}")
+    public String viewItinerary(@PathVariable String country, @PathVariable String destination, Model model) {
 
-        List<Waypoint> waypoints = waypointService.getWaypointsForPlaces(places);
+        List<WaypointDTO> waypoints = waypointService.getWaypointsByDestinationAndCountry(destination, country);
 
         model.addAttribute("city", destination);
+        model.addAttribute("country", country);
         model.addAttribute("waypoints", waypoints);
 
         return "waypoints_page";

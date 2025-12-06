@@ -15,4 +15,6 @@ public class WaypointRequest {
     private String address;
     private Double lat;
     private Double lng;
+    private String destination;
+    private String country;
 }

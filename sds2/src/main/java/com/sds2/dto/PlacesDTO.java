@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 public record PlacesDTO(
+    Long id,
     String name,
     List<String> photoUrl,
     String type,
