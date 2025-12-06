@@ -5,36 +5,43 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.sds2.classes.Places;
 import com.sds2.classes.coordinates.Location;
 import com.sds2.classes.request.WaypointRequest;
 import com.sds2.classes.routeclasses.Waypoint;
+import com.sds2.dto.WaypointDTO;
 import com.sds2.repository.WaypointRepository;
 
 @Service
 public class WaypointService {
     
     private final WaypointRepository waypointRepository;
-    private final GoogleAuthService googleAuthService;
     
-    public WaypointService(WaypointRepository waypointRepository, GoogleAuthService googleAuthService) {
+    public WaypointService(WaypointRepository waypointRepository) {
         this.waypointRepository = waypointRepository;
-        this.googleAuthService = googleAuthService;
     }
 
-    public Waypoint findWaypointByPlace(Places place) {
-        return waypointRepository.findByPlace(place);
-    }
+    public String addWaypoint(Waypoint waypoint) {
+        if (waypoint == null) return "Waypoint not provided";
 
-    public void addWaypoint(Waypoint waypoint) {
-        if (waypoint != null) {
-            waypointRepository.save(waypoint);
+        boolean exists = waypointRepository.findByLocation_LatitudeAndLocation_Longitude(
+            waypoint.getLocation().getLatitude(),
+            waypoint.getLocation().getLongitude()
+        ) != null;
+
+        if (exists) {
+            return "You have already added this waypoint";
         }
+
+        waypointRepository.save(waypoint);
+        return "Waypoint added successfully";
     }
+
 
     public void addWaypoint(WaypointRequest req) {
         Location location = new Location(req.getLat(), req.getLng());
         Waypoint waypoint = Waypoint.builder()
+                .destination(req.getDestination())
+                .country(req.getCountry())
                 .name(req.getName())
                 .address(req.getAddress())
                 .location(location)
@@ -43,16 +50,28 @@ public class WaypointService {
         waypointRepository.save(waypoint);
     }
 
-    public void removeWaypoint(Long id) {
+    public String removeWaypoint(Long id) {
         waypointRepository.deleteById(id);
+        return "Waypoint removed successfully";
     }
 
-    public List<Waypoint> getWaypointsForPlaces(List<Places> places) {
-        List<Waypoint> all = new ArrayList<>();
-        for (Places p : places) {
-            all.addAll(waypointRepository.findByPlaceId(p.getId()));
+    public List<WaypointDTO> getWaypointsByDestinationAndCountry(String destination, String country) {
+        List<WaypointDTO> waypointDTOs = new ArrayList<>();
+
+        List<Waypoint> waypoints = waypointRepository.findByDestinationAndCountry(destination, country);
+
+        for (Waypoint w : waypoints) {
+            waypointDTOs.add(new WaypointDTO(
+                w.getId(),
+                w.isVia(),
+                w.getName(),
+                w.getLocation(),
+                w.getAddress(),
+                w.getDestination(),
+                w.getCountry()
+            ));
         }
-        return all;
+        return waypointDTOs;
     }
 
     public Waypoint findWaypointByCoordinates(double lat, double lng) {

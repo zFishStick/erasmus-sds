@@ -20,15 +20,18 @@
         <input type="hidden" name="city" th:value="${request.destination}" id="city"/>
     </form>
 
-    <div class="header-section">
-        <h1 th:text="|Here's what you can see in ${request.destination}, ${request.countryCode}|" class="place-header">
-        Places to visit
-        </h1>
-        <form th:action="@{/routes/itinerary/{destination}(destination=${request.destination})}" method="get">
-        <button type="submit" id="view-itinerary-btn" class="btn btn-primary">View Itinerary</button>
+    <div class="header-section" style="display: flex; flex-direction: column; align-items: center; margin: 24px 0 12px;">
+        <div style="display: flex; flex-direction: row; align-items: center; gap:12px;">
+            <h1 th:text="|Here's what you can see in ${request.destination}, ${request.countryCode}|" class="place-header">
+            Places to visit
+            </h1>
+        <form th:action="@{/routes/itinerary/{country}/{destination}(country=${request.countryCode}, destination=${request.destination})}" method="get">
+            <button type="submit" id="view-itinerary-btn" class="btn btn-primary">View Itinerary</button>
         </form>
-    </div>
+        </div>
 
+        <p id="message" style="text-align:center; margin-top:12px;"></p>
+    </div>
 
 <div class="actions" style="text-align:center; margin: 12px 0 24px; display:flex; gap:12px; align-items:center; justify-content:center; flex-wrap:wrap;">
     <form th:if="${request != null}" th:action="@{/pois}" method="post" style="display:inline-block;">
@@ -76,8 +79,11 @@
                         <a th:href="@{|/places/${place.name}|}" class="btn btn-primary" style="text-decoration:none;">See Details</a>
                         <a class="btn btn-ghost" th:if="${place.location != null}"
                            th:href="${'https://www.google.com/maps/search/?api=1&query=' + place.location.latitude + ',' + place.location.longitude}"
-                           target="_blank" rel="noopener">Open in Maps</a>
-                        <form method="post" action="/routes/waypoint/add" class="btn btn-ghost add-route-form" style="padding: 0; display: flex;">
+                           target="_blank" rel="noopener">Open in Maps</a>                                      
+                        <form method="post" th:action="@{/routes/waypoint/add/{id}(id=${place.id})}" class="btn btn-ghost add-waypoint-form" style="padding: 0; display: flex;">
+                            <input type="hidden" name="destination" th:value="${request.destination}">
+                            <input type="hidden" name="countryCode" th:value="${request.countryCode}">
+                            <input type="hidden" name="id" th:value="${place.id}">
                             <input type="hidden" name="name" th:value="${place.name}">
                             <input type="hidden" name="address" th:value="${place.address}">
                             <input type="hidden" name="latitude" th:value="${place.location.latitude}">
@@ -113,27 +119,41 @@
 </body>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        document.querySelectorAll(".add-route-form").forEach(form => {
-            form.addEventListener("submit", function(event) {
-                event.preventDefault();
+document.addEventListener("DOMContentLoaded", () => {
+    const messageElem = document.getElementById("message");
 
-                const formData = new FormData(this);
+    document.querySelectorAll(".add-waypoint-form").forEach(form => {
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
 
-                fetch("/routes/waypoint/add", {
+            const city = form.querySelector("input[name='destination']").value;
+            const countryCode = form.querySelector("input[name='countryCode']").value;
+            const placeId = form.querySelector("input[name='id']").value;
+            const waypointRequest = {
+                name: form.querySelector("input[name='name']").value,
+                address: form.querySelector("input[name='address']").value,
+                latitude: parseFloat(form.querySelector("input[name='latitude']").value),
+                longitude: parseFloat(form.querySelector("input[name='longitude']").value),
+                destination: city,
+                country: countryCode
+            };
+
+            try {
+                const res = await fetch(`/routes/waypoint/add/${placeId}`, {
                     method: "POST",
-                    body: formData
-                })
-                .then(response => {
-                    if (response.ok) {
-                        console.log("Added to itinerary");
-                    } else {
-                        alert("Failed to add waypoint to itinerary.");
-                    }
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(waypointRequest)
                 });
-            });
+
+                const message = await res.text();
+                messageElem.textContent = message;
+            } catch (err) {
+                console.error(err);
+                messageElem.textContent = "Error adding waypoint.";
+            }
         });
     });
+});
 </script>
 
 
