@@ -27,7 +27,7 @@
                 <input type="hidden" name="longitude" th:value="${waypoint.location != null ? waypoint.location.longitude : ''}">
             </form>
 
-            <h2 th:text="${waypoint.name}"></h2>
+            <h2 th:text="${waypoint.name}">Waypoint</h2>
             <p>Lat: <span th:text="${waypoint.location != null ? waypoint.location.latitude : 'N/A'}"></span></p>
             <p>Lng: <span th:text="${waypoint.location != null ? waypoint.location.longitude : 'N/A'}"></span></p>
             <p>Address: <span th:text="${waypoint.address}"></span></p>
