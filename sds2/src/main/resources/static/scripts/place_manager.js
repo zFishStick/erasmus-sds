@@ -17,7 +17,8 @@ const placeTypes = {
     "event_venue": "Event Venue",
     "park": "Park",
     "zoo": "Zoo",
-    "botanical_garden": "Botanical Garden"
+    "botanical_garden": "Botanical Garden",
+    "church": "Church"
 };
 
 function getDescriptions(city) {
@@ -38,7 +39,8 @@ function getDescriptions(city) {
         "event_venue": `Attend exciting events at the top event venues in ${city}, perfect for concerts, conferences, and more.`,
         "park": `Relax and enjoy the natural beauty of ${city} by visiting its parks, ideal for picnics, walks, and outdoor activities.`,
         "zoo": `Visit the zoo in ${city} to see a variety of animals and enjoy a fun day out with family and friends.`,
-        "botanical_garden": `Explore the botanical gardens in ${city} to discover a wide variety of plants and enjoy a peaceful environment.`
+        "botanical_garden": `Explore the botanical gardens in ${city} to discover a wide variety of plants and enjoy a peaceful environment.`,
+        "church": `Experience the architectural beauty and spiritual ambiance of the churches in ${city}.`
     };
 }
 
