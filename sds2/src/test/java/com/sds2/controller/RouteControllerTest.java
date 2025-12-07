@@ -45,14 +45,16 @@ class RouteControllerTest {
             "Avenida Poznan",
             "Stanis\u0142awa Matyi 2, 61-586 Poznan, Poland",
             52.4003253,
-            16.9135941
+            16.9135941,
+            "Poznan",
+            "Poland"
         );
         Places place = Places.builder().id(1L).name("Avenida Poznan").text("Avenida Poznan").build();
         when(placeService.findPlaceByText(waypointRequest.getName())).thenReturn(place);
 
-        ResponseEntity<Void> response = routeController.addWaypoint(waypointRequest);
+        String response = routeController.addWaypoint(place.getId(), waypointRequest);
 
-        assertEquals(200, response.getStatusCode().value());
+        assertEquals("Waypoint added successfully", response);
         verify(placeService).findPlaceByText(waypointRequest.getName());
         verify(waypointService).addWaypoint(any(Waypoint.class));
     }
@@ -63,19 +65,19 @@ class RouteControllerTest {
 
         routeController.removeWaypoint(waypointId);
 
-        verify(waypointService).removeWaypoint(eq(waypointId));
+        verify(waypointService).removeWaypoint(waypointId);
     }
 
     @Test
-    void createRoute_acceptsRouteRequestAndSetsSession() throws Exception {
+    void createRoute_acceptsRouteRequestAndSetsSession() {
         RouteRequest routeRequest = new RouteRequest();
         HttpSession session = org.mockito.Mockito.mock(HttpSession.class);
-        when(routesService.saveRoute(eq(routeRequest), eq("route-123"))).thenReturn(true);
+        when(routesService.saveRoute(routeRequest));
 
-        RouteRequest result = routeController.createRoute("paris", "route-123", routeRequest, session);
-
+        String result = routeController.createRoute("paris", routeRequest);
+        
         assertNotNull(result);
-        verify(routesService).saveRoute(routeRequest, "route-123");
+        verify(routesService).saveRoute(routeRequest);
         verify(session).setAttribute("currentRoute", routeRequest);
     }
 }
