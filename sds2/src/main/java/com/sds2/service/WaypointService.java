@@ -2,6 +2,7 @@ package com.sds2.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,12 @@ public class WaypointService {
     public String addWaypoint(Waypoint waypoint) {
         if (waypoint == null) return "Waypoint not provided";
 
+        Logger logger = Logger.getLogger(WaypointService.class.getName());
+        logger.info("Adding waypoint at coordinates: " + 
+            waypoint.getLocation().getLatitude() + ", " + 
+            waypoint.getLocation().getLongitude()
+        );
+
         boolean exists = waypointRepository.findByLocation_LatitudeAndLocation_Longitude(
             waypoint.getLocation().getLatitude(),
             waypoint.getLocation().getLongitude()
@@ -38,7 +45,7 @@ public class WaypointService {
 
 
     public void addWaypoint(WaypointRequest req) {
-        Location location = new Location(req.getLat(), req.getLng());
+        Location location = new Location(req.getLatitude(), req.getLongitude());
         Waypoint waypoint = Waypoint.builder()
                 .destination(req.getDestination())
                 .country(req.getCountry())

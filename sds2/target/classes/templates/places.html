@@ -75,12 +75,17 @@
                     <p th:if="${place.websiteUri != null}">
                     Website: <a th:href="${place.websiteUri}" th:text="${place.websiteUri}" style="color:#7fb2ff; font-weight:600;">Website Link</a>
                     </p>
+                    <!-- Debug shows lat and lon -->
+                    <p th:if="${place.location != null}">
+                        <span class="main-text">Latitude:</span> <span th:text="${place.location.latitude}">Lat</span><br/>
+                        <span class="main-text">Longitude:</span> <span th:text="${place.location.longitude}">Lng</span>
+                    </p>
                     <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
                         <a th:href="@{|/places/${place.name}|}" class="btn btn-primary" style="text-decoration:none;">See Details</a>
                         <a class="btn btn-ghost" th:if="${place.location != null}"
                            th:href="${'https://www.google.com/maps/search/?api=1&query=' + place.location.latitude + ',' + place.location.longitude}"
                            target="_blank" rel="noopener">Open in Maps</a>                                      
-                        <form method="post" th:action="@{/routes/waypoint/add/{id}(id=${place.id})}" class="btn btn-ghost add-waypoint-form" style="padding: 0; display: flex;">
+                           <form method="post" th:action="@{/routes/waypoint/add/{id}(id=${place.id})}" class="btn btn-ghost add-waypoint-form" style="padding: 0; display: flex;">
                             <input type="hidden" name="destination" th:value="${request.destination}">
                             <input type="hidden" name="countryCode" th:value="${request.countryCode}">
                             <input type="hidden" name="id" th:value="${place.id}">

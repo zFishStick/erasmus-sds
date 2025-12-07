@@ -23,8 +23,8 @@ public class RoutesService {
 
     public String saveRoute(RouteRequest req) {
 
-        Double lat = req.getOrigin().getLat();
-        Double lng = req.getOrigin().getLng();
+        Double lat = req.getOrigin().getLatitude();
+        Double lng = req.getOrigin().getLongitude();
 
         Route existing = routesRepository.findByRouteIdentifier(req.getRouteIdentifier());
         if (existing != null) {
@@ -51,8 +51,8 @@ public class RoutesService {
 
         List<Waypoint> intermediates = Arrays.stream(req.getIntermediates())
                 .map(i -> waypointsService.findWaypointByCoordinates(
-                        i.getLat(),
-                        i.getLng()
+                        i.getLatitude(),
+                        i.getLongitude()
                 ))
                 .toList();
 
