@@ -1,0 +1,20 @@
+package com.sds2.classes.request;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class WaypointRequest {
+    private String name;
+    private String address;
+    private Double lat;
+    private Double lng;
+    private String destination;
+    private String country;
+}

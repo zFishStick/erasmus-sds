@@ -1,9 +1,0 @@
-com\sds2\classes\PriceTest.class
-com\sds2\classes\CityTest.class
-com\sds2\classes\HotelTest.class
-com\sds2\classes\GeoCodeTest.class
-com\sds2\classes\CoordinatesTest.class
-com\sds2\classes\AddressTest.class
-com\sds2\classes\request\HotelRequestTest.class
-com\sds2\dto\HotelDTOTest.class
-com\sds2\classes\poi\POITest.class
