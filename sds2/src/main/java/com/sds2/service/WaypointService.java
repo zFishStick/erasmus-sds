@@ -22,6 +22,7 @@ public class WaypointService {
     }
 
     public String addWaypoint(Waypoint waypoint) {
+        
         if (waypoint == null) return "Waypoint not provided";
 
         Logger logger = Logger.getLogger(WaypointService.class.getName());
