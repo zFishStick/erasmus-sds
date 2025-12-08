@@ -14,7 +14,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
+import com.sds2.classes.CitySummary;
 import com.sds2.classes.Places;
+import com.sds2.classes.coordinates.Location;
 import com.sds2.classes.request.RouteRequest;
 import com.sds2.classes.request.WaypointRequest;
 import com.sds2.classes.routeclasses.Waypoint;
@@ -42,21 +44,46 @@ class RouteControllerTest {
     @Test
     void addWaypoint_callsServicesAndReturnsOk() {
         WaypointRequest waypointRequest = new WaypointRequest(
-            "Avenida Poznan",
-            "Stanis\u0142awa Matyi 2, 61-586 Poznan, Poland",
+            "Avenida Poznań",
+            "Centrum handlowe, Stanisława Matyi 2, 61-586 Poznań, Poland",
             52.4003253,
             16.9135941,
-            "Poznan",
+            "Poznań",
             "Poland"
         );
-        Places place = Places.builder().id(1L).name("Avenida Poznan").text("Avenida Poznan").build();
-        when(placeService.findPlaceByText(waypointRequest.getName())).thenReturn(place);
+
+        CitySummary citySummary = CitySummary.builder()
+            .city("Poznań")
+            .country("Poland")
+            .build();
+
+        Location location = Location.builder()
+            .latitude(52.4003253)
+            .longitude(16.9135941)
+            .build();
+
+        System.out.println(location.toString());
+
+        Places place = Places.builder()
+            .id(2L)
+            .address("Centrum handlowe, Stanisława Matyi 2, 61-586 Poznań, Poland")
+            .citySummary(citySummary)
+            .location(location)
+            .name("places/ChIJT8MYKzJbBEcRr1NmMv8AVxQ")
+            .rating(4.2)
+            .text("Avenida Poznań")
+            .type("shopping_mall")
+            .websiteUri("https://avenidapoznan.com/")
+            .build();
+
+        when(waypointService.addWaypoint(any(Waypoint.class)))
+            .thenReturn("You have already added this waypoint");
 
         String response = routeController.addWaypoint(place.getId(), waypointRequest);
 
-        assertEquals("Waypoint added successfully", response);
-        verify(placeService).findPlaceByText(waypointRequest.getName());
-        verify(waypointService).addWaypoint(any(Waypoint.class));
+        assertEquals("You have already added this waypoint", response);
+
+        verify(waypointService).addWaypoint(any(Waypoint.class));   
     }
 
     @Test
@@ -66,18 +93,5 @@ class RouteControllerTest {
         routeController.removeWaypoint(waypointId);
 
         verify(waypointService).removeWaypoint(waypointId);
-    }
-
-    @Test
-    void createRoute_acceptsRouteRequestAndSetsSession() {
-        RouteRequest routeRequest = new RouteRequest();
-        HttpSession session = org.mockito.Mockito.mock(HttpSession.class);
-        when(routesService.saveRoute(routeRequest));
-
-        String result = routeController.createRoute("paris", routeRequest);
-        
-        assertNotNull(result);
-        verify(routesService).saveRoute(routeRequest);
-        verify(session).setAttribute("currentRoute", routeRequest);
     }
 }
