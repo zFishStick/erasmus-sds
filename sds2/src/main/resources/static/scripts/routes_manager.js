@@ -256,3 +256,37 @@ function setOriginMarker(lat, lng, title) {
         location: { lat, lng }
     };
 }
+
+document.getElementById("remove-waypoint-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    showConfirmationDialog()
+});
+
+function showConfirmationDialog() {
+    let confirmationBox = document.getElementById("confirmation-dialog");
+    confirmationBox.style.display = "flex";
+
+    document.getElementById("confirm-yes-btn").onclick = async function() {
+        confirmationBox.style.display = "none";
+        await submitRemoveForm();
+    };
+
+    document.getElementById("confirm-no-btn").onclick = function() {
+        confirmationBox.style.display = "none";
+    }
+}
+
+async function submitRemoveForm() {
+    const form = document.getElementById("remove-waypoint-form");
+    const url = form.getAttribute("action");
+    try {
+        const res = await fetch(url, {
+            method: "POST"
+        });
+        const message = await res.text();
+        console.log(message);
+        window.location.reload();
+    } catch (err) {
+        console.error(err);
+    }
+}
