@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.sds2.classes.Places;
 import com.sds2.dto.PlacesDTO;
 import com.sds2.service.PlaceService;
 
@@ -33,16 +34,16 @@ class PlacesControllerTest {
     @BeforeEach
     void setup() {
 		PlacesDTO placesDTO = mock(PlacesDTO.class);
-
+        
         when(placeService.searchNearby(
                 any(),
                 any(),
                 any())
         ).thenReturn(Arrays.asList(placesDTO));
 
-        when(placeService.findPlaceByName(
-            any())
-        ).thenReturn(placesDTO);
+        // when(placeService.findPlaceByName(
+        //     any())
+        // ).thenReturn(placesDTO);
     }
 
     @Test
@@ -64,11 +65,11 @@ class PlacesControllerTest {
         MockHttpSession session = new MockHttpSession();
         initSearchSession(session);
 
-            mockMvc.perform(get("/places/France/Paris")
-                .session(session)
-                .param("latitude", "48")
-                .param("longitude", "2"))
-                .andExpect(status().isOk());
+        mockMvc.perform(get("/places/France/Paris")
+            .session(session)
+            .param("latitude", "48")
+            .param("longitude", "2"))
+            .andExpect(status().isOk());
     }
     
     @Test

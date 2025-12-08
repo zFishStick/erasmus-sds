@@ -53,14 +53,6 @@ public class PlaceService {
         placesRepository.save(place);
     }
 
-    public Places findPlaceByText(String text) {
-        Places p = placesRepository.findByText(text);
-        if (p == null) {
-            throw new IllegalStateException("Place with text " + text + " not found");
-        }
-        return p;
-    }
-
     public List<Places> findPlacesByCitySummary_City(String city) {
         return placesRepository.findByCitySummary_CityIgnoreCase(city);
     }
@@ -71,34 +63,6 @@ public class PlaceService {
             throw new IllegalStateException("Place with name " + name + " not found");
         }
         return p;
-    }
-
-    public PlaceResponse searchText(String query) {
-
-        String url = "https://places.googleapis.com/v1/places:searchText";
-
-        String textQueryBody = """
-        {
-            "textQuery": "%s"
-        }
-        """.formatted(query);
-
-        PlaceResponse response = webClientBuilder.build()
-                .post()
-                .uri(url)
-                .header(GoogleBodyEnum.CONTENTTYPE.getValue(), GoogleBodyEnum.APPLICATIONJSON.getValue())
-                .header(GoogleBodyEnum.X_GOOG_API_KEY.getValue(), googleAuthService.getApiKey())
-                .header(GoogleBodyEnum.X_GOOG_FIELD_MASK.getValue(), String.join(",", headerInfo))
-                .bodyValue(textQueryBody)
-                .retrieve()
-                .bodyToMono(PlaceResponse.class)
-                .block();
-
-        if (response == null) {
-            throw new IllegalStateException("Failed to retrieve place from Google Places API");
-        }
-
-        return response;
     }
 
     private List<PlacesDTO> mapPlacesToDTOs(PlaceResponse response, String city, String country) {
