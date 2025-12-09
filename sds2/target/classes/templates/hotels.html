@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${cityName != null ? 'Hotels near ' + #strings.toUpperCase(cityName) : 'Hotels'}">Hotels</title>
+    <link rel="stylesheet" href="/./style/style.css"/>
+    <link rel="stylesheet" href="/./style/hotels.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Hotels results" />
+    <meta name="robots" content="noindex" />
+</head>
+<body>
+<header class="site-header hotels-header">
+    <h1 th:text="${cityName != null ? 'Hotels near ' + #strings.toUpperCase(cityName) : 'Hotels'}">Hotels</h1>
+    <p class="hotels-meta" th:if="${latitude != null and longitude != null}">
+        <span>Center coordinates: </span>
+        <span th:text="${#numbers.formatDecimal(latitude, 1, 6)}"></span>,
+        <span th:text="${#numbers.formatDecimal(longitude, 1, 6)}"></span>
+    </p>
+    <p th:if="${hotels != null and !#lists.isEmpty(hotels)}">
+        <span th:text="'Found ' + ${totalHotels} + ' results'">Results</span>
+    </p>
+    <p th:if="${checkInDate != null and checkOutDate != null}" class="hotels-meta">
+        <strong>Dates:</strong>
+        <span th:text="${checkInDate}"></span> -> <span th:text="${checkOutDate}"></span>
+    </p>
+    <div style="margin-top:14px;">
+        <a class="btn btn-primary" href="/" style="padding:10px 18px; font-weight:600; text-decoration:none;">Back to home</a>
+    </div>
+</header>
+
+<main class="container">
+
+<div th:if="${errorMessage != null}" class="alert alert-error" th:text="${errorMessage}">Error</div>
+
+<div th:if="${hotels == null or #lists.isEmpty(hotels)}">
+    <p>No hotels found around this area.</p>
+    <p class="hotels-meta">Try adjusting the search or returning to POIs.</p>
+ </div>
+
+<div th:if="${hotels != null and !#lists.isEmpty(hotels)}">
+    <div th:each="hotel,iter : ${hotels}" class="card hotel-card">
+        <h3 th:text="${hotel.name != null && !#strings.isEmpty(hotel.name) ? hotel.name : 'Unnamed hotel'}">Hotel</h3>
+        <div class="hotels-meta">
+            <span th:text="${hotel.address != null && hotel.address.line != null ? hotel.address.line : 'Address not available'}"></span>
+            <span th:text="${hotel.address != null ? hotel.address.cityName : ''}"></span>
+            <span th:text="${hotel.address != null ? hotel.address.countryCode : ''}"></span>
+        </div>
+        <div class="hotels-meta availability">
+            <span th:if="${availabilityStatus != null && hotel.hotelId != null && availabilityStatus.get(hotel.hotelId) == 'available'}">
+                Offer available from
+                <strong th:text="${#numbers.formatDecimal(availabilityAmounts.get(hotel.hotelId), 1, 2)}"></strong>
+                <span th:text="${availabilityCurrency.get(hotel.hotelId)}"></span>
+            </span>
+            <span th:if="${availabilityStatus != null && hotel.hotelId != null && availabilityStatus.get(hotel.hotelId) == 'unavailable'}">
+                <span th:text="${availabilityHasDates ? 'No availability for selected dates.' : 'No offers available yet.'}"></span>
+            </span>
+        </div>
+        <div class="hotel-actions" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <form th:if="${hotel.hotelId != null}" th:action="@{/hotels/details}" method="post" class="hotel-details-form" style="display:flex; gap:6px; align-items:center;">
+                <input type="hidden" name="hotelId" th:value="${hotel.hotelId}" />
+                <input type="hidden" name="adults" value="1" />
+                <button type="submit" class="btn btn-primary">View details</button>
+            </form>
+            <a class="btn btn-ghost" th:if="${hotel.coordinates != null}"
+               th:href="${'https://www.google.com/maps/search/?api=1&query=' + hotel.coordinates.latitude + ',' + hotel.coordinates.longitude}"
+               target="_blank" rel="noopener">Open in Maps</a>
+            <a class="btn btn-ghost" th:if="${hotel.coordinates == null and latitude != null and longitude != null}"
+               th:href="${'https://www.google.com/maps/search/?api=1&query=' + latitude + ',' + longitude}"
+               target="_blank" rel="noopener">Open in Maps</a>
+        </div>
+    </div>
+
+    <div class="hotels-footer" style="margin-top:16px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+        <form th:if="${currentPage > 0}" th:action="@{/hotels/page}" method="post">
+            <input type="hidden" name="page" th:value="${currentPage - 1}" />
+            <input type="hidden" name="size" th:value="${pageSize}" />
+            <button type="submit" class="btn btn-ghost">Previous</button>
+        </form>
+
+        <span>Page <span th:text="${currentPage + 1}">1</span> of <span th:text="${totalPages}">1</span></span>
+
+        <form th:if="${currentPage + 1 < totalPages}" th:action="@{/hotels/page}" method="post">
+            <input type="hidden" name="page" th:value="${currentPage + 1}" />
+            <input type="hidden" name="size" th:value="${pageSize}" />
+            <button type="submit" class="btn btn-ghost">Next</button>
+        </form>
+    </div>
+
+ </div>
+
+</main>
+
+</body>
+</html>

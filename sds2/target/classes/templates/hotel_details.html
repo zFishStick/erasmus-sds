@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${hotel != null && hotel.name != null ? hotel.name : 'Hotel details'}">Hotel details</title>
+    <link rel="stylesheet" href="/./style/style.css"/>
+    <link rel="stylesheet" href="/./style/hotels.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        .hotel-details-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 12px;
+            justify-content: center;
+        }
+        .hotel-filter-form {
+            margin: 16px auto;
+            padding: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: rgba(16, 20, 42, 0.6);
+        }
+        .hotel-filter-form label {
+            display: flex;
+            flex-direction: column;
+            color: #d5d8ff;
+            font-size: 0.9rem;
+        }
+        .hotel-filter-form input {
+            margin-top: 4px;
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: #0c1021;
+            color: #f7f7ff;
+        }
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+        .details-table th,
+        .details-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        .details-table th {
+            background: #1b1f3a;
+            color: #f0f0f0;
+        }
+        .details-table td {
+            background: #10142a;
+            color: #f8f8f8;
+        }
+        .details-table tr:nth-child(even) td {
+            background: #141935;
+        }
+        .meta { color: #cfd2f3; font-size: 0.95em; }
+        .home-btn {
+            background: #24385b;
+            color: #e8edff;
+            border: 1px solid #3a4f76;
+        }
+        .home-btn:hover {
+            background: #314b74;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<header class="site-header hotels-header">
+    <h1 th:text="${hotel != null && hotel.name != null ? hotel.name : 'Hotel'}">Hotel</h1>
+    <p class="meta" th:if="${hotel != null && hotel.address != null}">
+        <span th:text="${hotel.address.line != null ? hotel.address.line : ''}"></span>
+        <span th:text="${hotel.address.cityName}"></span>
+        <span th:text="${hotel.address.countryCode}"></span>
+    </p>
+    <p class="meta" th:if="${checkInDate != null && checkOutDate != null}">
+        <strong>Dates:</strong>
+        <span th:text="${checkInDate}"></span> -> <span th:text="${checkOutDate}"></span>
+    </p>
+    <p class="meta" th:if="${adults != null}">
+        <strong>Adults:</strong> <span th:text="${adults}">1</span>
+    </p>
+
+    <form class="hotel-filter-form" th:if="${hotel != null or hotelId != null}" th:action="@{/hotels/details}" method="post">
+        <input type="hidden" name="hotelId" th:value="${hotel != null ? hotel.hotelId : hotelId}" />
+        <label>
+            Adults
+            <input type="number" name="adults" min="1" th:value="${adults != null ? adults : 1}" />
+        </label>
+        <label>
+            Check-in
+            <input type="date" name="checkInDate" th:value="${checkInDate}" />
+        </label>
+        <label>
+            Check-out
+            <input type="date" name="checkOutDate" th:value="${checkOutDate}" />
+        </label>
+        <button type="submit" class="btn btn-primary">Update offers</button>
+    </form>
+
+    <div class="hotel-details-actions">
+        <form th:action="@{/hotels/page}" method="post">
+            <input type="hidden" name="page" th:value="${currentPage != null ? currentPage : 0}" />
+            <button type="submit" class="btn btn-ghost">Back to hotels</button>
+        </form>
+        <a class="btn home-btn" href="/">Back to home</a>
+        <a class="btn btn-primary" th:if="${hotel != null && hotel.coordinates != null}"
+           th:href="${'https://www.google.com/maps/search/?api=1&query=' + hotel.coordinates.latitude + ',' + hotel.coordinates.longitude}"
+           target="_blank" rel="noopener">Open in Maps</a>
+    </div>
+</header>
+
+<main class="container">
+    <section class="card" th:if="${hotel != null}">
+        <h2>Overview</h2>
+        <p class="meta" th:if="${hotel.address != null}">
+            <strong>Location:</strong>
+            <span th:text="${hotel.address.cityName}"></span>,
+            <span th:text="${hotel.address.countryCode}"></span>
+        </p>
+        <p class="meta" th:if="${hotel.coordinates != null}">
+            <strong>Coordinates:</strong>
+            <span th:text="${hotel.coordinates.latitude}"></span>,
+            <span th:text="${hotel.coordinates.longitude}"></span>
+        </p>
+    </section>
+
+    <section class="card" style="margin-top:16px;">
+        <h2>Offers</h2>
+        <div th:if="${offers != null and !#lists.isEmpty(offers)}">
+            <table class="details-table">
+                <thead>
+                    <tr>
+                        <th>Room</th>
+                        <th>Description</th>
+                        <th>Guests</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                        <th>Price</th>
+                        <th>Currency</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="offer : ${offers}">
+                        <td th:text="${offer.room != null ? offer.room.category : 'N/A'}">N/A</td>
+                        <td th:text="${offer.room != null ? offer.room.description : 'N/A'}">N/A</td>
+                        <td th:text="${offer.adults > 0 ? offer.adults : 'N/A'}">N/A</td>
+                        <td th:text="${offer.checkInDate != null ? offer.checkInDate : 'N/A'}">N/A</td>
+                        <td th:text="${offer.checkOutDate != null ? offer.checkOutDate : 'N/A'}">N/A</td>
+                        <td th:text="${offer.price != null ? offer.price.amount : 'N/A'}">N/A</td>
+                        <td th:text="${offer.price != null ? offer.price.currencyCode : 'N/A'}">N/A</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p th:if="${offers == null or #lists.isEmpty(offers)}" class="meta">
+            No offers available for this hotel at the moment.
+        </p>
+    </section>
+</main>
+
+</body>
+</html>

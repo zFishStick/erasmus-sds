@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Planner - Place Details</title>
+    <link rel="stylesheet" href="/./style/style.css"/>
+    <link rel="stylesheet" href="/./style/places.css"/>
+</head>
+<body>
+
+    <form method="post">
+        <!-- <input type="hidden" name="destination" th:value="${place.destination}" /> -->
+        <!-- <input type="hidden" name="countryCode" th:value="${place.countryCode}" /> -->
+        <input type="hidden" id="latitude" name="latitude" th:value="${place.location.latitude}" />
+        <input type="hidden" id="longitude" name="longitude" th:value="${place.location.longitude}" />
+        <!-- <input type="hidden" name="startDate" th:value="${place.startDate}" />
+        <input type="hidden" name="endDate" th:value="${place.endDate}" /> -->
+    </form>
+
+    <div class="place-wrapper">
+        <div class="place-body">
+            <div class="place-photos">
+                <div th:each="photoUrl : ${place.photoUrl}">
+                    <img th:if="${photoUrl != null}" th:src="${photoUrl}" alt="img"/>
+                </div>
+            </div>
+            <div class="meta-block">
+                <div class="place-header">
+                    <h1 th:text="${place.name}" id="place-name">Place Name</h1>
+                </div>
+                <p><span class="meta-label">Address:</span> <span th:text="${place.address}">Place Address</span></p>
+                <p><span class="meta-label">Type:</span> <span th:text="${place.type}">Place Type</span></p>
+                <p th:if="${place.priceRange != null}">
+                    <span class="meta-label">Price Range:</span>
+                    <span th:text="${place.priceRange}">Price Range</span>
+                </p>
+                <p th:if="${place.priceRange != null}">
+                    <span class="main-text">Price Range:</span>
+                    <span th:text="|From ${place.priceRange.startPrice.units} ${place.priceRange.startPrice.currencyCode} to ${place.priceRange.endPrice.units} ${place.priceRange.endPrice.currencyCode}|">Price Range</span>
+                </p>
+                <p><span class="meta-label">Rating:</span> <span th:text="${place.rating}">Place Rating</span></p>
+                <p th:if="${place.websiteUri != null}" class="link-strong">
+                    Website: <a th:href="${place.websiteUri}" th:text="${place.websiteUri}">Website Link</a>
+                </p>
+
+                <div class="map" id="gmap"></div>
+                    
+                <script src="/./scripts/google_map.js"></script>
+                    
+                <script
+                    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKmFHtLzbE2Q6tHjZi2h31tBgkNfSoD8U&libraries=maps,marker&callback=initMap" async defer>
+                </script>               
+
+            </div>
+        </div>
+        <div class="back-actions">
+            <a class="btn-ghost" href="/" >Back to home</a>
+            <a class="btn-primary" href="javascript:history.back()">Back to places</a>
+        </div>
+    </div>
+    
+</body>
+</html>

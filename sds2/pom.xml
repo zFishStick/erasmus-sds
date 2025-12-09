@@ -198,7 +198,6 @@
 	  </pluginRepository>
   </pluginRepositories>
 
-<<<<<<< HEAD:sds2/pom.xml
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -211,8 +210,6 @@
     </dependencies>
   </dependencyManagement>
 
-=======
->>>>>>> b36e8dad579c6528e939712d96ea7c207eef5beb:Project/sds2/pom.xml
   <distributionManagement>
     <repository>
       <id>github</id>
