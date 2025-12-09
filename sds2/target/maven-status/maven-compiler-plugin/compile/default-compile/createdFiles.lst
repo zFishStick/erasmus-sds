@@ -24,6 +24,7 @@ com\sds2\repository\CityRepository.class
 com\sds2\service\WaypointService.class
 com\sds2\classes\response\CityResponse$CityData.class
 com\sds2\util\DataISOFormatter.class
+com\sds2\classes\CitySummary$CitySummaryBuilder.class
 com\sds2\classes\response\PlaceResponse$DisplayName.class
 com\sds2\classes\coordinates\Location.class
 com\sds2\classes\request\RouteRequest.class
@@ -62,6 +63,7 @@ com\sds2\service\PlaceService.class
 com\sds2\controller\CityController.class
 com\sds2\dto\CityDTO.class
 com\sds2\classes\routeclasses\Route$RouteBuilder.class
+com\sds2\classes\coordinates\Location$LocationBuilder.class
 com\sds2\classes\hotel\HotelSearchContext.class
 com\sds2\classes\response\HotelOfferResponse$OfferItem.class
 com\sds2\classes\price\PriceRange.class

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.sds2.classes.request.HotelRequestTest" time="0.007" tests="2" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.sds2.controller.PageServerTest" time="0.045" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="23"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -10,6 +10,7 @@
     <property name="user.variant" value=""/>
     <property name="java.vendor.url" value="https://java.oracle.com/"/>
     <property name="user.timezone" value="Europe/Warsaw"/>
+    <property name="org.jboss.logging.provider" value="slf4j"/>
     <property name="os.name" value="Windows 11"/>
     <property name="java.vm.specification.version" value="23"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
@@ -30,6 +31,8 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="FILE_LOG_CHARSET" value="UTF-8"/>
+    <property name="java.awt.headless" value="true"/>
     <property name="surefire.real.class.path" value="C:\Users\gabri\AppData\Local\Temp\surefire6740779017642886765\surefirebooter-20251209174607365_3.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
@@ -44,11 +47,14 @@
     <property name="localRepository" value="C:\Users\gabri\.m2\repository"/>
     <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
     <property name="java.io.tmpdir" value="C:\Users\gabri\AppData\Local\Temp\"/>
+    <property name="com.zaxxer.hikari.pool_number" value="2"/>
     <property name="java.version" value="23.0.1"/>
     <property name="user.dir" value="C:\Projects\Java\erasmus-sds\sds2"/>
     <property name="os.arch" value="amd64"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="PID" value="5892"/>
     <property name="sun.os.patch.level" value=""/>
+    <property name="CONSOLE_LOG_CHARSET" value="windows-1252"/>
     <property name="native.encoding" value="Cp1252"/>
     <property name="java.library.path" value="C:\Program Files\Java\jdk-23\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;c:\Users\gabri\AppData\Roaming\Code\User\globalStorage\github.copilot-chat\debugCommand;c:\Users\gabri\AppData\Roaming\Code\User\globalStorage\github.copilot-chat\copilotCli;C:\Program Files\Java\jdk-23\bin;C:\Program Files\Eclipse Adoptium\jdk-11.0.29.7-hotspot\bin;C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\Program Files\Eclipse Adoptium\jdk-21.0.8.9-hotspot\bin;C:\Program Files\ImageMagick-7.1.2-Q16-HDRI;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Users\gabri\AppData\Local\Programs\Python\Python312\Scripts\;C:\Users\gabri\AppData\Local\Programs\Python\Python312\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Users\gabri\AppData\Local\Programs\Python\Python312;C:\Users\gabri\AppData\Local\Programs\Python\Python312\Scripts;C:\MinGW\bin;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Program Files\Git\cmd;C:\Users\gabri\Downloads\yt-dlp;C:\ffmpeg\bin;C:\ffmpeg;C:\Program Files\dotnet\;C:\Program Files\MongoDB\Server\7.0\bin;C:\Program Files\Amazon\AWSCLIV2\;C:\Program Files\Zero Install;C:\Program Files\CMake\bin;C:\WINDOWS\system32\config\systemprofile\AppData\Local\Muse Hub\lib;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\Git LFS;C:\Program Files\Java\jdk-23\bin;C:\Users\gabri\scoop\shims;C:\Users\gabri\.local\bin;C:\Users\gabri\.cargo\bin;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\jflex-1.9.1\jflex-1.9.1\bin;C:\Users\gabri\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\gabri\AppData\Local\Programs\Python\Python312\Lib\site-packages\pip;C:\Users\gabri\AppData\Roaming\npm;C:\texlive\2024\bin\windows;C:\apache-maven-3.9.6-bin\apache-maven-3.9.6\bin;C:\Users\gabri\.dotnet\tools;C:\Program Files\MongoDB\Server\7.0\bin\;C:\Users\gabri\AppData\Local\Android\Sdk\platform-tools;C:\Users\gabri\AppData\Local\Microsoft\WindowsApps;C:\Users\gabri\AppData\Local\GitHubDesktop\bin;C:\FlutterSDK\flutter\bin;C:\Users\gabri\AppData\Local\Android\Sdk\cmdline-tools\latest\bin;C:\Gradle\gradle-8.11.1\bin;C:\Program Files (x86)\Intel\oneAPI\vtune\latest\bin64;C:\Program Files\OpenSSL-Win64\bin;C:\Users\gabri\Downloads\john-1.9.0-jumbo-1-win64\john-1.9.0-jumbo-1-win64\run;C:\Users\gabri\AppData\Local\Microsoft\WinGet\Packages\dalance.procs_Microsoft.Winget.Source_8wekyb3d8bbwe;C:\Users\gabri\AppData\Local\Microsoft\WinGet\Packages\YS-L.csvlens_Microsoft.Winget.Source_8wekyb3d8bbwe;C:\Users\gabri\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin;C:\curl-8.17.0_2-win64-mingw\bin;C:\yt-dlp;c:\Users\gabri\.vscode\extensions\vscjava.vscode-java-debug-0.58.3\bundled\scripts\noConfigScripts;."/>
     <property name="java.vm.info" value="mixed mode, sharing"/>
@@ -58,6 +64,150 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="67.0"/>
   </properties>
-  <testcase name="constructorAndGettersSetters" classname="com.sds2.classes.request.HotelRequestTest" time="0.004"/>
-  <testcase name="defaultConstructorInitializesFields" classname="com.sds2.classes.request.HotelRequestTest" time="0.0"/>
+  <testcase name="testIndex" classname="com.sds2.controller.PageServerTest" time="0.034">
+    <system-out><![CDATA[2025-12-09T17:46:23.309+01:00  INFO 5892 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.sds2.controller.PageServerTest]: PageServerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2025-12-09T17:46:23.312+01:00  INFO 5892 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.sds2.Server for test class com.sds2.controller.PageServerTest
+
+MockHttpServletRequest:
+      HTTP Method = GET
+      Request URI = /
+       Parameters = {}
+          Headers = []
+             Body = null
+    Session Attrs = {}
+
+Handler:
+             Type = com.sds2.controller.PageServer
+           Method = com.sds2.controller.PageServer#index()
+
+Async:
+    Async started = false
+     Async result = null
+
+Resolved Exception:
+             Type = null
+
+ModelAndView:
+        View name = index
+             View = null
+            Model = null
+
+FlashMap:
+       Attributes = null
+
+MockHttpServletResponse:
+           Status = 200
+    Error message = null
+          Headers = [Content-Language:"en", Content-Type:"text/html;charset=UTF-8"]
+     Content type = text/html;charset=UTF-8
+             Body = 
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Travel Planner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <script src="https://code.jquery.com/jquery-1.12.4.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"></script> 
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="style/style.css" />
+  </head>
+  <body>
+    <header class="site-header" role="banner">
+      <div class="container">
+        <h1 class="site-title">Travel Planner</h1>
+        <p class="site-tagline">Plan your visit quickly and easily</p>
+      </div>
+    </header>
+
+    <main id="main" class="container" role="main">
+      <section aria-labelledby="trip-planner-title" class="card">
+        <h2 id="trip-planner-title">Plan your next trip</h2>
+        <p class="muted">
+          Enter a destination and a date range. Click
+          <strong>Search</strong> to continue.
+        </p>
+        <form id="planner-form" class="form" autocomplete="off" action="/places" method="post">
+          <div class="form-row">
+            <label for="destination">Destination</label>
+            <div class="form-filter">
+              <input
+                id="destination"
+                name="destination"
+                type="text"
+                placeholder="e.g., Paris, France"
+                aria-describedby="destination-help"
+                list="city-suggestions"
+                autocomplete="address-line1"
+                required
+              />
+            <i class="fa fa-filter" style="font-size:24px" id="filter-btn"></i>
+            </div>
+            <datalist id="city-suggestions"></datalist>
+            <small id="destination-help" class="muted">City or location you want to visit</small>
+            <div class="filters-div" id="filters-div">
+              <label><input type="checkbox" name="filter" value="museum" /> Museums</label>
+              <label><input type="checkbox" name="filter" value="park" /> Parks</label>
+              <label><input type="checkbox" name="filter" value="historical" /> Historical Sites</label>
+              <label><input type="checkbox" name="filter" value="shopping" /> Shopping</label>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-row">
+              <label for="start-date">Start date</label>
+              <input id="start-date" name="startDate" type="date" required />
+            </div>
+            <div class="form-row">
+              <label for="end-date">End date</label>
+              <input id="end-date" name="endDate" type="date" required />
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn btn-primary" id="submit-form">Search</button>
+            <button type="reset" class="btn btn-ghost">Reset</button>
+          </div>
+        </form>
+      </section>
+
+      <section aria-live="polite" class="card" id="preview" hidden>
+        <h2>Preview</h2>
+        <div class="preview-content">
+          <p>
+            <strong>Destination:</strong>
+            <span data-preview="destination">—</span>
+          </p>
+          <p>
+            <strong>From:</strong>
+            <span data-preview="startDate">—</span>
+            <strong>to</strong>
+            <span data-preview="endDate">—</span>
+          </p>
+          <p class="muted">
+            Loading available activities, wait a moment please...
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p class="muted">SDS2 • Erasmus Tourist Assistant</p>
+      </div>
+    </footer>
+
+    <script src="scripts/input_script.js?id=1"></script>
+    <script src="scripts/main.js"></script>
+
+  </body>
+  </html>
+    Forwarded URL = null
+   Redirected URL = null
+          Cookies = []
+]]></system-out>
+  </testcase>
 </testsuite>
