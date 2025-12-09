@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sds2.classes.Places;
 import com.sds2.classes.coordinates.Location;
 import com.sds2.classes.request.POIRequest;
@@ -30,7 +31,7 @@ public class PlacesController {
     static final String REQUEST = "request";
 
     @PostMapping
-    public String getPlacesToVisit(POIRequest request, HttpSession session) {
+    public String getPlacesToVisit(POIRequest request, HttpSession session) throws JsonProcessingException {
         Location location = new Location(request.getLatitude(), request.getLongitude());
         List<PlacesDTO> places = placeService.searchNearby(location, request.getDestination(), request.getCountryCode());
         session.setAttribute(PLACESDATA, places);

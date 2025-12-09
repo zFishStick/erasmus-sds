@@ -32,7 +32,7 @@ public class PlaceService {
     private final GoogleAuthService googleAuthService;
     private final WebClient.Builder webClientBuilder;
 
-    private String [] headerInfo = {
+    private static final String [] headerInfo = {
         "places.id",
         "places.name",
         "places.displayName.text",
@@ -50,6 +50,13 @@ public class PlaceService {
         if (place == null) {
             throw new IllegalArgumentException("Place cannot be null");
         }
+
+        Places existingPlace = placesRepository.findByName(place.getName());
+        System.out.println("Checking existence for place: " + place.getName());
+        if (existingPlace != null) {
+            return; 
+        }
+
         placesRepository.save(place);
     }
 
@@ -65,9 +72,8 @@ public class PlaceService {
         return p;
     }
 
-    private List<PlacesDTO> mapPlacesToDTOs(PlaceResponse response, String city, String country) {
+    public List<PlacesDTO> mapPlacesToDTOs(PlaceResponse response, String city, String country) {
         return response.getPlaces().stream()
-            .filter(data -> matchesCityAndCountry(data, city, country))
             .map(data -> {                
                 Places places = Places.builder()
                     .citySummary(new CitySummary(city, country))
@@ -108,13 +114,13 @@ public class PlaceService {
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
 
-        List<Places> existingPlaces = placesRepository.findByCitySummary_CityAndCitySummary_Country(city, country);
+        // List<Places> existingPlaces = placesRepository.findByCitySummary_CityAndCitySummary_Country(city, country);
 
-        if (!existingPlaces.isEmpty()) {
-            return existingPlaces.stream()
-                .map(this::mapToDTO)
-                .toList();
-        }
+        // if (!existingPlaces.isEmpty()) {
+        //     return existingPlaces.stream()
+        //         .map(this::mapToDTO)
+        //         .toList();
+        // }
 
         String url = "https://places.googleapis.com/v1/places:searchNearby";
 
@@ -133,7 +139,6 @@ public class PlaceService {
             }
           }
         }
-        }
         """.formatted(latitude, longitude, radius));
 
         PlaceResponse response = webClientBuilder.build()
@@ -150,6 +155,8 @@ public class PlaceService {
         if (response == null) {
             throw new IllegalStateException("Failed to retrieve nearby places from Google Places API");
         }
+
+        System.out.println("Retrieved " + response.getPlaces().size() + " places from Google Places API");
 
         return mapPlacesToDTOs(response, city, country);
     }

@@ -18,7 +18,17 @@ const placeTypes = {
     "park": "Park",
     "zoo": "Zoo",
     "botanical_garden": "Botanical Garden",
-    "church": "Church"
+    "church": "Church",
+    "bed_and_breakfast": "Bed and Breakfast",
+    "subway_station": "Subway Station",
+    "bakery": "Bakery",
+    "italian_restaurant": "Italian Restaurant",
+    "performing_arts_theater": "Performing Arts Theater",
+    "ice_cream_shop": "Ice Cream Shop",
+    "historical_place": "Historical Place",
+    "clothing_store": "Clothing Store",
+    "market": "Market",
+    "hostel": "Hostel"
 };
 
 function getDescriptions(city) {
@@ -40,7 +50,17 @@ function getDescriptions(city) {
         "park": `Relax and enjoy the natural beauty of ${city} by visiting its parks, ideal for picnics, walks, and outdoor activities.`,
         "zoo": `Visit the zoo in ${city} to see a variety of animals and enjoy a fun day out with family and friends.`,
         "botanical_garden": `Explore the botanical gardens in ${city} to discover a wide variety of plants and enjoy a peaceful environment.`,
-        "church": `Experience the architectural beauty and spiritual ambiance of the churches in ${city}.`
+        "church": `Experience the architectural beauty and spiritual ambiance of the churches in ${city}.`,
+        "bed_and_breakfast": `Looking for a cozy stay in ${city}? Check out the charming bed and breakfast options available.`,
+        "subway_station": `Navigate ${city} easily by using its subway stations, providing efficient transportation across the city.`,
+        "bakery": `Indulge in freshly baked goods at the best bakeries in ${city}, offering a variety of breads, pastries, and cakes.`,
+        "italian_restaurant": `Craving Italian cuisine? Discover the finest Italian restaurants in ${city} for an authentic dining experience.`,
+        "performing_arts_theater": `Experience the vibrant performing arts scene in ${city} by visiting its top theaters for plays, musicals, and performances.`,
+        "ice_cream_shop": `Cool off with delicious treats from the best ice cream shops in ${city}, offering a variety of flavors to satisfy your cravings.`,
+        "historical_place": `Step back in time by exploring the historical places in ${city}, rich with stories and heritage.`,
+        "clothing_store": `Update your wardrobe with the latest fashion trends at the top clothing stores in ${city}.`,
+        "market": `Experience the local culture and flavors by visiting the vibrant markets in ${city}, where you can find fresh produce, crafts, and more.`,
+        "hostel": `Traveling on a budget? Find affordable and comfortable hostels in ${city} for your stay.`
     };
 }
 

@@ -2,7 +2,7 @@ package com.sds2.classes.enums;
 
 public enum GoogleBodyEnum {
     CONTENTTYPE("Content-Type"),
-    APPLICATIONJSON("application/json; charset=UTF-8"),
+    APPLICATIONJSON("application/json"),
     X_GOOG_API_KEY("X-Goog-Api-Key"),
     X_GOOG_FIELD_MASK("X-Goog-FieldMask");
 
