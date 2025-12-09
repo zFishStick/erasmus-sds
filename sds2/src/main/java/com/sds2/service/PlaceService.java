@@ -114,13 +114,13 @@ public class PlaceService {
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
 
-        // List<Places> existingPlaces = placesRepository.findByCitySummary_CityAndCitySummary_Country(city, country);
+        List<Places> existingPlaces = placesRepository.findByCitySummary_CityAndCitySummary_Country(city, country);
 
-        // if (!existingPlaces.isEmpty()) {
-        //     return existingPlaces.stream()
-        //         .map(this::mapToDTO)
-        //         .toList();
-        // }
+        if (!existingPlaces.isEmpty()) {
+            return existingPlaces.stream()
+                .map(this::mapToDTO)
+                .toList();
+        }
 
         String url = "https://places.googleapis.com/v1/places:searchNearby";
 

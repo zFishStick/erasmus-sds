@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${'Point of interests in ' + (cityName != null and !#strings.isEmpty(cityName) ? cityName + ', ' + countryCode : '')}">POIs</title>
+    <script src="/./scripts/filter_places.js"></script>
+    <link rel="stylesheet" href="/./style/style.css"/>
+    <link rel="stylesheet" href="/../style/pois.css"/>
+    <style>
+        body { background: linear-gradient(180deg, #0b1024 0%, #101733 60%, #0b1024 100%); }
+        .pois-container { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 16px; margin-bottom: 18px; border: 1px solid rgba(255,255,255,0.05); }
+        .pois-back a { color: #7fb2ff; }
+        .pois-back a:hover { text-decoration: underline; }
+    </style>
+  </head>
+<body>
+
+<header class="pois-header" role="banner">
+    <div class="container">
+        <h1 th:text="${'Point of interests in ' + (cityName != null and !#strings.isEmpty(cityName) ? cityName + ', ' + countryCode : '')}">Point of interests in CITY</h1>
+        <div th:if="${cityName != null}" class="actions" style="justify-content:center; margin: 10px 0 6px; display:flex; gap:12px; flex-wrap:wrap;">
+          <form th:action="@{/hotels}" method="post">
+            <input type="hidden" name="destination" th:value="${cityName}" />
+            <input type="hidden" name="countryCode" th:value="${countryCode}" />
+            <input type="hidden" name="latitude" th:value="${latitude}" />
+            <input type="hidden" name="longitude" th:value="${longitude}" />
+            <input type="hidden" name="checkInDate" th:if="${checkInDate != null}" th:value="${checkInDate}" />
+            <input type="hidden" name="checkOutDate" th:if="${checkOutDate != null}" th:value="${checkOutDate}" />
+            <button type="submit" class="btn btn-primary">Want to book a hotel?</button>
+          </form>
+          <form th:action="@{/places}" method="post">
+            <input type="hidden" name="destination" th:value="${cityName}" />
+            <input type="hidden" name="countryCode" th:value="${countryCode}" />
+            <input type="hidden" name="latitude" th:value="${latitude}" />
+            <input type="hidden" name="longitude" th:value="${longitude}" />
+            <input type="hidden" name="startDate" th:value="${checkInDate}" />
+            <input type="hidden" name="endDate" th:value="${checkOutDate}" />
+            <button type="submit" class="btn btn-primary">Back to places</button>
+          </form>
+        </div>
+
+        <h2>Activities</h2>
+        <div th:if="${poisData == null or #lists.isEmpty(poisData)}">
+            <p>No activities found.</p>
+    </div>
+</header>
+<div class="pois-container" th:if="${poisData != null and !#lists.isEmpty(poisData)}" th:each="activity : ${poisData}">
+  <h2 th:text="${activity.name}">Activity name</h2>
+  <div class="row">
+    <img th:if="${activity.pictures != null}" th:src="${activity.pictures}" alt="Activity Img"/>
+    <div class="pois-description" th:utext="${activity.description}">Activity Description</div>
+  </div>
+  <div class="row details">
+    <p th:text="'Price: ' + ${activity.price.amount} + ' ' + ${activity.price.currencyCode}">Price</p>
+    <p th:text="'Minimum Duration: ' + ${activity.minimumDuration}">Minimum Duration</p>
+  </div>
+  <a th:href="${activity.bookingLink}">Book Now</a>
+</div>
+
+<div th:if="${poisData != null and !#lists.isEmpty(poisData)}" class="pagination">
+    <a th:if="${currentPage > 0}" 
+       th:href="@{'/pois/' + ${countryCode} + '/' + ${cityName} + '?page=' + (${currentPage} - 1) + '&size=' + ${pageSize}}">
+       Previous
+    </a>
+
+    <span>Page <span th:text="${currentPage + 1}">1</span> of <span th:text="${totalPages}">1</span></span>
+
+    <a th:if="${currentPage + 1 < totalPages}" 
+       th:href="@{'/pois/' + ${countryCode} + '/' + ${cityName} + '?page=' + (${currentPage} + 1) + '&size=' + ${pageSize}}">
+       Next
+    </a>
+</div>
+
+
+<p class="pois-back">
+  <a href="/">Back</a>
+</p>
+</body>
+</html>
