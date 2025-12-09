@@ -12,12 +12,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
 import com.sds2.classes.CitySummary;
 import com.sds2.classes.Places;
 import com.sds2.classes.coordinates.Location;
-import com.sds2.classes.request.RouteRequest;
 import com.sds2.classes.request.WaypointRequest;
 import com.sds2.classes.routeclasses.Waypoint;
 import com.sds2.service.PlaceService;
@@ -27,6 +27,7 @@ import com.sds2.service.WaypointService;
 import jakarta.servlet.http.HttpSession;
 
 @ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class RouteControllerTest {
 
     @Mock
