@@ -2,12 +2,9 @@ package com.sds2.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -18,7 +15,6 @@ import com.sds2.classes.enums.GoogleBodyEnum;
 import com.sds2.classes.response.PhotoResponse;
 import com.sds2.classes.response.PlaceResponse;
 import com.sds2.classes.response.PlaceResponse.Photo;
-import com.sds2.classes.response.PlaceResponse.PlacesData;
 import com.sds2.dto.PlacesDTO;
 import com.sds2.repository.PlacesRepository;
 
@@ -200,44 +196,6 @@ public class PlaceService {
         } catch (URISyntaxException e) {
             throw new IllegalStateException("Invalid URI syntax: " + uriString, e);
         }
-    }
-
-    private static String normalize(String s) {
-        if (s == null) return "";
-        return Normalizer.normalize(s, Normalizer.Form.NFD)
-                        .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
-                        .toLowerCase();
-    }
-
-    private boolean matchesCityAndCountry(PlacesData data, String city, String country) {
-        if (data.getAddressComponents() == null) return false;
-
-        String normCity = normalize(city);
-        String normCountry = normalize(country);
-
-        boolean cityMatch = Arrays.stream(data.getAddressComponents())
-            .filter(Objects::nonNull)
-            .anyMatch(ac ->
-                ac.getTypes() != null &&    
-                ac.getLongText() != null && 
-                Arrays.stream(ac.getTypes())
-                    .filter(Objects::nonNull) 
-                    .anyMatch(t -> t.equals("locality")) &&
-                normalize(ac.getLongText()).equals(normCity)
-            );
-
-        boolean countryMatch = Arrays.stream(data.getAddressComponents())
-            .filter(Objects::nonNull)
-            .anyMatch(ac ->
-                ac.getTypes() != null &&
-                ac.getLongText() != null &&
-                Arrays.stream(ac.getTypes())
-                    .filter(Objects::nonNull)
-                    .anyMatch(t -> t.equals("country")) &&
-                normalize(ac.getLongText()).equals(normCountry)
-            );
-
-        return cityMatch && countryMatch;
     }
 
     // DEBUG METHOD
