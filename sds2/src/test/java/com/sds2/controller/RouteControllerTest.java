@@ -1,9 +1,7 @@
 package com.sds2.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -12,19 +10,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
-
 import com.sds2.classes.CitySummary;
 import com.sds2.classes.Places;
 import com.sds2.classes.coordinates.Location;
-import com.sds2.classes.request.RouteRequest;
 import com.sds2.classes.request.WaypointRequest;
 import com.sds2.classes.routeclasses.Waypoint;
 import com.sds2.service.PlaceService;
 import com.sds2.service.RoutesService;
 import com.sds2.service.WaypointService;
-
-import jakarta.servlet.http.HttpSession;
 
 @ExtendWith(MockitoExtension.class)
 class RouteControllerTest {
