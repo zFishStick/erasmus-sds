@@ -28,7 +28,18 @@ const placeTypes = {
     "historical_place": "Historical Place",
     "clothing_store": "Clothing Store",
     "market": "Market",
-    "hostel": "Hostel"
+    "hostel": "Hostel",
+    "historical_landmark": "Historical Landmark",
+    "plaza": "Plaza",
+    "sporting_goods_store": "Sporting Goods Store",
+    "electronics_store": "Electronics Store",
+    "historical_landmark": "Historical Landmark",
+    "transit_station": "Transit Station",
+    "monument": "Monument",
+    "book_store": "Book Store",
+    "department_store": "Department Store",
+    "furniture_store": "Furniture Store",
+    "home_goods_store": "Home Goods Store"
 };
 
 function getDescriptions(city) {
@@ -60,7 +71,18 @@ function getDescriptions(city) {
         "historical_place": `Step back in time by exploring the historical places in ${city}, rich with stories and heritage.`,
         "clothing_store": `Update your wardrobe with the latest fashion trends at the top clothing stores in ${city}.`,
         "market": `Experience the local culture and flavors by visiting the vibrant markets in ${city}, where you can find fresh produce, crafts, and more.`,
-        "hostel": `Traveling on a budget? Find affordable and comfortable hostels in ${city} for your stay.`
+        "hostel": `Traveling on a budget? Find affordable and comfortable hostels in ${city} for your stay.`,
+        "historical_landmark": `Discover the historical landmarks in ${city} that tell the story of its rich past and cultural heritage.`,
+        "plaza": `Enjoy the vibrant atmosphere of the plazas in ${city}, perfect for socializing and events.`,
+        "sporting_goods_store": `Find the best sporting goods stores in ${city} for all your athletic and outdoor needs.`,
+        "electronics_store": `Shop for the latest gadgets and electronics at the top electronics stores in ${city}.`,
+        "historical_landmark": `Explore the significant historical landmarks in ${city} that highlight its unique history and culture.`,
+        "transit_station": `Easily navigate ${city} using its transit stations, providing access to various modes of transportation.`,
+        "monument": `Visit the iconic monuments in ${city} that commemorate its history and notable figures.`,
+        "book_store": `Discover a world of knowledge and stories at the best book stores in ${city}, offering a wide selection of books for all interests.`,
+        "department_store": `Shop for a variety of products under one roof at the top department stores in ${city}.`,
+        "furniture_store": `Furnish your home with style by visiting the best furniture stores in ${city}, offering a range of designs and options.`,
+        "home_goods_store": `Find a variety of home goods and decor at the top home goods stores in ${city}, perfect for enhancing your living space.`,
     };
 }
 
