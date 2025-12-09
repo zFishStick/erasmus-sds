@@ -32,7 +32,7 @@ jobs:
         settings-path: ${{ github.workspace }}
 
     - name: Build with Maven
-      run: mvn -B package --file Project/sds2/pom.xml
+      run: mvn -B package --file sds2/pom.xml
 
     - name: Publish to GitHub Packages Apache Maven
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml --file Project/sds2/pom.xml
