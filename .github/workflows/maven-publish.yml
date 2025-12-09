@@ -38,3 +38,6 @@ jobs:
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml --file Project/sds2/pom.xml
       env:
         GITHUB_TOKEN: ${{ github.token }}
+        SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/travel-planner
+        SPRING_DATASOURCE_USERNAME: postgres
+        SPRING_DATASOURCE_PASSWORD: admin
