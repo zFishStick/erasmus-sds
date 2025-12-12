@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.sds2.classes.coordinates.GeoCode;
-import com.sds2.classes.poi.POI;
+import com.sds2.classes.entity.POI;
 import com.sds2.classes.poi.POIInfo;
 import com.sds2.classes.response.POISResponse;
 import com.sds2.dto.POIDTO;

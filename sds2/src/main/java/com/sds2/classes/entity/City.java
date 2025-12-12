@@ -1,4 +1,4 @@
-package com.sds2.classes;
+package com.sds2.classes.entity;
 
 import com.sds2.classes.coordinates.GeoCode;
 

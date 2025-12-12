@@ -43,6 +43,14 @@ public class RouteController {
         return waypointService.removeWaypoint(id);
     }
 
+    @PostMapping("/save")
+    public String postMethodName(@RequestBody RouteRequest routeRequest) {
+        //TODO: process POST request
+        
+        return "Route saved successfully";
+    }
+    
+
     @PostMapping("/create/{city}")
     @ResponseBody
     public String createRoute(@PathVariable String city, RouteRequest routeRequest) {
@@ -58,7 +66,7 @@ public class RouteController {
         model.addAttribute("country", country);
         model.addAttribute("waypoints", waypoints);
 
-        return "waypoints_page";
+        return "itinerary";
     }
 
     

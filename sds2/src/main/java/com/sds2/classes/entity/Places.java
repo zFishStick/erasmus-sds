@@ -1,7 +1,8 @@
-package com.sds2.classes;
+package com.sds2.classes.entity;
 
 import java.util.List;
 
+import com.sds2.classes.CitySummary;
 import com.sds2.classes.coordinates.Location;
 import com.sds2.classes.price.PriceRange;
 import com.sds2.classes.price.PriceRangeConverter;

@@ -1,6 +1,7 @@
-package com.sds2.classes.hotel;
+package com.sds2.classes.entity;
 
 import com.sds2.classes.coordinates.GeoCode;
+import com.sds2.classes.hotel.HotelAddress;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;

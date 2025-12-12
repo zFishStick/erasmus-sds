@@ -7,8 +7,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sds2.classes.Places;
 import com.sds2.classes.coordinates.Location;
+import com.sds2.classes.entity.Places;
 import com.sds2.classes.request.POIRequest;
 import com.sds2.dto.PlacesDTO;
 import com.sds2.service.PlaceService;

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1 th:text="'Hello ' + ${user.username}"> User not found</h1>
+    <div>
+        <p th:text="'Email: ' + ${user.email}">Email not found</p>
+    </div>
+
+    <button><a th:href="@{/user/logout}">Sign out</a></button>
+    <button onclick="window.history.back()">Back</button>
+</body>
+</html>

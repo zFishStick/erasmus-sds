@@ -1,7 +1,8 @@
-package com.sds2.classes.poi;
+package com.sds2.classes.entity;
 
 import com.sds2.classes.Price;
 import com.sds2.classes.coordinates.GeoCode;
+import com.sds2.classes.poi.POIInfo;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
