@@ -35,7 +35,7 @@ class CityControllerTest {
         mockMvc.perform(get("/city/Paris"))
                .andDo(print())
                .andExpect(status().isOk())
-               .andExpect(content().string("Paris"));
-    }
+               .andExpect(content().string("[{\"name\":\"Paris\",\"country\":\"France\",\"latitude\":48.85341,\"longitude\":2.3488}]"));
+	}
 }
 
