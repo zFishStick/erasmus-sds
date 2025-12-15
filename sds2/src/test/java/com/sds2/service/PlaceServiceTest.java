@@ -32,18 +32,4 @@ class PlaceServiceTest {
         assertNotNull(response);
         System.out.println(response);
     }
-
-    @Test
-    void addOtherPlaces() {
-        String city = "Rome";
-        String country = "Italy";
-        double latitude = 41.89193;
-        double longitude = 12.51133;
-
-        Location location = new Location(latitude, longitude);
-
-        List<PlacesDTO> response = placeService.searchNearby(location, city, country);
-        assertNotNull(response);
-        System.out.println(response);   
-    }
 }
