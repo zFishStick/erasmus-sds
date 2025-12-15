@@ -8,6 +8,7 @@ on:
       - main
       - develop
       - develop/*
+      - feature/*
   workflow_dispatch:
   schedule:
     - cron: "0 20 * * *" 
