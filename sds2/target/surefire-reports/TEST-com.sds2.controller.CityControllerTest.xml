@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.sds2.classes.AddressTest" time="0.059" tests="3" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.sds2.controller.CityControllerTest" time="0.552" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="23"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -10,6 +10,7 @@
     <property name="user.variant" value=""/>
     <property name="java.vendor.url" value="https://java.oracle.com/"/>
     <property name="user.timezone" value="Europe/Warsaw"/>
+    <property name="org.jboss.logging.provider" value="slf4j"/>
     <property name="os.name" value="Windows 11"/>
     <property name="java.vm.specification.version" value="23"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
@@ -30,6 +31,8 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="FILE_LOG_CHARSET" value="UTF-8"/>
+    <property name="java.awt.headless" value="true"/>
     <property name="surefire.real.class.path" value="C:\Users\gabri\AppData\Local\Temp\surefire8883604613273463769\surefirebooter-20251215112630703_3.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
@@ -44,11 +47,14 @@
     <property name="localRepository" value="C:\Users\gabri\.m2\repository"/>
     <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
     <property name="java.io.tmpdir" value="C:\Users\gabri\AppData\Local\Temp\"/>
+    <property name="com.zaxxer.hikari.pool_number" value="1"/>
     <property name="java.version" value="23.0.1"/>
     <property name="user.dir" value="C:\Projects\Java\erasmus-sds\sds2"/>
     <property name="os.arch" value="amd64"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="PID" value="4428"/>
     <property name="sun.os.patch.level" value=""/>
+    <property name="CONSOLE_LOG_CHARSET" value="windows-1252"/>
     <property name="native.encoding" value="Cp1252"/>
     <property name="java.library.path" value="C:\Program Files\Java\jdk-23\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;c:\Users\gabri\AppData\Roaming\Code\User\globalStorage\github.copilot-chat\debugCommand;c:\Users\gabri\AppData\Roaming\Code\User\globalStorage\github.copilot-chat\copilotCli;C:\Program Files\Java\jdk-23\bin;C:\Program Files\Eclipse Adoptium\jdk-11.0.29.7-hotspot\bin;C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\Program Files\Eclipse Adoptium\jdk-21.0.8.9-hotspot\bin;C:\Program Files\ImageMagick-7.1.2-Q16-HDRI;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Users\gabri\AppData\Local\Programs\Python\Python312\Scripts\;C:\Users\gabri\AppData\Local\Programs\Python\Python312\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Users\gabri\AppData\Local\Programs\Python\Python312;C:\Users\gabri\AppData\Local\Programs\Python\Python312\Scripts;C:\MinGW\bin;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Program Files\Git\cmd;C:\Users\gabri\Downloads\yt-dlp;C:\ffmpeg\bin;C:\ffmpeg;C:\Program Files\dotnet\;C:\Program Files\MongoDB\Server\7.0\bin;C:\Program Files\Amazon\AWSCLIV2\;C:\Program Files\Zero Install;C:\Program Files\CMake\bin;C:\WINDOWS\system32\config\systemprofile\AppData\Local\Muse Hub\lib;C:\Program Files\Git LFS;;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\Java\jdk-23\bin;C:\Users\gabri\scoop\shims;C:\Users\gabri\.local\bin;C:\Users\gabri\.cargo\bin;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\jflex-1.9.1\jflex-1.9.1\bin;C:\Users\gabri\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\gabri\AppData\Local\Programs\Python\Python312\Lib\site-packages\pip;C:\Users\gabri\AppData\Roaming\npm;C:\texlive\2024\bin\windows;C:\apache-maven-3.9.6-bin\apache-maven-3.9.6\bin;C:\Users\gabri\.dotnet\tools;C:\Program Files\MongoDB\Server\7.0\bin\;C:\Users\gabri\AppData\Local\Android\Sdk\platform-tools;C:\Users\gabri\AppData\Local\Microsoft\WindowsApps;C:\Users\gabri\AppData\Local\GitHubDesktop\bin;C:\FlutterSDK\flutter\bin;C:\Users\gabri\AppData\Local\Android\Sdk\cmdline-tools\latest\bin;C:\Gradle\gradle-8.11.1\bin;C:\Program Files (x86)\Intel\oneAPI\vtune\latest\bin64;C:\Program Files\OpenSSL-Win64\bin;C:\Users\gabri\Downloads\john-1.9.0-jumbo-1-win64\john-1.9.0-jumbo-1-win64\run;C:\Users\gabri\AppData\Local\Microsoft\WinGet\Packages\dalance.procs_Microsoft.Winget.Source_8wekyb3d8bbwe;C:\Users\gabri\AppData\Local\Microsoft\WinGet\Packages\YS-L.csvlens_Microsoft.Winget.Source_8wekyb3d8bbwe;C:\Users\gabri\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin;C:\curl-8.17.0_2-win64-mingw\bin;C:\yt-dlp;;C:\Users\gabri\.fly\bin;c:\Users\gabri\.vscode\extensions\vscjava.vscode-java-debug-0.58.4\bundled\scripts\noConfigScripts;."/>
     <property name="java.vm.info" value="mixed mode, sharing"/>
@@ -58,7 +64,47 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="67.0"/>
   </properties>
-  <testcase name="setLinesDefensiveCopyAndNullHandled" classname="com.sds2.classes.AddressTest" time="0.025"/>
-  <testcase name="constructorCopiesProvidedLines" classname="com.sds2.classes.AddressTest" time="0.002"/>
-  <testcase name="defaultConstructorInitializesEmptyLines" classname="com.sds2.classes.AddressTest" time="0.003"/>
+  <testcase name="testGetCityByPattern" classname="com.sds2.controller.CityControllerTest" time="0.532">
+    <system-out><![CDATA[2025-12-15T11:26:46.198+01:00  INFO 4428 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.sds2.controller.CityControllerTest]: CityControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2025-12-15T11:26:46.206+01:00  INFO 4428 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.sds2.Server for test class com.sds2.controller.CityControllerTest
+Hibernate: select c1_0.id,c1_0.country,c1_0.latitude,c1_0.longitude,c1_0.name from city c1_0 where upper(c1_0.name) like upper(?) escape '\'
+
+MockHttpServletRequest:
+      HTTP Method = GET
+      Request URI = /city/Paris
+       Parameters = {}
+          Headers = []
+             Body = null
+    Session Attrs = {}
+
+Handler:
+             Type = com.sds2.controller.CityController
+           Method = com.sds2.controller.CityController#getCityByPattern(String)
+
+Async:
+    Async started = false
+     Async result = null
+
+Resolved Exception:
+             Type = null
+
+ModelAndView:
+        View name = null
+             View = null
+            Model = null
+
+FlashMap:
+       Attributes = null
+
+MockHttpServletResponse:
+           Status = 200
+    Error message = null
+          Headers = [Content-Type:"application/json"]
+     Content type = application/json
+             Body = [{"name":"Paris","country":"FR","latitude":48.85341,"longitude":2.3488},{"name":"Paris","country":"US","latitude":36.302,"longitude":-88.32671}]
+    Forwarded URL = null
+   Redirected URL = null
+          Cookies = []
+]]></system-out>
+  </testcase>
 </testsuite>

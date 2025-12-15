@@ -24,10 +24,7 @@ com\sds2\repository\CityRepository.class
 com\sds2\service\WaypointService.class
 com\sds2\classes\response\CityResponse$CityData.class
 com\sds2\util\DataISOFormatter.class
-<<<<<<< HEAD
 com\sds2\classes\CitySummary$CitySummaryBuilder.class
-=======
->>>>>>> 105abd2a841c0b28f2cf4d7ee6b520806a53a7c1
 com\sds2\classes\response\PlaceResponse$DisplayName.class
 com\sds2\classes\coordinates\Location.class
 com\sds2\classes\request\RouteRequest.class
@@ -66,33 +63,25 @@ com\sds2\service\PlaceService.class
 com\sds2\controller\CityController.class
 com\sds2\dto\CityDTO.class
 com\sds2\classes\routeclasses\Route$RouteBuilder.class
-<<<<<<< HEAD
 com\sds2\classes\coordinates\Location$LocationBuilder.class
-=======
->>>>>>> 105abd2a841c0b28f2cf4d7ee6b520806a53a7c1
 com\sds2\classes\hotel\HotelSearchContext.class
 com\sds2\classes\response\HotelOfferResponse$OfferItem.class
 com\sds2\classes\price\PriceRange.class
-com\sds2\classes\Places.class
 com\sds2\util\Pagination.class
 com\sds2\Server.class
 com\sds2\config\RestClientConfig.class
-com\sds2\classes\poi\POI.class
 com\sds2\service\GoogleAuthService.class
-com\sds2\classes\Places$PlacesBuilder.class
 com\sds2\repository\POIRepository.class
 com\sds2\classes\request\POIRequest.class
 com\sds2\exception\GlobalExceptionHandler.class
 com\sds2\classes\Address.class
 com\sds2\classes\response\HotelOfferResponse$OfferGuests.class
-com\sds2\classes\hotel\Hotel.class
 com\sds2\controller\RouteController.class
 com\sds2\classes\request\HotelRequest.class
 com\sds2\classes\enums\GoogleBodyEnum.class
 com\sds2\classes\price\PriceRangeConverter.class
 com\sds2\classes\response\HotelOfferResponse$HotelOfferData.class
 com\sds2\classes\hotel\HotelAddress.class
-com\sds2\classes\City.class
 com\sds2\classes\response\CityResponse.class
 com\sds2\service\HotelAvailabilityService.class
 com\sds2\controller\AmadeusPageController.class
