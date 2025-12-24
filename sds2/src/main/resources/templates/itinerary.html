@@ -56,7 +56,7 @@
 
     <gmp-map id="map">
         <div class="place-autocomplete-card" slot="control-inline-start-block-start">
-            <form action="" id="route-form">
+            <form th:action="@{/routes/save}" id="route-form">
                 <div class="row">
                     <div class="col">
                         <p>Route origin:</p>
@@ -81,7 +81,9 @@
                     </select>
                     <input type="time" id="departure-time" name="departureTime" placeholder="Departure Time" required>
                 </div>
-                <button id="compute-route-btn" type="submit">Compute Route</button>
+                <input type="text" id="route-identifier" name="routeIdentifier" placeholder="Route Identifier" required />
+                <button id="compute-route-btn" type="button">Compute Route</button>
+                <button id="save-route-btn" type="submit">Save Route</button>
                 <input type="hidden" id="intermediates-input" name="intermediates" />
             </form>
         </div>
@@ -97,7 +99,6 @@
     </script>
 
     <script th:src="@{/scripts/routes_manager.js}" defer></script>
-    <script th:src="@{/scripts/waypoints_manager.js}" defer></script>
 
 </body>
 </html>

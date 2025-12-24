@@ -1,5 +1,6 @@
 package com.sds2.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
@@ -46,14 +47,15 @@ public class UserController {
     @PostMapping("/login")
     @ResponseBody
     public LoginResponse loginUser(String email, String password, HttpSession session) {
-        UserDTO userDTO = userService.loginUser(email, password);
 
-        if (userDTO != null) {
-            session.setAttribute("user", userDTO);
-            return new LoginResponse(true, null, "/user/" + userDTO.id());
-        } else {
-            return new LoginResponse(false, "User not found", null);
+        LoginResponse loginResult = userService.loginUser(email, password);
+        
+        if (loginResult.isSuccess()) {
+            UserDTO user = userService.getUserByEmail(email);
+            session.setAttribute("user", user);
         }
+
+        return loginResult;
     }
 
     @GetMapping("/login")
@@ -65,21 +67,22 @@ public class UserController {
     @ResponseBody
     public Map<String, Object> loginStatus(HttpSession session) {
         UserDTO user = (UserDTO) session.getAttribute("user");
-        return Map.of(
-            "loggedIn", user != null,
-            "user", user
-        );
+        Map<String, Object> response = new HashMap<>();
+        response.put("loggedIn", user != null);
+        response.put("user", user);
+
+        return response;
     }
 
     @GetMapping("/{id}")
-    public String getMethodName(@PathVariable Long id, HttpSession session, Model model) {
+    public String getUserById(@PathVariable Long id, HttpSession session, Model model) {
 
         if (session.getAttribute("user") != null) {
             model.addAttribute("user", session.getAttribute("user"));
             return "user";
         }
 
-        UserDTO user = userService.getUser(id);
+        UserDTO user = userService.getUserById(id);
         session.setAttribute("user", user);
         model.addAttribute("user", user);
         return "user";
@@ -90,6 +93,19 @@ public class UserController {
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/";
+    }
+
+    @GetMapping("/itineraries/{userId}")
+    public String getUserItineraries(@PathVariable Long userId, Model model, HttpSession session) {
+        UserDTO sessionUser = (UserDTO) session.getAttribute("user");
+        if (sessionUser == null || !sessionUser.id().equals(userId)) {
+            return "redirect:/user/login";
+        }
+
+        UserDTO user = userService.getUserById(userId);
+        model.addAttribute("user", user);
+        model.addAttribute("itineraries", userService.getUserRoutes(userId));
+        return "itineraries";
     }
     
     

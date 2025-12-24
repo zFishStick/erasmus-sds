@@ -21,17 +21,26 @@
     <nav class="navbar">
       <ul>
         <header class="site-header" role="banner">
-          <div class="container">
+          <div class="nav-container">
             <h1 class="site-title">Travel Planner</h1>
             <p class="site-tagline">Plan your visit quickly and easily</p>
           </div>
         </header>
-          <li><a href="#home">Home</a></li>
+          <li><a th:href="@{/}">Home</a></li>
           <li><a href="#contact">Contact</a></li>
-          <li><a th:href="@{/itinerary}">Itinerary</a></li>
-          <li><a th:href="@{/user/login}" id="user-auth">Login</a></li>
+          <li>
+            <form id="itinerary-form" th:action="@{/user/itineraries/{userId}(userId=${userId})}" method="get">
+              <input type="hidden" id="user-id" name="userId" th:value="${userId}" />
+              <button type="submit" id="view-itinerary-btn" class="btn btn-primary">Itinerary</button>
+            </form>
+          </li>
+          <li>
+            <a th:href="@{/user/login}" id="user-auth">Login</a>
+        </li>
         </ul>
     </nav>
+
+    <p id="message" style="color: red;"></p>
 
     <main id="main" class="container" role="main">
       <section aria-labelledby="trip-planner-title" class="card">

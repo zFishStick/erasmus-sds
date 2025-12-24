@@ -94,7 +94,7 @@ async function initMap() {
             fields: ['displayName', 'formattedAddress', 'location'],
         });
 
-        setOriginMarker(place.location.lat(), place.location.lng(), place.displayName);
+        setOriginMarker(place);
 
         let content = document.createElement('div');
         let nameText = document.createElement('span');
@@ -132,19 +132,63 @@ function updateInfoWindow(content, center) {
 initMap();
 
 function initRouteButton() {
-    document.getElementById("route-form").addEventListener("submit", (event) => {
+    document.getElementById("compute-route-btn").addEventListener("click", (event) => {
         event.preventDefault();
         computeRoute();
     });
 }
+
+function saveRoute() {
+    const form = document.getElementById("route-form");
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const data = {
+            routeIdentifier: document.getElementById("route-identifier").value,
+            origin: {
+                name: origin.name,
+                address: origin.address,
+                latitude: origin.location.lat,
+                longitude: origin.location.lng
+            },
+            destination: {
+                name : destination.name,
+                address: destination.address,
+                latitude: destination.lat,
+                longitude: destination.lng
+            },
+            intermediates: waypoints.map(wp => ({
+                name: wp.name,
+                address: wp.address,
+                latitude: wp.location.lat,
+                longitude: wp.location.lng
+            })
+        ),
+            travelMode: document.getElementById("travel-mode-select").value,
+            departureTime: document.getElementById("departure-time").value
+        };
+
+        alert("Saving route: " + JSON.stringify(data));
+
+        const response = await fetch(form.action, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.text();
+        console.log(result);
+    });
+}
+
+saveRoute();
 
 function computeRoute() {
     if (!originMarker) {
         alert("Select an origin first!");
         return;
     }
-
-    const originObj = origin.location;
     
     const destinationSelect = document.getElementById("destination-select");
     const destCoords = destinationSelect.value.split(',').map(parseFloat);
@@ -158,7 +202,7 @@ function computeRoute() {
     const travelModeSelect = document.getElementById("travel-mode-select");
 
     const request = {
-        origin: originObj,
+        origin: origin.location,
         destination: destinationObj,
         waypoints: waypointsArr,
         travelMode: travelModeSelect.value
@@ -239,7 +283,13 @@ function addWaypointMarker(lat, lng, title) {
     waypointMarkers.push(marker);
 }
 
-function setOriginMarker(lat, lng, title) {
+function setOriginMarker(place) {
+
+    const lat = place.location.lat();
+    const lng = place.location.lng();
+    const title = place.displayName;
+    const address = place.formattedAddress;
+
     if (originMarker) {
         originMarker.setMap(null);
     }
@@ -253,6 +303,7 @@ function setOriginMarker(lat, lng, title) {
 
     origin = {
         name: title,
+        address: address,
         location: { lat, lng }
     };
 }

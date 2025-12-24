@@ -7,9 +7,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sds2.classes.entity.Waypoint;
 import com.sds2.classes.request.RouteRequest;
 import com.sds2.classes.request.WaypointRequest;
-import com.sds2.classes.routeclasses.Waypoint;
 import com.sds2.dto.WaypointDTO;
 import com.sds2.service.PlaceService;
 import com.sds2.service.RoutesService;
@@ -30,10 +30,10 @@ public class RouteController {
     private final WaypointService waypointService;
     private final PlaceService placesService;
 
-    @PostMapping("/waypoint/add/{id}")
+    @PostMapping("/waypoint/add")
     @ResponseBody
-    public String addWaypoint(@PathVariable Long id, @RequestBody WaypointRequest waypointRequest) {
-        Waypoint waypoint = new Waypoint(waypointRequest, id);
+    public String addWaypoint(WaypointRequest waypointRequest) {
+        Waypoint waypoint = new Waypoint(waypointRequest);
         return waypointService.addWaypoint(waypoint);
     }
 
@@ -44,10 +44,9 @@ public class RouteController {
     }
 
     @PostMapping("/save")
-    public String postMethodName(@RequestBody RouteRequest routeRequest) {
-        //TODO: process POST request
-        
-        return "Route saved successfully";
+    @ResponseBody
+    public String saveRoute(@RequestBody RouteRequest routeRequest) {
+        return routesService.saveRoute(routeRequest);
     }
     
 

@@ -1,9 +1,9 @@
 package com.sds2.classes.routeclasses;
 
 public enum RouteTravelMode {
-    DRIVE,
-    WALK,
-    BICYCLE,
+    DRIVING,
+    WALKING,
+    BICYCLING,
     TRANSIT,
     TWO_WHEELER
 }

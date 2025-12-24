@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/./style/style.css"/>
     <link rel="stylesheet" href="/./style/places.css"/>
-    <script src="/./scripts/place_manager.js" defer></script>
+    <script src="/scripts/places_data.js"></script>
+    <script src="/scripts/place_manager.js" defer></script>
+    <link rel="stylesheet" href="/style/navbar.css" />
+    <script src="/scripts/user_auth.js"></script>
     <title>Travel Planner</title>
     <style>
         body { background: linear-gradient(180deg, #0b1024 0%, #0f142d 60%, #0b1024 100%); }
@@ -16,6 +19,31 @@
 </head>
 <body>
 
+    <nav class="navbar">
+      <ul>
+        <header class="site-header" role="banner">
+          <div class="nav-container">
+            <h1 class="site-title">Travel Planner</h1>
+            <p class="site-tagline">Plan your visit quickly and easily</p>
+          </div>
+        </header>
+          <li><a th:href="@{/}">Home</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li>
+            <form id="itinerary-form" th:action="@{/user/itineraries/{userId}(userId=${userId})}" method="get">
+              <input type="hidden" id="user-id" name="userId" th:value="${userId}" />
+              <button type="submit" id="view-itinerary-btn" class="btn btn-primary">Itinerary</button>
+            </form>
+          </li>
+          <li>
+            <a th:href="@{/user/login}" id="user-auth">Login</a>
+        </li>
+        </ul>
+        <div id="filter-container" style="margin-top: 12px;"></div>
+    </nav>
+
+    <p id="message" style="color: red;"></p>
+
     <form action="">
         <input type="hidden" name="city" th:value="${request.destination}" id="city"/>
     </form>
@@ -25,12 +53,9 @@
             <h1 th:text="|Here's what you can see in ${request.destination}, ${request.countryCode}|" class="place-header">
             Places to visit
             </h1>
-        <form th:action="@{/routes/itinerary/{country}/{destination}(country=${request.countryCode}, destination=${request.destination})}" method="get">
-            <button type="submit" id="view-itinerary-btn" class="btn btn-primary">View Itinerary</button>
-        </form>
         </div>
 
-        <p id="message" style="text-align:center; margin-top:12px;"></p>
+        <p id="wpnt-message" style="text-align:center; margin-top:12px;"></p>
     </div>
 
 <div class="actions" style="text-align:center; margin: 12px 0 24px; display:flex; gap:12px; align-items:center; justify-content:center; flex-wrap:wrap;">
@@ -66,7 +91,12 @@
                 <img th:if="${place.photoUrl[0] != null}" th:src="${place.photoUrl[0]}" alt="Placeholder"/>
                 <div class="column">
                     <p><span class="main-text">Address:</span> <span th:text="${place.address}">Place Address</span></p>
-                    <p hidden><span class="main-text">Type:</span> <span th:text="${place.type}" class="place-type">Place Type</span></p>
+                    
+                    <p class="place-type-wrapper">
+                        <span class="place-type" th:text="${place.type}"></span>
+                    </p>
+
+
                     <p th:if="${place.priceRange != null}">
                         <span class="main-text">Price Range:</span>
                         <span th:text="|From ${place.priceRange.startPrice.units} ${place.priceRange.startPrice.currencyCode} to ${place.priceRange.endPrice.units} ${place.priceRange.endPrice.currencyCode}|">Price Range</span>
@@ -85,7 +115,7 @@
                         <a class="btn btn-ghost" th:if="${place.location != null}"
                            th:href="${'https://www.google.com/maps/search/?api=1&query=' + place.location.latitude + ',' + place.location.longitude}"
                            target="_blank" rel="noopener">Open in Maps</a>                                      
-                           <form method="post" th:action="@{/routes/waypoint/add/{id}(id=${place.id})}" class="btn btn-ghost add-waypoint-form" style="padding: 0; display: flex;">
+                           <form method="post" th:action="@{/routes/waypoint/add}" class="btn btn-ghost add-waypoint-form" style="padding: 0; display: flex;">
                             <input type="hidden" name="destination" th:value="${request.destination}">
                             <input type="hidden" name="countryCode" th:value="${request.countryCode}">
                             <input type="hidden" name="id" th:value="${place.id}">
@@ -125,7 +155,7 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    const messageElem = document.getElementById("message");
+    const messageElem = document.getElementById("wpnt-message");
 
     document.querySelectorAll(".add-waypoint-form").forEach(form => {
         form.addEventListener("submit", async (e) => {

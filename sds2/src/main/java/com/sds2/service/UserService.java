@@ -1,10 +1,18 @@
 package com.sds2.service;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
+import com.sds2.classes.entity.Route;
 import com.sds2.classes.entity.User;
+import com.sds2.classes.entity.Waypoint;
 import com.sds2.classes.request.UserRequest;
+import com.sds2.classes.response.LoginResponse;
+import com.sds2.dto.RouteDTO;
 import com.sds2.dto.UserDTO;
+import com.sds2.repository.RoutesRepository;
 import com.sds2.repository.UserRepository;
 import com.sds2.util.PasswordManager;
 
@@ -15,6 +23,7 @@ import lombok.AllArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final RoutesRepository routesRepository;
 
     public UserDTO registerUser(UserRequest userRequest) {
         String email = userRequest.getEmail();
@@ -37,16 +46,52 @@ public class UserService {
 
     }
 
-    public UserDTO loginUser(String email, String password) {
+    public LoginResponse loginUser(String email, String password) {
         User user = userRepository.findByEmail(email);
-        if (user != null && PasswordManager.verifyPassword(password, user.getPassword())) {
-            return new UserDTO(user.getId(),  user.getEmail(), user.getUsername());
+
+        if (user == null) {
+            return new LoginResponse(false, LoginResponse.LoginStatus.USER_NOT_FOUND, null);
+        }
+
+        if (!PasswordManager.verifyPassword(password, user.getPassword())) {
+            return new LoginResponse(false, LoginResponse.LoginStatus.INVALID_CREDENTIALS, null);
+        }
+
+        return new LoginResponse(
+            true,
+            LoginResponse.LoginStatus.SUCCESS,
+            "/user/" + user.getId()
+        );
+    }
+
+    public UserDTO getUserById(Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user != null) {
+            return new UserDTO(user.getId(), user.getUsername(), user.getEmail());
         }
         return null;
     }
 
-    public UserDTO getUser(Long id) {
-        User user = userRepository.findById(id).orElse(null);
+    public List<RouteDTO> getUserRoutes(Long userId) {
+        List<Route> routes = routesRepository.findAllByUserId(userId);
+        if (routes != null) {
+            return routes.stream()
+                    .map(route -> new RouteDTO(
+                            route.getRouteIdentifier(),
+                            route.getOrigin().getName(),
+                            route.getDestination().getName(),
+                            route.getIntermediates().stream()
+                                    .map(Waypoint::getName)
+                                    .toList(),
+                            route.getTravelMode().toString()
+                    ))
+                    .toList();
+        }
+        return Collections.emptyList();
+    }
+
+    public UserDTO getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email);
         if (user != null) {
             return new UserDTO(user.getId(), user.getUsername(), user.getEmail());
         }

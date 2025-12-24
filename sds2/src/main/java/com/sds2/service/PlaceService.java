@@ -152,8 +152,6 @@ public class PlaceService {
             throw new IllegalStateException("Failed to retrieve nearby places from Google Places API");
         }
 
-        System.out.println("Retrieved " + response.getPlaces().size() + " places from Google Places API");
-
         return mapPlacesToDTOs(response, city, country);
     }
 
@@ -239,6 +237,8 @@ public class PlaceService {
 
         return mapPlacesToDTOs(response, city, country);
     }
+
+    
 
 
 

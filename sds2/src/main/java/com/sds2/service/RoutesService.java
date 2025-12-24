@@ -6,9 +6,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.sds2.classes.entity.Route;
+import com.sds2.classes.entity.Waypoint;
 import com.sds2.classes.request.RouteRequest;
-import com.sds2.classes.routeclasses.Route;
-import com.sds2.classes.routeclasses.Waypoint;
 import com.sds2.repository.RoutesRepository;
 import lombok.AllArgsConstructor;
 

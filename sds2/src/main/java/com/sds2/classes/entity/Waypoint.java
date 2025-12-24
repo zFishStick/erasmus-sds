@@ -1,4 +1,4 @@
-package com.sds2.classes.routeclasses;
+package com.sds2.classes.entity;
 
 import com.sds2.classes.coordinates.Location;
 import com.sds2.classes.request.WaypointRequest;
@@ -7,7 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,15 +31,12 @@ public class Waypoint {
     private String destination;
     private String country;
 
-    @JoinColumn(name = "place_id", unique = true)
-    private Long placeId;
 
-    public Waypoint(WaypointRequest waypointRequest, Long placeId) {
+    public Waypoint(WaypointRequest waypointRequest) {
         this.via = false;
         this.name = waypointRequest.getName();
         this.location = new Location(waypointRequest.getLatitude(), waypointRequest.getLongitude());
         this.address = waypointRequest.getAddress();
-        this.placeId = placeId;
         this.destination = waypointRequest.getDestination();
         this.country = waypointRequest.getCountry();
     }

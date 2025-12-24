@@ -7,8 +7,8 @@ import java.util.logging.Logger;
 import org.springframework.stereotype.Service;
 
 import com.sds2.classes.coordinates.Location;
+import com.sds2.classes.entity.Waypoint;
 import com.sds2.classes.request.WaypointRequest;
-import com.sds2.classes.routeclasses.Waypoint;
 import com.sds2.dto.WaypointDTO;
 import com.sds2.repository.WaypointRepository;
 
