@@ -5,14 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-signin-client_id" content="185197270996-mn5ocpnljoechmaae23ljoes6j4v0n1h.apps.googleusercontent.com">
     <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <link rel="stylesheet" href="/style/navbar.css" />
     <title>Document</title>
 </head>
 <body>
     <h2>Login</h2>
 
+    <nav class="navbar">
+      <ul>
+        <header class="site-header" role="banner">
+          <div class="nav-container">
+            <h1 class="site-title">Travel Planner</h1>
+            <p class="site-tagline">Plan your visit quickly and easily</p>
+          </div>
+        </header>
+          <li><a th:href="@{/}">Home</a></li>
+        <li>
+            <a th:href="@{/user/itineraries}" class="btn btn-primary">Itinerary</a>
+        </li>
+          <li>
+            <a th:href="@{/user/login}" id="user-auth">Login</a>
+        </li>
+        </ul>
+        <div id="filter-container" style="margin-top: 12px;"></div>
+    </nav>
+
     <p id="message" style="color: red;"></p>
 
-    <form th:action="@{/user/login}" method="post" autocomplete="on">
+    <form id="login-form" autocomplete="on">
         <div>
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required autocomplete="email">
@@ -23,15 +43,51 @@
         </div>
         <div>
             <button type="button" id="login-btn">Login</button>
-            <button type="button"><a th:href="@{/user/register}">Don't have an account? Register</a></button>
+            <a th:href="@{/user/register}">Don't have an account? Register</a>
         </div>
     </form>
+    <div id="login-error" style="color:red; margin-top:10px;"></div>
 
-    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+
+    <!-- <div class="g-signin2" data-onsuccess="onSignIn"></div> -->
 
     <button onclick="window.history.back()">Back</button>
     
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("login-form");
+        const loginBtn = document.getElementById("login-btn");
+        const errorDiv = document.getElementById("login-error");
 
-    <script src="/scripts/user_auth.js"></script>
+        loginBtn.addEventListener("click", async () => {
+            const email = form.email.value;
+            const password = form.password.value;
+
+            try {
+                const res = await fetch("/user/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams({ email, password })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    window.location.href = "/user";
+                } else {
+                    errorDiv.textContent = data.message || "Login failed";
+                }
+
+            } catch (err) {
+                console.error(err);
+                errorDiv.textContent = "Server error during login";
+            }
+        });
+    });
+</script>
+
+<script src="/scripts/user_auth.js"></script>
+
+
 </body>
 </html>

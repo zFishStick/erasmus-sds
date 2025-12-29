@@ -42,7 +42,7 @@ public class UserService {
 
         userRepository.save(user);
 
-       return new UserDTO(user.getId(), user.getEmail(), user.getUsername());
+       return new UserDTO(user.getId(), user.getUsername(), user.getEmail());
 
     }
 
@@ -96,6 +96,10 @@ public class UserService {
             return new UserDTO(user.getId(), user.getUsername(), user.getEmail());
         }
         return null;
+    }
+
+    public User findById(Long userId) {
+        return userRepository.findById(userId).orElse(null);
     }
 
 }

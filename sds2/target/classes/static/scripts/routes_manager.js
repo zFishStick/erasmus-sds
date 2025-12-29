@@ -145,6 +145,7 @@ function saveRoute() {
         e.preventDefault();
 
         const data = {
+            userId: document.getElementById("user-id").value,
             routeIdentifier: document.getElementById("route-identifier").value,
             origin: {
                 name: origin.name,
@@ -308,10 +309,13 @@ function setOriginMarker(place) {
     };
 }
 
-document.getElementById("remove-waypoint-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    showConfirmationDialog()
-});
+const removeWaypointForm = document.getElementById("remove-waypoint-form");
+if (removeWaypointForm) {
+    removeWaypointForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        showConfirmationDialog();
+    });
+}
 
 function showConfirmationDialog() {
     let confirmationBox = document.getElementById("confirmation-dialog");

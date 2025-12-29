@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 public record UserDTO(
     Long id,
-    String email,
-    String username
+    String username,
+    String email
 ) implements Serializable {
     
 }

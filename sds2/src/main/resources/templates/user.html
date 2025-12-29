@@ -12,6 +12,33 @@
     </div>
 
     <button><a th:href="@{/user/logout}">Sign out</a></button>
+    <button><a th:href="@{/user/itineraries}">Places</a></button>
     <button><a th:href="@{/}">Menu</a></button>
+
+    <div th:if="${itineraries != null and !#lists.isEmpty(itineraries)}">
+        <h2>Itineraries</h2>
+        <ul>
+            <li th:each="itinerary : ${itineraries}">
+                <strong th:text="${itinerary.routeIdentifier}">Itinerary Name</strong>
+                <ul>
+                    <li>Origin: <span th:text="${itinerary.origin}">Origin</span></li>
+                    <li>Destination: <span th:text="${itinerary.destination}">Destination</span></li>
+                    <li>Travel mode: <span th:text="${itinerary.travelMode}">Travel mode</span></li>
+                    <li th:if="${itinerary.intermediates != null and !#lists.isEmpty(itinerary.intermediates)}">
+                        Intermediates:
+                        <ul>
+                            <li th:each="stop : ${itinerary.intermediates}" th:text="${stop}">stop</li>
+                        </ul>
+                    </li>
+                </ul>
+                <a th:href="@{|/user/itinerary/${itinerary.id}|}">View itinerary</a>
+            </li>
+        </ul>
+    </div>
+
+
+
+
+
 </body>
 </html>

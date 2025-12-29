@@ -8,9 +8,30 @@
     <script>(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})
     ({key: "AIzaSyCKmFHtLzbE2Q6tHjZi2h31tBgkNfSoD8U", v: "weekly"});
     </script>
+    <script src="/scripts/user_auth.js"></script>
+    <link rel="stylesheet" href="/style/navbar.css" />
     <title>Itinerary</title>
 </head>
 <body>
+
+        <nav class="navbar">
+        <ul>
+            <header class="site-header" role="banner">
+            <div class="nav-container">
+                <h1 class="site-title">Travel Planner</h1>
+                <p class="site-tagline">Plan your visit quickly and easily</p>
+            </div>
+            </header>
+            <li><a th:href="@{/}">Home</a></li>
+            <li>
+                <a th:href="@{/user/itineraries}" class="btn btn-primary">Itinerary</a>
+            </li>
+            <li>
+                <a th:href="@{/user/login}" id="user-auth">Login</a>
+            </li>
+        </ul>
+            <div id="filter-container" style="margin-top: 12px;"></div>
+    </nav>
 
     <div class="confirmation-dialog" id="confirmation-dialog">
         <div class="confirmation-content">

@@ -1,6 +1,5 @@
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\util\DataISOFormatter.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\request\UserRequest.java
-C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\routeclasses\Waypoint.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\controller\UserController.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\dto\HotelDTO.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\dto\OffersPreview.java
@@ -11,10 +10,10 @@ C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\service\POIService.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\CitySummary.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\request\POIRequest.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\service\UserService.java
-C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\routeclasses\Route.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\repository\HotelRepository.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\controller\POISController.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\repository\RoutesRepository.java
+C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\entity\Waypoint.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\price\PriceRangeConverter.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\dto\PlacesDTO.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\response\HotelResponse.java
@@ -76,6 +75,7 @@ C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\entity\Places.j
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\exception\GlobalExceptionHandler.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\service\AmadeusAuthService.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\util\PasswordManager.java
+C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\entity\Route.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\service\PlaceService.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\repository\POIRepository.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\service\HotelOfferService.java

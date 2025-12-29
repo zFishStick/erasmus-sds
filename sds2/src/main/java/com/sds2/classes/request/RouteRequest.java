@@ -18,4 +18,5 @@ public class RouteRequest {
     private WaypointRequest[] intermediates;
     private RouteTravelMode travelMode;
     private String departureTime;
+    private Long userId;
 }

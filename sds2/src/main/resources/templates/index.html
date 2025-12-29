@@ -27,17 +27,20 @@
           </div>
         </header>
           <li><a th:href="@{/}">Home</a></li>
-          <li><a href="#contact">Contact</a></li>
-          <li>
-            <form id="itinerary-form" th:action="@{/user/itineraries/{userId}(userId=${userId})}" method="get">
-              <input type="hidden" id="user-id" name="userId" th:value="${userId}" />
-              <button type="submit" id="view-itinerary-btn" class="btn btn-primary">Itinerary</button>
-            </form>
+          <li th:if="${request != null}">
+              <form action="/user/itineraries" method="get">
+                  <input type="hidden" name="city" th:value="${request.destination}">
+                  <input type="hidden" name="countryCode" th:value="${request.countryCode}">
+                  <button type="submit" class="btn btn-primary">
+                      Waypoints
+                  </button>
+              </form>
           </li>
           <li>
             <a th:href="@{/user/login}" id="user-auth">Login</a>
         </li>
         </ul>
+        <div id="filter-container" style="margin-top: 12px;"></div>
     </nav>
 
     <p id="message" style="color: red;"></p>

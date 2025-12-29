@@ -44,7 +44,6 @@ public class WaypointService {
         return "Waypoint added successfully";
     }
 
-
     public void addWaypoint(WaypointRequest req) {
         Location location = new Location(req.getLatitude(), req.getLongitude());
         Waypoint waypoint = Waypoint.builder()
@@ -85,5 +84,29 @@ public class WaypointService {
     public Waypoint findWaypointByCoordinates(double lat, double lng) {
         return waypointRepository.findByLocation_LatitudeAndLocation_Longitude(lat, lng);
     }
+
+    public List<WaypointDTO> findByUserAndCity(
+            Long userId,
+            String city,
+            String countryCode) {
+
+        if (countryCode != null && !countryCode.isBlank()) {
+            return waypointRepository
+                .findByUserIdAndDestinationAndCountryIgnoreCase(
+                    userId, city, countryCode
+                )
+                .stream()
+                .map(WaypointDTO::fromEntity)
+                .toList();
+        }
+
+        return waypointRepository
+            .findByUserIdAndDestinationIgnoreCase(userId, city)
+            .stream()
+            .map(WaypointDTO::fromEntity)
+            .toList();
+    }
+
+
 
 }

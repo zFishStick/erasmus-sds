@@ -32,7 +32,7 @@ public class RouteController {
 
     @PostMapping("/waypoint/add")
     @ResponseBody
-    public String addWaypoint(WaypointRequest waypointRequest) {
+    public String addWaypoint(@RequestBody WaypointRequest waypointRequest) {
         Waypoint waypoint = new Waypoint(waypointRequest);
         return waypointService.addWaypoint(waypoint);
     }

@@ -30,6 +30,7 @@ public class Waypoint {
     private String address;
     private String destination;
     private String country;
+    private Long userId;
 
 
     public Waypoint(WaypointRequest waypointRequest) {
@@ -39,5 +40,6 @@ public class Waypoint {
         this.address = waypointRequest.getAddress();
         this.destination = waypointRequest.getDestination();
         this.country = waypointRequest.getCountry();
+        this.userId = waypointRequest.getUserId();
     }
 }

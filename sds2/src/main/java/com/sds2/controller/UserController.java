@@ -1,19 +1,22 @@
 package com.sds2.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.sds2.classes.request.UserRequest;
 import com.sds2.classes.response.LoginResponse;
 import com.sds2.dto.UserDTO;
+import com.sds2.dto.WaypointDTO;
 import com.sds2.service.UserService;
+import com.sds2.service.WaypointService;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class UserController {
 
     private final UserService userService;
+    private final WaypointService waypointService;
 
     @GetMapping("/register")
     public String register() {
@@ -37,7 +41,7 @@ public class UserController {
 
         if (user != null) {
             session.setAttribute("user", user);
-            return "redirect:/user/" + user.id();
+            return "redirect:/user";
         } else {
             return "redirect:/register?error=User already exists";
         }
@@ -47,14 +51,11 @@ public class UserController {
     @PostMapping("/login")
     @ResponseBody
     public LoginResponse loginUser(String email, String password, HttpSession session) {
-
         LoginResponse loginResult = userService.loginUser(email, password);
-        
         if (loginResult.isSuccess()) {
             UserDTO user = userService.getUserByEmail(email);
             session.setAttribute("user", user);
         }
-
         return loginResult;
     }
 
@@ -74,20 +75,19 @@ public class UserController {
         return response;
     }
 
-    @GetMapping("/{id}")
-    public String getUserById(@PathVariable Long id, HttpSession session, Model model) {
+    @GetMapping
+    public String getUserFromSession(HttpSession session, Model model) {
 
-        if (session.getAttribute("user") != null) {
-            model.addAttribute("user", session.getAttribute("user"));
-            return "user";
+        UserDTO user = (UserDTO) session.getAttribute("user");
+
+        if (user == null) {
+            return "redirect:/user/login";
         }
 
-        UserDTO user = userService.getUserById(id);
-        session.setAttribute("user", user);
         model.addAttribute("user", user);
         return "user";
-
     }
+
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
@@ -95,18 +95,34 @@ public class UserController {
         return "redirect:/";
     }
 
-    @GetMapping("/itineraries/{userId}")
-    public String getUserItineraries(@PathVariable Long userId, Model model, HttpSession session) {
-        UserDTO sessionUser = (UserDTO) session.getAttribute("user");
-        if (sessionUser == null || !sessionUser.id().equals(userId)) {
+    @GetMapping("/itineraries")
+    public String getUserItineraries(
+            @RequestParam String city,
+            @RequestParam(required = false) String countryCode,
+            HttpSession session,
+            Model model) {
+
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        if (user == null) {
             return "redirect:/user/login";
         }
 
-        UserDTO user = userService.getUserById(userId);
+        List<WaypointDTO> waypoints =
+            waypointService.findByUserAndCity(
+                user.id(),
+                city,
+                countryCode
+            );
+
+        model.addAttribute("city", city);
+        model.addAttribute("countryCode", countryCode);
+        model.addAttribute("waypoints", waypoints);
         model.addAttribute("user", user);
-        model.addAttribute("itineraries", userService.getUserRoutes(userId));
+
         return "itineraries";
     }
+
+
     
     
 }

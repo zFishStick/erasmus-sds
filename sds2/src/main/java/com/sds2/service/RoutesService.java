@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.sds2.classes.entity.Route;
+import com.sds2.classes.entity.User;
 import com.sds2.classes.entity.Waypoint;
 import com.sds2.classes.request.RouteRequest;
 import com.sds2.repository.RoutesRepository;
@@ -20,6 +21,7 @@ public class RoutesService {
     private final RoutesRepository routesRepository;
     private final WebClient.Builder webClientBuilder;
     private final WaypointService waypointsService;
+    private final UserService userService;
 
     public String saveRoute(RouteRequest req) {
 
@@ -50,11 +52,17 @@ public class RoutesService {
         );
 
         List<Waypoint> intermediates = Arrays.stream(req.getIntermediates())
-                .map(i -> waypointsService.findWaypointByCoordinates(
-                        i.getLatitude(),
-                        i.getLongitude()
-                ))
-                .toList();
+            .map(i -> {
+                Waypoint wp = waypointsService.findWaypointByCoordinates(i.getLatitude(), i.getLongitude());
+                if (wp == null) {
+                    waypointsService.addWaypoint(i);
+                    wp = waypointsService.findWaypointByCoordinates(i.getLatitude(), i.getLongitude());
+                }
+                return wp;
+            })
+            .toList();
+
+        User user = userService.findById(req.getUserId());
 
 
         Route route = Route.builder()
@@ -63,6 +71,7 @@ public class RoutesService {
                 .destination(destination)
                 .intermediates(intermediates)
                 .travelMode(req.getTravelMode())
+                .user(user)
                 .build();
 
         routesRepository.save(route);

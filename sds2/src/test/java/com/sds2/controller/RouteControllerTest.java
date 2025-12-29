@@ -40,7 +40,8 @@ class RouteControllerTest {
             52.4003253,
             16.9135941,
             "Poznań",
-            "Poland"
+            "Poland",
+            1L
         );
 
         Location location = Location.builder()

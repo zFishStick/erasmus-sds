@@ -8,7 +8,6 @@
     <script src="/scripts/places_data.js"></script>
     <script src="/scripts/place_manager.js" defer></script>
     <link rel="stylesheet" href="/style/navbar.css" />
-    <script src="/scripts/user_auth.js"></script>
     <title>Travel Planner</title>
     <style>
         body { background: linear-gradient(180deg, #0b1024 0%, #0f142d 60%, #0b1024 100%); }
@@ -30,9 +29,16 @@
           <li><a th:href="@{/}">Home</a></li>
           <li><a href="#contact">Contact</a></li>
           <li>
-            <form id="itinerary-form" th:action="@{/user/itineraries/{userId}(userId=${userId})}" method="get">
-              <input type="hidden" id="user-id" name="userId" th:value="${userId}" />
-              <button type="submit" id="view-itinerary-btn" class="btn btn-primary">Itinerary</button>
+            <form id="itinerary-form"
+                th:action="@{/user/itineraries}"
+                method="get">
+                <input type="hidden" name="city" th:value="${request.destination}">
+                <input type="hidden" name="countryCode" th:value="${request.countryCode}">
+                <button type="submit"
+                        id="view-itinerary-btn"
+                        class="btn btn-primary">
+                    Waypoints
+                </button>
             </form>
           </li>
           <li>
@@ -46,6 +52,7 @@
 
     <form action="">
         <input type="hidden" name="city" th:value="${request.destination}" id="city"/>
+        <input type="hidden" name="countryCode" th:value="${request.countryCode}" id="countryCode"/>
     </form>
 
     <div class="header-section" style="display: flex; flex-direction: column; align-items: center; margin: 24px 0 12px;">
@@ -153,35 +160,46 @@
     
 </body>
 
+<script src="/scripts/user_auth.js"></script>
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("user-auth-ready", (e) => {
+
     const messageElem = document.getElementById("wpnt-message");
+    const user = e.detail.user;
+    const userId = user ? user.id : null;
+
+    alert("userId: " + userId);
 
     document.querySelectorAll(".add-waypoint-form").forEach(form => {
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
 
-            const city = form.querySelector("input[name='destination']").value;
-            const countryCode = form.querySelector("input[name='countryCode']").value;
-            const placeId = form.querySelector("input[name='id']").value;
+        form.addEventListener("submit", async (ev) => {
+            ev.preventDefault();
+
+            if (!userId) {
+                alert("Please log in to save waypoints for your itinerary.");
+                window.location.href = "/user/login";
+                return;
+            }
+
             const waypointRequest = {
                 name: form.querySelector("input[name='name']").value,
                 address: form.querySelector("input[name='address']").value,
                 latitude: parseFloat(form.querySelector("input[name='latitude']").value),
                 longitude: parseFloat(form.querySelector("input[name='longitude']").value),
-                destination: city,
-                country: countryCode
+                destination: form.querySelector("input[name='destination']").value,
+                country: form.querySelector("input[name='countryCode']").value,
+                userId: userId
             };
 
             try {
-                const res = await fetch(`/routes/waypoint/add/${placeId}`, {
+                const res = await fetch("/routes/waypoint/add", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(waypointRequest)
                 });
 
-                const message = await res.text();
-                messageElem.textContent = message;
+                messageElem.textContent = await res.text();
+
             } catch (err) {
                 console.error(err);
                 messageElem.textContent = "Error adding waypoint.";
@@ -190,6 +208,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script>
-
 
 </html>

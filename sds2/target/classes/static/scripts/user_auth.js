@@ -1,50 +1,52 @@
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 
-    const itinerary_form = document.getElementById("itinerary-form");
-    let userAuthLink = document.getElementById("user-auth");
-    const loginBtn = document.getElementById("login-btn");
-        
+    const userAuthLink = document.getElementById("user-auth");
+
     fetch("/user/status")
         .then(res => res.json())
         .then(data => {
+
             if (data.loggedIn) {
                 userAuthLink.textContent = data.user.username;
-                userAuthLink.href = "/user/" + data.user.id;
-                document.getElementById("user-id").value = data.user.id;
+                userAuthLink.href = "/user";
+
+                const userIdInput = document.getElementById("user-id");
+                if (userIdInput) {
+                    userIdInput.value = data.user.id;
+                }
+                document.dispatchEvent(new CustomEvent("user-auth-ready", {
+                    detail: { user: data.user }
+                }));
+
             } else {
                 userAuthLink.textContent = "Login";
                 userAuthLink.href = "/user/login";
+                
+                document.dispatchEvent(new CustomEvent("user-auth-ready", {
+                    detail: { user: null }
+                }));
             }
         });
-
-    if (itinerary_form) {
-        initItineraryForm(itinerary_form, userAuthLink);
-    }
-
-    if (loginBtn) {
-        loginBtn.addEventListener("click", function() {
-        attemptLogin();
-    });
-    }
-
 });
 
-function attemptLogin() {
+async function attemptLogin() {
     const form = document.querySelector("form");
     const formData = new FormData(form);
-    fetch("/user/login", {
+    const res = await fetch("/user/login", {
         method: "POST",
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ email, password })
+        });
+
+        const data = await res.json();
+
         if (data.success) {
-            window.location.href = data.redirectUrl;
+            window.location.href = "/user";
         } else {
             document.getElementById("message").textContent = data.errorMessage;
-        }
-    });
+    }
+
 }
 
 function initItineraryForm(itinerary_form, userAuthLink) {
