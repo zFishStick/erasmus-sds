@@ -17,4 +17,5 @@ public class WaypointRequest {
     private Double longitude;
     private String destination;
     private String country;
+    private Long userId;
 }
