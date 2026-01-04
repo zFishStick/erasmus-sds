@@ -27,7 +27,6 @@
           </div>
         </header>
           <li><a th:href="@{/}">Home</a></li>
-          <li><a href="#contact">Contact</a></li>
           <li>
             <form id="itinerary-form"
                 th:action="@{/user/itineraries}"
@@ -42,7 +41,13 @@
             </form>
           </li>
           <li>
-            <a th:href="@{/user/login}" id="user-auth">Login</a>
+            <a th:href="@{/user/login(
+                destination=${request.destination},
+                countryCode=${request.countryCode}
+                )}"
+                id="user-auth">
+                Login
+            </a>
         </li>
         </ul>
         <div id="filter-container" style="margin-top: 12px;"></div>
@@ -162,24 +167,24 @@
 
 <script src="/scripts/user_auth.js"></script>
 <script>
-document.addEventListener("user-auth-ready", (e) => {
 
+document.addEventListener("user-auth-ready", (e) => {
     const messageElem = document.getElementById("wpnt-message");
     const user = e.detail.user;
     const userId = user ? user.id : null;
-
-    alert("userId: " + userId);
 
     document.querySelectorAll(".add-waypoint-form").forEach(form => {
 
         form.addEventListener("submit", async (ev) => {
             ev.preventDefault();
 
-            if (!userId) {
-                alert("Please log in to save waypoints for your itinerary.");
-                window.location.href = "/user/login";
-                return;
-            }
+        if (!userId) {
+            alert("Please log in to save waypoints for your itinerary.");
+
+            window.location.href = `/user/login`
+
+            return;
+        }
 
             const waypointRequest = {
                 name: form.querySelector("input[name='name']").value,

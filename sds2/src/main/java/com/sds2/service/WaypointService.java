@@ -53,6 +53,7 @@ public class WaypointService {
                 .address(req.getAddress())
                 .location(location)
                 .via(false)
+                .userId(req.getUserId())
                 .build();
         waypointRepository.save(waypoint);
     }

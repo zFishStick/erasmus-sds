@@ -32,7 +32,6 @@ public class Waypoint {
     private String country;
     private Long userId;
 
-
     public Waypoint(WaypointRequest waypointRequest) {
         this.via = false;
         this.name = waypointRequest.getName();

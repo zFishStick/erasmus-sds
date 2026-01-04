@@ -66,7 +66,5 @@ public class RouteController {
         model.addAttribute("waypoints", waypoints);
 
         return "itinerary";
-    }
-
-    
+    } 
 }

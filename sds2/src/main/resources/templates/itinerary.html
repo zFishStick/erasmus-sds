@@ -14,7 +14,7 @@
 </head>
 <body>
 
-        <nav class="navbar">
+    <nav class="navbar">
         <ul>
             <header class="site-header" role="banner">
             <div class="nav-container">
@@ -30,7 +30,7 @@
                 <a th:href="@{/user/login}" id="user-auth">Login</a>
             </li>
         </ul>
-            <div id="filter-container" style="margin-top: 12px;"></div>
+        <div id="filter-container" style="margin-top: 12px;"></div>
     </nav>
 
     <div class="confirmation-dialog" id="confirmation-dialog">
@@ -81,7 +81,15 @@
                 <div class="row">
                     <div class="col">
                         <p>Route origin:</p>
+
                         <gmp-place-autocomplete id="map-autocomplete"></gmp-place-autocomplete>
+
+                        <button type="button"
+                                id="use-current-location-btn"
+                                class="btn btn-secondary"
+                                style="margin-top:8px; width:100%;">
+                            Use your current position
+                        </button>
                     </div>
                     <div class="col">
                         <p>Destination:</p>

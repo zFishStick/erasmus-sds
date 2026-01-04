@@ -25,8 +25,11 @@ public class RoutesService {
 
     public String saveRoute(RouteRequest req) {
 
-        Double lat = req.getOrigin().getLatitude();
-        Double lng = req.getOrigin().getLongitude();
+        Double oriLat = req.getOrigin().getLatitude();
+        Double oriLng = req.getOrigin().getLongitude();
+
+        Double destLat = req.getDestination().getLatitude();
+        Double destLng = req.getDestination().getLongitude();
 
         Route existing = routesRepository.findByRouteIdentifier(req.getRouteIdentifier());
         if (existing != null) {
@@ -34,21 +37,21 @@ public class RoutesService {
         }
 
         Waypoint origin = waypointsService.findWaypointByCoordinates(
-            lat,
-            lng
+            oriLat,
+            oriLng
         );
 
         if (origin == null) {
             waypointsService.addWaypoint(req.getOrigin());
             origin = waypointsService.findWaypointByCoordinates(
-                    lat,
-                    lng
+                oriLat,
+                oriLng
             );
         }
 
         Waypoint destination = waypointsService.findWaypointByCoordinates(
-                lat,
-                lng
+            destLat,
+            destLng
         );
 
         List<Waypoint> intermediates = Arrays.stream(req.getIntermediates())

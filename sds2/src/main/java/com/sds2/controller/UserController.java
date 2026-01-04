@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.sds2.classes.request.UserRequest;
 import com.sds2.classes.response.LoginResponse;
+import com.sds2.dto.RouteDTO;
 import com.sds2.dto.UserDTO;
 import com.sds2.dto.WaypointDTO;
 import com.sds2.service.UserService;
@@ -29,6 +30,10 @@ public class UserController {
 
     private final UserService userService;
     private final WaypointService waypointService;
+
+    public static final String COUNTRY_CODE = "countryCode";
+    public static final String DESTINATION = "destination";
+
 
     @GetMapping("/register")
     public String register() {
@@ -49,20 +54,48 @@ public class UserController {
     }
     
     @PostMapping("/login")
-    @ResponseBody
-    public LoginResponse loginUser(String email, String password, HttpSession session) {
-        LoginResponse loginResult = userService.loginUser(email, password);
-        if (loginResult.isSuccess()) {
-            UserDTO user = userService.getUserByEmail(email);
-            session.setAttribute("user", user);
+    public String login(
+            @RequestParam String email,
+            @RequestParam String password,
+            @RequestParam(required = false) String destination,
+            @RequestParam(required = false) String countryCode,
+            HttpSession session,
+            Model model) {
+
+        LoginResponse result = userService.loginUser(email, password);
+
+        if (!result.isSuccess()) {
+            model.addAttribute("error", result.getMessage());
+            model.addAttribute(DESTINATION, destination);
+            model.addAttribute(COUNTRY_CODE, countryCode);
+            return "login";
         }
-        return loginResult;
+
+        session.setAttribute("user", userService.getUserByEmail(email));
+
+        if (destination != null && !destination.isBlank() &&
+            countryCode != null && !countryCode.isBlank()) {
+            return "redirect:/places/" + countryCode + "/" + destination;
+        }
+
+
+        return "redirect:/user";
     }
 
+
+
     @GetMapping("/login")
-    public String login() {
+    public String loginPage(Model model, HttpSession session) {
+
+        String destination = (String) session.getAttribute(DESTINATION);
+        String countryCode = (String) session.getAttribute(COUNTRY_CODE);
+
+        model.addAttribute(DESTINATION, destination);
+        model.addAttribute(COUNTRY_CODE, countryCode);
+
         return "login";
     }
+
 
     @GetMapping("/status")
     @ResponseBody
@@ -84,6 +117,16 @@ public class UserController {
             return "redirect:/user/login";
         }
 
+        // Show all the itineraries for the user
+        List<RouteDTO> routes = userService.getUserRoutes(user.id());
+        model.addAttribute("itineraries", routes);
+
+        // String city = (String) session.getAttribute("city");
+        // String countryCode = (String) session.getAttribute(COUNTRY_CODE);
+
+        // model.addAttribute("city", city);
+        // model.addAttribute(COUNTRY_CODE, countryCode);
+
         model.addAttribute("user", user);
         return "user";
     }
@@ -104,6 +147,8 @@ public class UserController {
 
         UserDTO user = (UserDTO) session.getAttribute("user");
         if (user == null) {
+            session.setAttribute(DESTINATION, city);
+            session.setAttribute(COUNTRY_CODE, countryCode);
             return "redirect:/user/login";
         }
 
@@ -115,7 +160,7 @@ public class UserController {
             );
 
         model.addAttribute("city", city);
-        model.addAttribute("countryCode", countryCode);
+        model.addAttribute(COUNTRY_CODE, countryCode);
         model.addAttribute("waypoints", waypoints);
         model.addAttribute("user", user);
 

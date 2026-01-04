@@ -1,4 +1,4 @@
-package com.sds2.classes.routeclasses;
+package com.sds2.classes.enums;
 
 public enum RouteTravelMode {
     DRIVING,

@@ -24,7 +24,6 @@
           </div>
         </header>
           <li><a th:href="@{/}">Home</a></li>
-          <li><a href="#contact">Contact</a></li>
           <li>
             <form id="itinerary-form"
                 th:action="@{/user/itineraries}"
@@ -53,6 +52,9 @@
         </div>
 
     </div>
+
+    <input type="hidden" id="route-city" th:value="${city}" />
+    <input type="hidden" id="route-country" th:value="${countryCode}" />
 
     <h1 style="font-size: 3.5rem ;" th:text="|Saved waypoints for ${city}, ${countryCode}|">Waypoints</h1>
 

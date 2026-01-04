@@ -1,5 +1,5 @@
 package com.sds2.classes.request;
-import com.sds2.classes.routeclasses.RouteTravelMode;
+import com.sds2.classes.enums.RouteTravelMode;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,18 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="/style/style.css" />
+    <link rel="stylesheet" href="/style/navbar.css" />
+    <title>Profile</title>
 </head>
 <body>
+
+    <nav class="navbar">
+      <ul>
+        <header class="site-header" role="banner">
+          <div class="nav-container">
+            <h1 class="site-title">Travel Planner</h1>
+            <p class="site-tagline">Plan your visit quickly and easily</p>
+          </div>
+        </header>
+          <li><a th:href="@{/}">Home</a></li>
+          <li th:if="${request != null}">
+              <form action="/user/itineraries" method="get">
+                  <input type="hidden" name="city" th:value="${request.destination}">
+                  <input type="hidden" name="countryCode" th:value="${request.countryCode}">
+                  <button type="submit" class="btn btn-primary">
+                      Waypoints
+                  </button>
+              </form>
+          </li>
+          <li>
+            <a th:href="@{/user/login}" id="user-auth">Login</a>
+        </li>
+        </ul>
+        <div id="filter-container" style="margin-top: 12px;"></div>
+    </nav>
+
     <h1 th:text="'Hello ' + ${user.username}"> User not found</h1>
     <div>
         <p th:text="'Email: ' + ${user.email}">Email not found</p>
     </div>
 
+    <form method="post" action="/user/login">
+        <input type="hidden" name="destination" th:value="${destination}">
+        <input type="hidden" name="countryCode" th:value="${countryCode}">
+    </form>
+
     <button><a th:href="@{/user/logout}">Sign out</a></button>
-    <button><a th:href="@{/user/itineraries}">Places</a></button>
+
+    <button th:if="${destination != null && countryCode != null}"><a th:href="@{/user/itineraries}">Places</a></button>
+
     <button><a th:href="@{/}">Menu</a></button>
 
     <div th:if="${itineraries != null and !#lists.isEmpty(itineraries)}">
@@ -31,14 +66,10 @@
                         </ul>
                     </li>
                 </ul>
-                <a th:href="@{|/user/itinerary/${itinerary.id}|}">View itinerary</a>
+                <a th:href="@{|/user/itinerary/${itinerary.routeIdentifier}|}">View itinerary</a>
             </li>
         </ul>
     </div>
-
-
-
-
-
 </body>
+
 </html>

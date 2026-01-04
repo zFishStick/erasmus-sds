@@ -30,7 +30,7 @@ function getCurrentPosition() {
     });
 }
 
-function putMarkerAtLocation(lat, lng) {
+function setOriginFromCoordinates(lat, lng) {
 
     if (originMarker) {
         originMarker.setMap(null);
@@ -39,16 +39,18 @@ function putMarkerAtLocation(lat, lng) {
     originMarker = new google.maps.marker.AdvancedMarkerElement({
         map: map,
         position: { lat, lng },
-        title: "Current Location",
+        title: "Current position",
         gmpClickable: true
     });
 
     origin = {
-        name: "Current Location",
-        address: "GPS Position",
+        name: "Current position",
+        address: "Detected via GPS",
         location: { lat, lng }
     };
 
+    map.setCenter({ lat, lng });
+    map.setZoom(14);
 }
 
 function addWaypointMarker(lat, lng, title) {
@@ -144,33 +146,35 @@ function saveRoute() {
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
+        if (!origin) {
+            alert("Select an origin first");
+            return;
+        }
+
+        const destination = getSelectedDestination();
+        const intermediates = getIntermediates(
+            destination.latitude,
+            destination.longitude
+        );
+
         const data = {
             userId: document.getElementById("user-id").value,
             routeIdentifier: document.getElementById("route-identifier").value,
             origin: {
                 name: origin.name,
                 address: origin.address,
-                latitude: origin.location.lat,
-                longitude: origin.location.lng
+                latitude: origin.latitude,
+                longitude: origin.longitude,
+                destination: origin.destination,
+                country: origin.country
             },
-            destination: {
-                name : destination.name,
-                address: destination.address,
-                latitude: destination.lat,
-                longitude: destination.lng
-            },
-            intermediates: waypoints.map(wp => ({
-                name: wp.name,
-                address: wp.address,
-                latitude: wp.location.lat,
-                longitude: wp.location.lng
-            })
-        ),
+            destination: destination,
+            intermediates: intermediates,
             travelMode: document.getElementById("travel-mode-select").value,
             departureTime: document.getElementById("departure-time").value
         };
 
-        alert("Saving route: " + JSON.stringify(data));
+        console.log("Saving route:", data);
 
         const response = await fetch(form.action, {
             method: "POST",
@@ -179,11 +183,41 @@ function saveRoute() {
         });
 
         const result = await response.text();
-        console.log(result);
+        alert(result);
     });
 }
 
 saveRoute();
+
+function getIntermediates(destinationLat, destinationLng) {
+    return waypoints
+        .filter(wp =>
+            wp.location.lat !== destinationLat ||
+            wp.location.lng !== destinationLng
+        )
+        .map(wp => ({
+            name: wp.name,
+            address: wp.address,
+            latitude: wp.location.lat,
+            longitude: wp.location.lng
+        }));
+}
+
+function getSelectedDestination() {
+    const select = document.getElementById("destination-select");
+    const selectedOption = select.options[select.selectedIndex];
+
+    const [lat, lng] = selectedOption.value.split(",").map(Number);
+
+    return {
+        name: selectedOption.textContent,
+        address: "Waypoint destination",
+        latitude: lat,
+        longitude: lng
+    };
+}
+
+
 
 function computeRoute() {
     if (!originMarker) {
@@ -288,8 +322,9 @@ function setOriginMarker(place) {
 
     const lat = place.location.lat();
     const lng = place.location.lng();
-    const title = place.displayName;
-    const address = place.formattedAddress;
+
+    const city = document.getElementById("route-city").value;
+    const country = document.getElementById("route-country").value;
 
     if (originMarker) {
         originMarker.setMap(null);
@@ -298,14 +333,17 @@ function setOriginMarker(place) {
     originMarker = new google.maps.marker.AdvancedMarkerElement({
         map: map,
         position: { lat, lng },
-        title: title,
+        title: place.displayName,
         gmpClickable: true
     });
 
     origin = {
-        name: title,
-        address: address,
-        location: { lat, lng }
+        name: place.displayName,
+        address: place.formattedAddress,
+        latitude: lat,
+        longitude: lng,
+        destination: city,
+        country: country
     };
 }
 
