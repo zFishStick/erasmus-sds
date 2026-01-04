@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.sds2.classes.Price;
 import com.sds2.classes.coordinates.GeoCode;
+import com.sds2.classes.entity.POI;
 
 import org.junit.jupiter.api.Test;
 

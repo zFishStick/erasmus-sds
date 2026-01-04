@@ -30,7 +30,7 @@ function getCurrentPosition() {
     });
 }
 
-function putMarkerAtLocation(lat, lng) {
+function setOriginFromCoordinates(lat, lng) {
 
     if (originMarker) {
         originMarker.setMap(null);
@@ -39,16 +39,18 @@ function putMarkerAtLocation(lat, lng) {
     originMarker = new google.maps.marker.AdvancedMarkerElement({
         map: map,
         position: { lat, lng },
-        title: "Current Location",
+        title: "Current position",
         gmpClickable: true
     });
 
     origin = {
-        name: "Current Location",
-        address: "GPS Position",
+        name: "Current position",
+        address: "Detected via GPS",
         location: { lat, lng }
     };
 
+    map.setCenter({ lat, lng });
+    map.setZoom(14);
 }
 
 function addWaypointMarker(lat, lng, title) {
@@ -94,7 +96,7 @@ async function initMap() {
             fields: ['displayName', 'formattedAddress', 'location'],
         });
 
-        setOriginMarker(place.location.lat(), place.location.lng(), place.displayName);
+        setOriginMarker(place);
 
         let content = document.createElement('div');
         let nameText = document.createElement('span');
@@ -132,19 +134,96 @@ function updateInfoWindow(content, center) {
 initMap();
 
 function initRouteButton() {
-    document.getElementById("route-form").addEventListener("submit", (event) => {
+    document.getElementById("compute-route-btn").addEventListener("click", (event) => {
         event.preventDefault();
         computeRoute();
     });
 }
+
+function saveRoute() {
+    const form = document.getElementById("route-form");
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        if (!origin) {
+            alert("Select an origin first");
+            return;
+        }
+
+        const destination = getSelectedDestination();
+        const intermediates = getIntermediates(
+            destination.latitude,
+            destination.longitude
+        );
+
+        const data = {
+            userId: document.getElementById("user-id").value,
+            routeIdentifier: document.getElementById("route-identifier").value,
+            origin: {
+                name: origin.name,
+                address: origin.address,
+                latitude: origin.latitude,
+                longitude: origin.longitude,
+                destination: origin.destination,
+                country: origin.country
+            },
+            destination: destination,
+            intermediates: intermediates,
+            travelMode: document.getElementById("travel-mode-select").value,
+            departureTime: document.getElementById("departure-time").value
+        };
+
+        console.log("Saving route:", data);
+
+        const response = await fetch(form.action, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.text();
+        alert(result);
+    });
+}
+
+saveRoute();
+
+function getIntermediates(destinationLat, destinationLng) {
+    return waypoints
+        .filter(wp =>
+            wp.location.lat !== destinationLat ||
+            wp.location.lng !== destinationLng
+        )
+        .map(wp => ({
+            name: wp.name,
+            address: wp.address,
+            latitude: wp.location.lat,
+            longitude: wp.location.lng
+        }));
+}
+
+function getSelectedDestination() {
+    const select = document.getElementById("destination-select");
+    const selectedOption = select.options[select.selectedIndex];
+
+    const [lat, lng] = selectedOption.value.split(",").map(Number);
+
+    return {
+        name: selectedOption.textContent,
+        address: "Waypoint destination",
+        latitude: lat,
+        longitude: lng
+    };
+}
+
+
 
 function computeRoute() {
     if (!originMarker) {
         alert("Select an origin first!");
         return;
     }
-
-    const originObj = origin.location;
     
     const destinationSelect = document.getElementById("destination-select");
     const destCoords = destinationSelect.value.split(',').map(parseFloat);
@@ -158,7 +237,7 @@ function computeRoute() {
     const travelModeSelect = document.getElementById("travel-mode-select");
 
     const request = {
-        origin: originObj,
+        origin: origin.location,
         destination: destinationObj,
         waypoints: waypointsArr,
         travelMode: travelModeSelect.value
@@ -239,7 +318,14 @@ function addWaypointMarker(lat, lng, title) {
     waypointMarkers.push(marker);
 }
 
-function setOriginMarker(lat, lng, title) {
+function setOriginMarker(place) {
+
+    const lat = place.location.lat();
+    const lng = place.location.lng();
+
+    const city = document.getElementById("route-city").value;
+    const country = document.getElementById("route-country").value;
+
     if (originMarker) {
         originMarker.setMap(null);
     }
@@ -247,20 +333,27 @@ function setOriginMarker(lat, lng, title) {
     originMarker = new google.maps.marker.AdvancedMarkerElement({
         map: map,
         position: { lat, lng },
-        title: title,
+        title: place.displayName,
         gmpClickable: true
     });
 
     origin = {
-        name: title,
-        location: { lat, lng }
+        name: place.displayName,
+        address: place.formattedAddress,
+        latitude: lat,
+        longitude: lng,
+        destination: city,
+        country: country
     };
 }
 
-document.getElementById("remove-waypoint-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    showConfirmationDialog()
-});
+const removeWaypointForm = document.getElementById("remove-waypoint-form");
+if (removeWaypointForm) {
+    removeWaypointForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        showConfirmationDialog();
+    });
+}
 
 function showConfirmationDialog() {
     let confirmationBox = document.getElementById("confirmation-dialog");

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-signin-client_id" content="185197270996-mn5ocpnljoechmaae23ljoes6j4v0n1h.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <link rel="stylesheet" href="/style/navbar.css" />
+    <title>Login</title>
+</head>
+<body>
+    <nav class="navbar">
+      <ul>
+        <header class="site-header" role="banner">
+          <div class="nav-container">
+            <h1 class="site-title">Travel Planner</h1>
+            <p class="site-tagline">Plan your visit quickly and easily</p>
+          </div>
+        </header>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/user/login}" id="user-auth">Login</a></li>
+        </ul>
+        <div id="filter-container" style="margin-top: 12px;"></div>
+    </nav>
+
+    <p id="message" style="color: red;"></p>
+
+    <form id="login-form" method="post" th:action="@{/user/login}" autocomplete="on">
+
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required autocomplete="email">
+        </div>
+
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required autocomplete="current-password">
+        </div>
+
+        <div>
+            <button type="submit">Login</button>
+            <a th:href="@{/user/register}"> Don't have an account? Register </a>
+        </div>
+
+        <input type="hidden" name="destination" id="destination" th:value="${destination}" />
+        <input type="hidden" name="countryCode" id="countryCode" th:value="${countryCode}" />
+
+    </form>
+
+    <p th:if="${error}" th:text="${error}" style="color:red"></p>
+
+
+    <!-- <div class="g-signin2" data-onsuccess="onSignIn"></div> -->
+
+    <button onclick="window.history.back()">Back</button>
+
+<script src="/scripts/user_auth.js"></script>
+
+</body>
+</html>

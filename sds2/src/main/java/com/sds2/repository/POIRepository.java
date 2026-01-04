@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.sds2.classes.poi.POI;
+import com.sds2.classes.entity.POI;
 
 @Repository
 public interface POIRepository extends JpaRepository<POI, Long> {

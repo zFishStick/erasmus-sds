@@ -11,14 +11,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.sds2.classes.Price;
 import com.sds2.classes.coordinates.GeoCode;
+import com.sds2.classes.entity.Hotel;
 import com.sds2.classes.hotel.HotelAddress;
 import com.sds2.classes.response.HotelResponse;
 import com.sds2.dto.HotelDTO;
 import com.sds2.dto.HotelDetailsDTO;
 import com.sds2.dto.HotelOfferDTO;
 import com.sds2.repository.HotelRepository;
-
-import com.sds2.classes.hotel.Hotel;
 
 @Service
 public class HotelService {

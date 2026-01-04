@@ -36,7 +36,7 @@ jobs:
       run: mvn -B package --file sds2/pom.xml
 
     - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml --file Project/sds2/pom.xml
+      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml --file sds2/pom.xml
       env:
         GITHUB_TOKEN: ${{ github.token }}
         SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/TravelPlannerDB

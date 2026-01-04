@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 C:\Projects\Java\erasmus-sds\sds2\src\test\java\com\sds2\classes\HotelTest.java
 C:\Projects\Java\erasmus-sds\sds2\src\test\java\com\sds2\classes\PriceTest.java
 C:\Projects\Java\erasmus-sds\sds2\src\test\java\com\sds2\controller\HotelControllerTest.java
@@ -16,23 +15,5 @@ C:\Projects\Java\erasmus-sds\sds2\src\test\java\com\sds2\classes\CoordinatesTest
 C:\Projects\Java\erasmus-sds\sds2\src\test\java\com\sds2\controller\PlacesControllerTest.java
 C:\Projects\Java\erasmus-sds\sds2\src\test\java\com\sds2\classes\request\HotelRequestTest.java
 C:\Projects\Java\erasmus-sds\sds2\src\test\java\com\sds2\controller\AmadeusPageControllerTest.java
-C:\Projects\Java\erasmus-sds\sds2\src\test\java\com\sds2\service\PlaceServiceTest.java
 C:\Projects\Java\erasmus-sds\sds2\src\test\java\com\sds2\classes\CityTest.java
 C:\Projects\Java\erasmus-sds\sds2\src\test\java\com\sds2\classes\poi\POIInfoTest.java
-=======
-C:\Users\coren\OneDrive\Bureau\SDS2\erasmus-sds\sds2\src\test\java\com\sds2\classes\poi\POIInfoTest.java
-C:\Users\coren\OneDrive\Bureau\SDS2\erasmus-sds\sds2\src\test\java\com\sds2\dto\HotelDTOTest.java
-C:\Users\coren\OneDrive\Bureau\SDS2\erasmus-sds\sds2\src\test\java\com\sds2\service\POIServiceTest.java
-C:\Users\coren\OneDrive\Bureau\SDS2\erasmus-sds\sds2\src\test\java\com\sds2\classes\GeoCodeTest.java
-C:\Users\coren\OneDrive\Bureau\SDS2\erasmus-sds\sds2\src\test\java\com\sds2\classes\poi\POITest.java
-C:\Users\coren\OneDrive\Bureau\SDS2\erasmus-sds\sds2\src\test\java\com\sds2\classes\AddressTest.java
-C:\Users\coren\OneDrive\Bureau\SDS2\erasmus-sds\sds2\src\test\java\com\sds2\service\RouteServiceTest.java
-C:\Users\coren\OneDrive\Bureau\SDS2\erasmus-sds\sds2\src\test\java\com\sds2\classes\PriceTest.java
-C:\Users\coren\OneDrive\Bureau\SDS2\erasmus-sds\sds2\src\test\java\com\sds2\classes\HotelTest.java
-C:\Users\coren\OneDrive\Bureau\SDS2\erasmus-sds\sds2\src\test\java\com\sds2\classes\CoordinatesTest.java
-C:\Users\coren\OneDrive\Bureau\SDS2\erasmus-sds\sds2\src\test\java\com\sds2\classes\request\HotelRequestTest.java
-C:\Users\coren\OneDrive\Bureau\SDS2\erasmus-sds\sds2\src\test\java\com\sds2\service\PlaceServiceTest.java
-C:\Users\coren\OneDrive\Bureau\SDS2\erasmus-sds\sds2\src\test\java\com\sds2\classes\CityTest.java
-C:\Users\coren\OneDrive\Bureau\SDS2\erasmus-sds\sds2\src\test\java\com\sds2\controller\PlacesControllerTest.java
-C:\Users\coren\OneDrive\Bureau\SDS2\erasmus-sds\sds2\src\test\java\com\sds2\controller\RouteControllerTest.java
->>>>>>> 105abd2a841c0b28f2cf4d7ee6b520806a53a7c1
