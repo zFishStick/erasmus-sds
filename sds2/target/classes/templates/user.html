@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/scripts/user_auth.js"></script>
     <link rel="stylesheet" href="/style/style.css" />
     <link rel="stylesheet" href="/style/navbar.css" />
     <title>Profile</title>
@@ -51,7 +52,7 @@
     <button><a th:href="@{/}">Menu</a></button>
 
     <div th:if="${itineraries != null and !#lists.isEmpty(itineraries)}">
-        <h2>Itineraries</h2>
+        <h2 th:text="|Itineraries in ${destination}, ${countryCode}">Itineraries</h2>
         <ul>
             <li th:each="itinerary : ${itineraries}">
                 <strong th:text="${itinerary.routeIdentifier}">Itinerary Name</strong>

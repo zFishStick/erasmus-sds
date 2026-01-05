@@ -1,5 +1,6 @@
 package com.sds2.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,15 +8,18 @@ import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.sds2.classes.entity.Route;
 import com.sds2.classes.request.UserRequest;
 import com.sds2.classes.response.LoginResponse;
 import com.sds2.dto.RouteDTO;
 import com.sds2.dto.UserDTO;
 import com.sds2.dto.WaypointDTO;
+import com.sds2.service.RoutesService;
 import com.sds2.service.UserService;
 import com.sds2.service.WaypointService;
 
@@ -30,9 +34,11 @@ public class UserController {
 
     private final UserService userService;
     private final WaypointService waypointService;
+    private final RoutesService routesService;
 
     public static final String COUNTRY_CODE = "countryCode";
     public static final String DESTINATION = "destination";
+    public static final String REDIRECT = "redirect:/user/login";
 
 
     @GetMapping("/register")
@@ -114,7 +120,7 @@ public class UserController {
         UserDTO user = (UserDTO) session.getAttribute("user");
 
         if (user == null) {
-            return "redirect:/user/login";
+            return REDIRECT;
         }
 
         // Show all the itineraries for the user
@@ -149,7 +155,7 @@ public class UserController {
         if (user == null) {
             session.setAttribute(DESTINATION, city);
             session.setAttribute(COUNTRY_CODE, countryCode);
-            return "redirect:/user/login";
+            return REDIRECT;
         }
 
         List<WaypointDTO> waypoints =
@@ -166,6 +172,43 @@ public class UserController {
 
         return "itineraries";
     }
+
+    @GetMapping("/itinerary/{routeIdentifier}")
+    public String getItineraryByRouteIdentifier(
+            @PathVariable String routeIdentifier,
+            HttpSession session,
+            Model model) {
+
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        if (user == null) {
+            return REDIRECT;
+        }
+
+        Route route = routesService.getRouteByRouteIdentifier(routeIdentifier);
+
+        System.out.println("Route found: " + route);
+
+        List<WaypointDTO> waypoints = new ArrayList<>(
+                route.getIntermediates()
+                        .stream()
+                        .map(WaypointDTO::fromEntity)
+                        .toList()
+        );
+
+
+        System.out.println("Intermediates: " + waypoints);
+
+        waypoints.add(0, WaypointDTO.fromEntity(route.getOrigin()));
+        waypoints.add(WaypointDTO.fromEntity(route.getDestination()));
+
+        model.addAttribute("routeIdentifier", routeIdentifier);
+        model.addAttribute("waypoints", waypoints);
+        model.addAttribute("user", user);
+
+        return "itineraryDetails";
+    }
+
+    
 
 
     

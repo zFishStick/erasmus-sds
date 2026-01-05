@@ -81,5 +81,9 @@ public class RoutesService {
         return "Route saved successfully";
     }
 
+    public Route getRouteByRouteIdentifier(String routeIdentifier) {
+        return routesRepository.findByRouteIdentifier(routeIdentifier);
+    }
+
 }
 

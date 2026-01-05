@@ -160,6 +160,8 @@ function saveRoute() {
         const data = {
             userId: document.getElementById("user-id").value,
             routeIdentifier: document.getElementById("route-identifier").value,
+            city: document.getElementById("route-city").value,
+            country: document.getElementById("route-country").value,
             origin: {
                 name: origin.name,
                 address: origin.address,
