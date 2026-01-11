@@ -6,9 +6,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.sds2.classes.entity.Route;
+import com.sds2.classes.entity.User;
+import com.sds2.classes.entity.Waypoint;
 import com.sds2.classes.request.RouteRequest;
-import com.sds2.classes.routeclasses.Route;
-import com.sds2.classes.routeclasses.Waypoint;
 import com.sds2.repository.RoutesRepository;
 import lombok.AllArgsConstructor;
 
@@ -20,11 +21,15 @@ public class RoutesService {
     private final RoutesRepository routesRepository;
     private final WebClient.Builder webClientBuilder;
     private final WaypointService waypointsService;
+    private final UserService userService;
 
     public String saveRoute(RouteRequest req) {
 
-        Double lat = req.getOrigin().getLatitude();
-        Double lng = req.getOrigin().getLongitude();
+        Double oriLat = req.getOrigin().getLatitude();
+        Double oriLng = req.getOrigin().getLongitude();
+
+        Double destLat = req.getDestination().getLatitude();
+        Double destLng = req.getDestination().getLongitude();
 
         Route existing = routesRepository.findByRouteIdentifier(req.getRouteIdentifier());
         if (existing != null) {
@@ -32,29 +37,35 @@ public class RoutesService {
         }
 
         Waypoint origin = waypointsService.findWaypointByCoordinates(
-            lat,
-            lng
+            oriLat,
+            oriLng
         );
 
         if (origin == null) {
             waypointsService.addWaypoint(req.getOrigin());
             origin = waypointsService.findWaypointByCoordinates(
-                    lat,
-                    lng
+                oriLat,
+                oriLng
             );
         }
 
         Waypoint destination = waypointsService.findWaypointByCoordinates(
-                lat,
-                lng
+            destLat,
+            destLng
         );
 
         List<Waypoint> intermediates = Arrays.stream(req.getIntermediates())
-                .map(i -> waypointsService.findWaypointByCoordinates(
-                        i.getLatitude(),
-                        i.getLongitude()
-                ))
-                .toList();
+            .map(i -> {
+                Waypoint wp = waypointsService.findWaypointByCoordinates(i.getLatitude(), i.getLongitude());
+                if (wp == null) {
+                    waypointsService.addWaypoint(i);
+                    wp = waypointsService.findWaypointByCoordinates(i.getLatitude(), i.getLongitude());
+                }
+                return wp;
+            })
+            .toList();
+
+        User user = userService.findById(req.getUserId());
 
 
         Route route = Route.builder()
@@ -63,10 +74,15 @@ public class RoutesService {
                 .destination(destination)
                 .intermediates(intermediates)
                 .travelMode(req.getTravelMode())
+                .user(user)
                 .build();
 
         routesRepository.save(route);
         return "Route saved successfully";
+    }
+
+    public Route getRouteByRouteIdentifier(String routeIdentifier) {
+        return routesRepository.findByRouteIdentifier(routeIdentifier);
     }
 
 }

@@ -8,18 +8,35 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <script src="https://code.jquery.com/jquery-1.12.4.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"></script> 
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="scripts/user_auth.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="style/navbar.css" />
     <link rel="stylesheet" href="style/style.css" />
   </head>
   <body>
-    <header class="site-header" role="banner">
-      <div class="container">
-        <h1 class="site-title">Travel Planner</h1>
-        <p class="site-tagline">Plan your visit quickly and easily</p>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <div class="row">
+        <div class="nav-brand">
+          <h1 class="site-title">Travel Planner</h1>
+          <p class="site-tagline">Plan your visit quickly and easily</p>
+        </div>
+        <ul class="nav-links">
+          <li><a th:href="@{/}">Home</a></li>
+          <li>
+            <a th:href="@{/user/login}" id="user-auth">Login</a>
+          </li>
+        </ul>
       </div>
-    </header>
+    </div>
+  </nav>
+
+
+    <p id="message" style="color: red;"></p>
 
     <main id="main" class="container" role="main">
       <section aria-labelledby="trip-planner-title" class="card">
@@ -42,16 +59,9 @@
                 autocomplete="address-line1"
                 required
               />
-            <i class="fa fa-filter" style="font-size:24px" id="filter-btn"></i>
             </div>
             <datalist id="city-suggestions"></datalist>
             <small id="destination-help" class="muted">City or location you want to visit</small>
-            <div class="filters-div" id="filters-div">
-              <label><input type="checkbox" name="filter" value="museum" /> Museums</label>
-              <label><input type="checkbox" name="filter" value="park" /> Parks</label>
-              <label><input type="checkbox" name="filter" value="historical" /> Historical Sites</label>
-              <label><input type="checkbox" name="filter" value="shopping" /> Shopping</label>
-            </div>
           </div>
 
           <div class="form-grid">
@@ -94,7 +104,7 @@
 
     <footer class="site-footer">
       <div class="container">
-        <p class="muted">SDS2 • Erasmus Tourist Assistant</p>
+        <p class="muted">Travel Planner - Plan your visit quickly and easily!</p>
       </div>
     </footer>
 

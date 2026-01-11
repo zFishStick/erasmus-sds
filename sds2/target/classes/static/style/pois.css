@@ -36,11 +36,6 @@ html,body {
         font-size: large;
     }
 
-    a {
-        text-decoration: underline;
-        color: white;
-        font-size: xx-large;
-    }
 }
 
 .pois-back {

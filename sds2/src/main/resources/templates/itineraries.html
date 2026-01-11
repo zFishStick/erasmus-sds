@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/style/routes.css">  
+    <link rel="stylesheet" type="text/css" href="/style/map.css">  
+    <link rel="stylesheet" type="text/css" href="/style/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/style/navbar.css"/>
+    <script>(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})
+    ({key: "AIzaSyCKmFHtLzbE2Q6tHjZi2h31tBgkNfSoD8U", v: "weekly"});
+    </script>
+    <script src="/scripts/user_auth.js"></script>
+    <style>
+        body { background: linear-gradient(180deg, #0b1024 0%, #0f142d 60%, #0b1024 100%); }
+        .container { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 16px; margin-bottom: 18px; border: 1px solid rgba(255,255,255,0.05); }
+        .details-link { color: #7fb2ff; }
+        .details-link:hover { text-decoration: underline; }
+    </style>
+    <title th:text="|Waypoints, ${destination}, ${countryCode}|"></title>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="col">
+                <div class="row">
+                    <div class="nav-brand">
+                        <h1 class="site-title">Travel Planner</h1>
+                        <p class="site-tagline">Plan your visit quickly and easily</p>
+                    </div>
+
+                    <ul class="nav-links">
+                        
+                        <li><a th:href="@{/}">Home</a></li>
+                        <li>
+                            <a th:href="@{/user/login(
+                                destination=${request.destination},
+                                countryCode=${request.countryCode}
+                                )}"
+                                id="user-auth">
+                                Login
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="row">
+                    <ul class="nav-links">
+                        <li th:if="${request != null}">
+                            <form th:action="@{/places}" method="post">
+                                <input type="hidden" name="destination" th:value="${request.destination}">
+                                <input type="hidden" name="countryCode" th:value="${request.countryCode}">
+                                <input type="hidden" name="latitude" th:value="${request.latitude}" />
+                                <input type="hidden" name="longitude" th:value="${request.longitude}" />
+                                <input type="hidden" name="startDate" th:value="${request.startDate}" />
+                                <input type="hidden" name="endDate" th:value="${request.endDate}" />
+                                <button type="submit"
+                                        class="btn btn-primary">
+                                    Places to visit
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <p th:text="|Dest: ${request.destination}|"></p>
+    <p th:text="|Dest: ${request.countryCode}|"></p>
+    <p th:text="|Dest: ${request.latitude}|"></p>
+    <p th:text="|Dest: ${request.longitude}|"></p>
+    <p th:text="|Dest: ${request.startDate}|"></p>
+    <p th:text="|Dest: ${request.endDate}|"></p>
+
+    <div class="confirmation-dialog" id="confirmation-dialog">
+        <div class="confirmation-content">
+            <p>Are you sure you want to remove this waypoint?</p>
+            <div class="confirmation-buttons">
+                <button id="confirm-yes-btn">Yes</button>
+                <button id="confirm-no-btn">No</button>
+            </div>
+        </div>
+
+    </div>
+
+    <input type="hidden" id="route-city" th:value="${city}" />
+    <input type="hidden" id="route-country" th:value="${countryCode}" />
+
+    <h1 th:if="${request != null}" class="wpn-text" th:text="|Saved waypoints for ${request.destination}, ${request.countryCode}|">Waypoints</h1>
+
+    <main class="container" role="main">
+        <div th:if="${waypoints == null or #lists.isEmpty(waypoints)}">
+            <p>No waypoints found.</p>
+        </div>
+
+        <div th:if="${waypoints != null and !#lists.isEmpty(waypoints)}">
+            <div th:each="waypoint : ${waypoints}" class="waypoint-item">
+                <form class="waypoint-form">
+                    <input type="hidden" name="name" th:value="${waypoint.name}">
+                    <input type="hidden" name="address" th:value="${waypoint.address}">
+                    <input type="hidden" name="latitude" th:value="${waypoint.location != null ? waypoint.location.latitude : ''}">
+                    <input type="hidden" name="longitude" th:value="${waypoint.location != null ? waypoint.location.longitude : ''}">
+                </form>
+
+                <h2 th:text="${waypoint.name}">Waypoint</h2>
+                <p>Lat: <span th:text="${waypoint.location != null ? waypoint.location.latitude : 'N/A'}"></span></p>
+                <p>Lng: <span th:text="${waypoint.location != null ? waypoint.location.longitude : 'N/A'}"></span></p>
+                <p>Address: <span th:text="${waypoint.address}"></span></p>
+
+                <form th:action="@{/routes/waypoint/remove/{id}(id=${waypoint.id})}" 
+                method="post" 
+                style="display:inline-block; margin-top:8px;"
+                class="remove-waypoint-form" id="remove-waypoint-form">
+                <button type="submit" class="remove-btn">Remove</button>
+                </form>
+            </div>
+        </div>
+
+        <h2 style="font-size: 1.5rem;">Create Route</h2>
+
+        <gmp-map id="map">
+            <div class="place-autocomplete-card" slot="control-inline-start-block-start">
+                <form th:action="@{/routes/save}" id="route-form">
+                    <input type="hidden" id="user-id" name="userId" th:value="${user.id}" />
+                    <div class="row">
+                        <div class="col">
+                            <p>Route origin:</p>
+                            <gmp-place-autocomplete id="map-autocomplete"></gmp-place-autocomplete>
+                        </div>
+                        <div class="col">
+                            <p>Destination:</p>
+                            <select id="destination-select" name="destination" required>
+                                <option th:each="w : ${waypoints}"
+                                        th:value="${w.location.latitude + ',' + w.location.longitude}"
+                                        th:text="${w.name}",>
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <select id="travel-mode-select" name="travelMode" required>
+                            <option value="DRIVING">Driving</option>
+                            <option value="WALKING">Walking</option>
+                            <option value="BICYCLING">Bicycling</option>
+                            <option value="TRANSIT">Transit</option>
+                        </select>
+                        <input type="time" id="departure-time" name="departureTime" placeholder="Departure Time" required>
+                    </div>
+                    <input type="text" id="route-identifier" name="routeIdentifier" placeholder="Route Identifier" required />
+                    <button id="compute-route-btn" type="button">Compute Route</button>
+                    <button id="save-route-btn" type="submit">Save Route</button>
+                    <input type="hidden" id="intermediates-input" name="intermediates" />
+                </form>
+            </div>
+        </gmp-map>
+
+    </main>
+
+     <div style="display: flex; justify-content: center;">
+        <button onclick="window.history.back();" class="back-btn">Back</button>
+     </div>
+
+
+    <script type="module"
+            src="https://unpkg.com/@googlemaps/extended-component-library@0.6.0/dist/index.min.js">
+    </script>
+
+    <script th:src="@{/scripts/routes_manager.js}" defer></script>
+
+</body>
+</html>

@@ -1,17 +1,15 @@
 package com.sds2.controller;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -19,13 +17,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import com.sds2.classes.coordinates.GeoCode;
+import com.sds2.classes.hotel.HotelAddress;
 import com.sds2.dto.HotelDTO;
 import com.sds2.dto.HotelDetailsDTO;
 import com.sds2.service.HotelAvailabilityService;
 import com.sds2.service.HotelService;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(HotelController.class)
 class HotelControllerTest {
 
     @Autowired
@@ -37,39 +36,28 @@ class HotelControllerTest {
     @MockitoBean
     private HotelAvailabilityService availabilityService;
 
-    @BeforeEach
-    void setup() {
-		HotelDTO dto = mock(HotelDTO.class);
+        @BeforeEach
+        void setup() {
+        HotelDTO dto = new HotelDTO(
+                "HOTEL_001",               
+                "Hotel Paris",               
+                new GeoCode(48.8566, 2.3522), 
+                new HotelAddress("Paris", "France", "75001"),
+                List.of()                     
+        );
 
-        // Mock searchHotels
-        when(hotelService.getHotelsByCoordinates(
-                any(),
-                any(),
-                any(),
-                any())
-        ).thenReturn(Arrays.asList(dto));
+        when(hotelService.getHotelsByCoordinates(any(), any(), any(), any()))
+                .thenReturn(List.of(dto));
 
-        // Mock pagination availability
-        when(availabilityService.loadAvailability(
-                any(),
-                any())
-        ).thenReturn(Collections.emptyMap());
+        when(availabilityService.loadAvailability(any(), any()))
+                .thenReturn(Collections.emptyMap());
 
-        // Mock hotel details
-        when(hotelService.getHotelById(
-                any(),
-                anyInt(),
-                any(),
-                any())
-        ).thenReturn(Arrays.asList(new HotelDetailsDTO(
-                dto,
-                null
-        )));
-    }
+        when(hotelService.getHotelById(any(), anyInt(), any(), any()))
+                .thenReturn(List.of(new HotelDetailsDTO(dto, null)));
+        }
 
     @Test
     void postSearchHotel() throws Exception {
-
         mockMvc.perform(post("/hotels")
                 .param("latitude", "48")
                 .param("longitude", "2")
@@ -78,13 +66,12 @@ class HotelControllerTest {
                 .param("checkInDate", "2025-01-10")
                 .param("checkOutDate", "2025-01-12")
                 .param("size", "5"))
-            .andExpect(status().isOk())
-            .andExpect(view().name("hotels"));
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/hotels"));
     }
 
     @Test
     void postChangePage() throws Exception {
-
         MockHttpSession session = new MockHttpSession();
         initSearchSession(session);
 
@@ -98,7 +85,6 @@ class HotelControllerTest {
 
     @Test
     void postShowHotelDetails() throws Exception {
-
         MockHttpSession session = new MockHttpSession();
         initSearchSession(session);
 
@@ -112,11 +98,7 @@ class HotelControllerTest {
             .andExpect(view().name("hotel_details"));
     }
 
-    /**
-     * Initialise la session via /hotels
-     */
     private void initSearchSession(MockHttpSession session) throws Exception {
-
         mockMvc.perform(post("/hotels")
                 .session(session)
                 .param("latitude", "48")
@@ -126,6 +108,6 @@ class HotelControllerTest {
                 .param("checkInDate", "2025-01-10")
                 .param("checkOutDate", "2025-01-12")
                 .param("size", "5"))
-            .andExpect(status().isOk());
+            .andExpect(status().is3xxRedirection());
     }
 }

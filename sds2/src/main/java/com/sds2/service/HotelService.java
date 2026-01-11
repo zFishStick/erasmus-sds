@@ -11,14 +11,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.sds2.classes.Price;
 import com.sds2.classes.coordinates.GeoCode;
+import com.sds2.classes.entity.Hotel;
 import com.sds2.classes.hotel.HotelAddress;
 import com.sds2.classes.response.HotelResponse;
 import com.sds2.dto.HotelDTO;
 import com.sds2.dto.HotelDetailsDTO;
 import com.sds2.dto.HotelOfferDTO;
 import com.sds2.repository.HotelRepository;
-
-import com.sds2.classes.hotel.Hotel;
 
 @Service
 public class HotelService {
@@ -197,7 +196,10 @@ public class HotelService {
         if (hotelId == null || hotelId.isBlank()) {
             return null;
         }
-        String url = "https://api.amadeus.com/v1/reference-data/locations/hotels/" + hotelId;
+
+        String url = String.format(
+            "https://api.amadeus.com/v1/reference-data/locations/hotels/%s", hotelId);
+
         try {
             HotelDetailResponse response = webClientBuilder
                     .build()
