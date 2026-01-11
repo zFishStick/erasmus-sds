@@ -16,6 +16,7 @@ com\sds2\dto\HotelDTO.class
 com\sds2\classes\response\HotelResponse.class
 com\sds2\controller\POISController.class
 com\sds2\service\RoutesService.class
+com\sds2\classes\enums\RouteTravelMode.class
 com\sds2\service\POIService.class
 com\sds2\classes\coordinates\GeoCode.class
 com\sds2\repository\RoutesRepository.class
@@ -103,7 +104,6 @@ com\sds2\controller\AmadeusPageController.class
 com\sds2\classes\Geometry.class
 com\sds2\dto\HotelOfferDTO.class
 com\sds2\classes\entity\Waypoint.class
-com\sds2\classes\routeclasses\RouteTravelMode.class
 com\sds2\classes\entity\Waypoint$WaypointBuilder.class
 com\sds2\classes\response\HotelResponse$HotelData.class
 com\sds2\classes\response\PlaceResponse$PlacesData.class

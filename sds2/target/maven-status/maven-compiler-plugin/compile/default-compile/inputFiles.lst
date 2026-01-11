@@ -39,6 +39,7 @@ C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\controller\CityControll
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\entity\Hotel.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\dto\HotelDetailsDTO.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\response\LoginResponse.java
+C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\enums\RouteTravelMode.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\coordinates\Location.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\entity\City.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\hotel\HotelAddress.java
@@ -68,7 +69,6 @@ C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\Photos.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\controller\PageServer.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\response\HotelOfferResponse.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\repository\PlacesRepository.java
-C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\routeclasses\RouteTravelMode.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\response\POISResponse.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\service\CityService.java
 C:\Projects\Java\erasmus-sds\sds2\src\main\java\com\sds2\classes\entity\Places.java
