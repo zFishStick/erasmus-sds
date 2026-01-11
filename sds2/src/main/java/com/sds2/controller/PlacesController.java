@@ -40,7 +40,7 @@ public class PlacesController {
     }
 
     @GetMapping("/{country}/{destination}")
-    public String getMethodName(
+    public String getPlaces(
         @PathVariable String destination,
         @PathVariable String country,
         @RequestParam(defaultValue = "0") int page,

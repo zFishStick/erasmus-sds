@@ -23,21 +23,17 @@ import lombok.AllArgsConstructor;
 @Controller
 @RequestMapping("/pois")
 public class POISController {
-    
+
     private final POIService poiService;
 
     @PostMapping
-    public String searchCityByCoordinates(
-        POIRequest poiRequest, HttpSession session) {
+    public String searchCityByCoordinates(POIRequest poiRequest, HttpSession session) {
         GeoCode geoCode = new GeoCode(poiRequest.getLatitude(), poiRequest.getLongitude());
         List<POIDTO> activities = poiService.getPointOfInterests(geoCode, poiRequest.getDestination(), poiRequest.getCountryCode());
-        session.setAttribute(PoisEnum.CITY.getValue(), poiRequest.getDestination());
-        session.setAttribute(PoisEnum.COUNTRY.getValue(), poiRequest.getCountryCode());
-        session.setAttribute(PoisEnum.LATITUDE.getValue(), poiRequest.getLatitude());
-        session.setAttribute(PoisEnum.LONGITUDE.getValue(), poiRequest.getLongitude());
-        session.setAttribute(PoisEnum.CHECKIN.getValue(), poiRequest.getStartDate());
-        session.setAttribute(PoisEnum.CHECKOUT.getValue(), poiRequest.getEndDate());
+
+        session.setAttribute("request", poiRequest);
         session.setAttribute(PoisEnum.POISDATA.getValue(), activities);
+
         return "redirect:/pois/" + poiRequest.getCountryCode() + "/" + poiRequest.getDestination();
     }
 
@@ -50,55 +46,28 @@ public class POISController {
             Model model,
             HttpSession session) {
 
-            Object obj = session.getAttribute(PoisEnum.POISDATA.getValue());
-            List<POIDTO> activities;
-
-            if (obj instanceof List<?>) {
-                activities = ((List<?>) obj).stream()
-                            .filter(POIDTO.class::isInstance)
-                            .map(POIDTO.class::cast)
-                            .toList();
-            } else {
-                activities = List.of();
-            }
-
-        
-        if (activities == null) {
-            model.addAttribute(PoisEnum.POISDATA.getValue(), List.of());
-            model.addAttribute("currentPage", 0);
-            model.addAttribute("totalPages", 0);
-            model.addAttribute("pageSize", size);
-            return "pois";
+        POIRequest request = (POIRequest) session.getAttribute("request");
+        if (request != null) {
+            model.addAttribute("request", request);
         }
+
+        Object obj = session.getAttribute(PoisEnum.POISDATA.getValue());
+        List<POIDTO> activities = (obj instanceof List<?> list) 
+                ? list.stream().filter(POIDTO.class::isInstance).map(POIDTO.class::cast).toList()
+                : List.of();
 
         int total = activities.size();
-        int fromIndex = page * size;
+        int fromIndex = Math.min(Math.max(page * size, 0), total);
         int toIndex = Math.min(fromIndex + size, total);
-        List<POIDTO> pagedActivities;
-        if (fromIndex < 0 || fromIndex >= total) {
-            pagedActivities = List.of();
-        } else {
-            pagedActivities = activities.subList(fromIndex, toIndex);
-        }
+        List<POIDTO> pagedActivities = (fromIndex < toIndex) ? activities.subList(fromIndex, toIndex) : List.of();
 
         model.addAttribute(PoisEnum.CITY.getValue(), destination);
         model.addAttribute(PoisEnum.COUNTRY.getValue(), countryCode);
         model.addAttribute(PoisEnum.POISDATA.getValue(), pagedActivities);
-
-        Object lat = session.getAttribute(PoisEnum.LATITUDE.getValue());
-        Object lon = session.getAttribute(PoisEnum.LONGITUDE.getValue());
-        Object cin = session.getAttribute(PoisEnum.CHECKIN.getValue());
-        Object cout = session.getAttribute(PoisEnum.CHECKOUT.getValue());
-        if (lat != null) model.addAttribute(PoisEnum.LATITUDE.getValue(), lat);
-        if (lon != null) model.addAttribute(PoisEnum.LONGITUDE.getValue(), lon);
-        if (cin != null) model.addAttribute(PoisEnum.CHECKIN.getValue(), cin);
-        if (cout != null) model.addAttribute(PoisEnum.CHECKOUT.getValue(), cout);
         model.addAttribute("currentPage", page);
-        int totalPages = size > 0 ? (int) Math.ceil((double) total / size) : 0;
-        model.addAttribute("totalPages", totalPages);
         model.addAttribute("pageSize", size);
-        
+        model.addAttribute("totalPages", size > 0 ? (int) Math.ceil((double) total / size) : 0);
+
         return "pois";
     }
-
 }

@@ -11,28 +11,44 @@
 <body>
 
     <nav class="navbar">
-      <ul>
-        <header class="site-header" role="banner">
-          <div class="nav-container">
-            <h1 class="site-title">Travel Planner</h1>
-            <p class="site-tagline">Plan your visit quickly and easily</p>
-          </div>
-        </header>
-          <li><a th:href="@{/}">Home</a></li>
-          <li th:if="${request != null}">
-              <form action="/user/itineraries" method="get">
-                  <input type="hidden" name="city" th:value="${request.destination}">
-                  <input type="hidden" name="countryCode" th:value="${request.countryCode}">
-                  <button type="submit" class="btn btn-primary">
-                      Waypoints
-                  </button>
-              </form>
-          </li>
-          <li>
-            <a th:href="@{/user/login}" id="user-auth">Login</a>
-        </li>
-        </ul>
-        <div id="filter-container" style="margin-top: 12px;"></div>
+        <div class="nav-inner">
+            <div class="col">
+                <div class="row">
+                    <div class="nav-brand">
+                        <h1 class="site-title">Travel Planner</h1>
+                        <p class="site-tagline">Plan your visit quickly and easily</p>
+                    </div>
+
+                    <ul class="nav-links">
+                        
+                        <li><a th:href="@{/}">Home</a></li>
+
+                        <li>
+                            <a id="user-auth"> Login </a>
+                        </li>
+                        
+                    </ul>
+                </div>
+
+                <div class="row">
+                    <ul class="nav-links">
+                        <li>
+                            <form id="itinerary-form"
+                                th:action="@{/user/itineraries}"
+                                method="post">
+                                <input type="hidden" name="destination" th:value="${destination}">
+                                <input type="hidden" name="country" th:value="${countryCode}">
+                                <button type="submit"
+                                        id="view-itinerary-btn" class="btn btn-primary"
+                                        th:text="|Saved Waypoint for ${destination}|">
+                                    Saved Waypoints
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </nav>
 
     <h1 th:text="'Hello ' + ${user.username}"> User not found</h1>
@@ -49,12 +65,10 @@
 
     <button th:if="${destination != null && countryCode != null}"><a th:href="@{/user/itineraries}">Places</a></button>
 
-    <button><a th:href="@{/}">Menu</a></button>
-
     <div th:if="${itineraries != null and !#lists.isEmpty(itineraries)}">
-        <h2 th:text="|Itineraries in ${destination}, ${countryCode}">Itineraries</h2>
-        <ul>
-            <li th:each="itinerary : ${itineraries}">
+        <ul th:each="itinerary : ${itineraries}">
+            <h2 th:text="|Itineraries in ${itinerary.city}, ${itinerary.country}">Itineraries</h2>
+            <li>
                 <strong th:text="${itinerary.routeIdentifier}">Itinerary Name</strong>
                 <ul>
                     <li>Origin: <span th:text="${itinerary.origin}">Origin</span></li>

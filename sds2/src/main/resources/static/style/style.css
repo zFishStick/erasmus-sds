@@ -11,6 +11,7 @@
   --muted: #a7b0c6;
   --text: #e6e9f2;
   --primary: #5b8cff;
+  --back: #780411;
   --primary-900: #2a5bff;
   --ring: rgba(91, 140, 255, 0.45);
   --radius: 12px;
@@ -88,7 +89,7 @@ body {
 }
 
 label { font-weight: 600; }
-input[type="text"], input[type="date"], input[type="email"], input[type="tel"] {
+input[type="text"], input[type="date"], input[type="email"], input[type="tel"], input[type="password"], select, textarea {
   appearance: none;
   width: 100%;
   padding: 12px 14px;
@@ -116,11 +117,49 @@ input:focus {
   font-weight: 600;
 }
 .btn-primary {
-  background: linear-gradient(180deg, var(--primary) 0%, var(--primary-900) 100%);
-  border: 1px solid rgba(255,255,255,0.18);
+  background: linear-gradient(180deg, var(--primary) 0%, var(--primary-900) 100%) !important;
+  border: 1px solid rgba(255,255,255,0.18) !important;
 }
 .btn-ghost:hover { border-color: rgba(255,255,255,0.3); }
+
+.btn-back {
+  background: linear-gradient(180deg, var(--back) 0%, #4c0200 100%);
+  border: 1px solid rgba(255,255,255,0.18);
+}
 
 .preview-content p { margin: 8px 0; }
 
 .site-footer { padding: 40px 0; color: var(--muted); text-align: center; }
+
+.login-buttons {
+  display: flex;
+  margin-top: 20px;
+  gap: 12px;
+  justify-content: center;
+
+  .col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .row {
+    display: flex;
+    gap: 16px;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.2);
+}

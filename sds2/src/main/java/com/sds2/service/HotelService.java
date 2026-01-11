@@ -196,7 +196,10 @@ public class HotelService {
         if (hotelId == null || hotelId.isBlank()) {
             return null;
         }
-        String url = "https://api.amadeus.com/v1/reference-data/locations/hotels/" + hotelId;
+
+        String url = String.format(
+            "https://api.amadeus.com/v1/reference-data/locations/hotels/%s", hotelId);
+
         try {
             HotelDetailResponse response = webClientBuilder
                     .build()

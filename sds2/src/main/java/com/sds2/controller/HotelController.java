@@ -20,12 +20,14 @@ import com.sds2.service.HotelService;
 import com.sds2.util.Pagination;
 
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.bind.annotation.GetMapping;
+
 
 @Controller
 @RequestMapping("/hotels")
 public class HotelController {
 
-    private static final int DEFAULT_PAGE_SIZE = 5;
+    private static final int DEFAULT_PAGE_SIZE = 9;
 
     private final HotelService hotelService;
     private final HotelAvailabilityService availabilityService;
@@ -38,7 +40,6 @@ public class HotelController {
     @PostMapping
     public String searchHotels (
         HotelRequest hotelRequest,
-        @RequestParam(value = "size", defaultValue = "5") int size,
         Model model,
         HttpSession session
     ) {
@@ -63,7 +64,7 @@ public class HotelController {
             hotelRequest.getLongitude(),
             hotelRequest.getCheckInDate(),
             hotelRequest.getCheckOutDate(),
-            normalizePageSize(size)
+            normalizePageSize(DEFAULT_PAGE_SIZE)
         );
 
         session.setAttribute(HotelEnum.HOTELS_DATA.getValue(), hotels);
@@ -71,8 +72,31 @@ public class HotelController {
 
         int resolvedPage = populateHotelsModel(model, hotels, 0, context);
         session.setAttribute(HotelEnum.CURRENT_PAGE.getValue(), resolvedPage);
+        return "redirect:/hotels";
+    }
+
+    @GetMapping
+    public String restoreHotelsFromSession(
+        @RequestParam(value = "page", defaultValue = "0") int page,
+        Model model,
+        HttpSession session
+    ) {
+        List<HotelDTO> hotels =
+            (List<HotelDTO>) session.getAttribute(HotelEnum.HOTELS_DATA.getValue());
+
+        HotelSearchContext context =
+            (HotelSearchContext) session.getAttribute(HotelEnum.SEARCH_CONTEXT.getValue());
+
+        if (hotels == null || context == null) {
+            return "redirect:/";
+        }
+
+        int resolvedPage = populateHotelsModel(model, hotels, page, context);
+        session.setAttribute(HotelEnum.CURRENT_PAGE.getValue(), resolvedPage);
+
         return HotelEnum.HOTELS_DATA.getValue();
     }
+    
 
     @PostMapping("/page")
     public String changePage (
@@ -176,12 +200,7 @@ public class HotelController {
         );
 
         if (context != null) {
-            model.addAttribute("cityName", context.destination());
-            model.addAttribute("countryCode", context.countryCode());
-            model.addAttribute("latitude", context.latitude());
-            model.addAttribute("longitude", context.longitude());
-            model.addAttribute("checkInDate", context.checkInDate());
-            model.addAttribute("checkOutDate", context.checkOutDate());
+            model.addAttribute("request", context);
         }
 
         return pagination.page();

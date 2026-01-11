@@ -2,10 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title th:text="${'Point of interests in ' + (cityName != null and !#strings.isEmpty(cityName) ? cityName + ', ' + countryCode : '')}">POIs</title>
-    <script src="/./scripts/filter_places.js"></script>
-    <link rel="stylesheet" href="/./style/style.css"/>
-    <link rel="stylesheet" href="/../style/pois.css"/>
+    <title th:text="${'Guided visits in ' + (cityName != null and !#strings.isEmpty(cityName) ? cityName + ', ' + countryCode : '')}">POIs</title>
+    <link rel="stylesheet" href="/style/style.css"/>
+    <link rel="stylesheet" href="/style/pois.css"/>
+    <link rel="stylesheet" href="/style/navbar.css"/>
     <style>
         body { background: linear-gradient(180deg, #0b1024 0%, #101733 60%, #0b1024 100%); }
         .pois-container { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 16px; margin-bottom: 18px; border: 1px solid rgba(255,255,255,0.05); }
@@ -15,35 +15,87 @@
   </head>
 <body>
 
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="col">
+                <div class="row">
+                    <div class="nav-brand">
+                        <h1 class="site-title">Travel Planner</h1>
+                        <p class="site-tagline">Plan your visit quickly and easily</p>
+                    </div>
+
+                    <ul class="nav-links">
+                        
+                        <li><a th:href="@{/}">Home</a></li>
+
+                        <li>
+                            <a th:href="@{/user/login(
+                                destination=${cityName},
+                                countryCode=${countryCode}
+                                )}"
+                                id="user-auth">
+                                Login
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="row">
+                    <ul class="nav-links">
+                        <li>
+                            <form id="itinerary-form"
+                                th:action="@{/user/itineraries}"
+                                method="get">
+                                <input type="hidden" name="city" th:value="${cityName}">
+                                <input type="hidden" name="countryCode" th:value="${countryCode}">
+                                <button type="submit"
+                                        id="view-itinerary-btn" class="btn btn-primary">
+                                    Saved Waypoints
+                                </button>
+                            </form>
+                        </li>
+
+                        <li th:if="${request != null}">
+                            <form th:action="@{/pois}" method="post">
+                                <input type="hidden" name="destination" th:value="${request.destination}" />
+                                <input type="hidden" name="countryCode" th:value="${request.countryCode}" />
+                                <input type="hidden" name="latitude" th:value="${request.latitude}" />
+                                <input type="hidden" name="longitude" th:value="${request.longitude}" />
+                                <input type="hidden" name="startDate" th:value="${request.startDate}" />
+                                <input type="hidden" name="endDate" th:value="${request.endDate}" />
+                                <button type="submit" class="btn btn-primary">
+                                    Guided Visits
+                                </button>
+                            </form>
+                        </li>
+
+                        <li th:if="${request != null}">
+                            <form th:action="@{/hotels}" method="post">
+                                <input type="hidden" name="destination" th:value="${request.destination}" />
+                                <input type="hidden" name="countryCode" th:value="${request.countryCode}" />
+                                <input type="hidden" name="latitude" th:value="${request.latitude}" />
+                                <input type="hidden" name="longitude" th:value="${request.longitude}" />
+                                <input type="hidden" name="startDate" th:value="${request.startDate}" />
+                                <input type="hidden" name="endDate" th:value="${request.endDate}" />
+                                <button type="submit" class="btn btn-primary">
+                                    Book a Hotel
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
 <header class="pois-header" role="banner">
     <div class="container">
         <h1 th:text="${'Point of interests in ' + (cityName != null and !#strings.isEmpty(cityName) ? cityName + ', ' + countryCode : '')}">Point of interests in CITY</h1>
-        <div th:if="${cityName != null}" class="actions" style="justify-content:center; margin: 10px 0 6px; display:flex; gap:12px; flex-wrap:wrap;">
-          <form th:action="@{/hotels}" method="post">
-            <input type="hidden" name="destination" th:value="${cityName}" />
-            <input type="hidden" name="countryCode" th:value="${countryCode}" />
-            <input type="hidden" name="latitude" th:value="${latitude}" />
-            <input type="hidden" name="longitude" th:value="${longitude}" />
-            <input type="hidden" name="checkInDate" th:if="${checkInDate != null}" th:value="${checkInDate}" />
-            <input type="hidden" name="checkOutDate" th:if="${checkOutDate != null}" th:value="${checkOutDate}" />
-            <button type="submit" class="btn btn-primary">Want to book a hotel?</button>
-          </form>
-          <form th:action="@{/places}" method="post">
-            <input type="hidden" name="destination" th:value="${cityName}" />
-            <input type="hidden" name="countryCode" th:value="${countryCode}" />
-            <input type="hidden" name="latitude" th:value="${latitude}" />
-            <input type="hidden" name="longitude" th:value="${longitude}" />
-            <input type="hidden" name="startDate" th:value="${checkInDate}" />
-            <input type="hidden" name="endDate" th:value="${checkOutDate}" />
-            <button type="submit" class="btn btn-primary">Back to places</button>
-          </form>
-        </div>
-
-        <h2>Activities</h2>
         <div th:if="${poisData == null or #lists.isEmpty(poisData)}">
             <p>No activities found.</p>
     </div>
 </header>
+
 <div class="pois-container" th:if="${poisData != null and !#lists.isEmpty(poisData)}" th:each="activity : ${poisData}">
   <h2 th:text="${activity.name}">Activity name</h2>
   <div class="row">
@@ -54,7 +106,7 @@
     <p th:text="'Price: ' + ${activity.price.amount} + ' ' + ${activity.price.currencyCode}">Price</p>
     <p th:text="'Minimum Duration: ' + ${activity.minimumDuration}">Minimum Duration</p>
   </div>
-  <a th:href="${activity.bookingLink}">Book Now</a>
+  <button class="btn btn-primary"><a th:href="${activity.bookingLink}">Book Now</a></button>
 </div>
 
 <div th:if="${poisData != null and !#lists.isEmpty(poisData)}" class="pagination">
@@ -73,7 +125,8 @@
 
 
 <p class="pois-back">
-  <a href="/">Back</a>
+  <button onclick="window.history.back()" class="btn btn-back">Back</button>
 </p>
 </body>
+<script src="/scripts/user_auth.js"></script>
 </html>

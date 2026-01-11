@@ -9,7 +9,6 @@ import com.sds2.classes.entity.Route;
 import com.sds2.classes.entity.User;
 import com.sds2.classes.entity.Waypoint;
 import com.sds2.classes.request.UserRequest;
-import com.sds2.classes.response.LoginResponse;
 import com.sds2.dto.RouteDTO;
 import com.sds2.dto.UserDTO;
 import com.sds2.repository.RoutesRepository;
@@ -46,23 +45,23 @@ public class UserService {
 
     }
 
-    public LoginResponse loginUser(String email, String password) {
-        User user = userRepository.findByEmail(email);
+    // public LoginResponse loginUser(String email, String password) {
+    //     User user = userRepository.findByEmail(email);
 
-        if (user == null) {
-            return new LoginResponse(false, LoginResponse.LoginStatus.USER_NOT_FOUND, null);
-        }
+    //     if (user == null) {
+    //         return new LoginResponse(false, "User not found", null);
+    //     }
 
-        if (!PasswordManager.verifyPassword(password, user.getPassword())) {
-            return new LoginResponse(false, LoginResponse.LoginStatus.INVALID_CREDENTIALS, null);
-        }
+    //     if (!PasswordManager.verifyPassword(password, user.getPassword())) {
+    //         return new LoginResponse(false, "Invalid credentials", null);
+    //     }
 
-        return new LoginResponse(
-            true,
-            LoginResponse.LoginStatus.SUCCESS,
-            "/user/" + user.getId()
-        );
-    }
+    //     return new LoginResponse(
+    //         true,
+    //         "Login successful",
+    //         "/user/" + user.getId()
+    //     );
+    // }
 
     public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id).orElse(null);
@@ -78,6 +77,8 @@ public class UserService {
             return routes.stream()
                     .map(route -> new RouteDTO(
                             route.getRouteIdentifier(),
+                            route.getCity(),
+                            route.getCountry(),
                             route.getOrigin().getName(),
                             route.getDestination().getName(),
                             route.getIntermediates().stream()

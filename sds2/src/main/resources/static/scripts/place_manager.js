@@ -71,32 +71,52 @@ if (savedTypes) {
     JSON.parse(savedTypes).forEach(type => activeTypes.add(type));
 }
 
+const toggleBtn = document.getElementById('filter-toggle');
+const filterPanel = document.getElementById('filter-container');
+
+toggleBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  filterPanel.classList.toggle('hidden');
+});
+
+filterPanel.addEventListener('click', (e) => {
+  e.stopPropagation();
+});
+
+document.addEventListener('click', () => {
+  filterPanel.classList.add('hidden');
+});
 
 function createFilterCheckboxes() {
-    const filterContainer = document.getElementById('filter-container');
-    filterContainer.innerHTML = '';
+  const filterContainer = document.getElementById('filter-container');
+  filterContainer.innerHTML = '';
 
-    for (const [groupKey, group] of Object.entries(placeGroups)) {
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = `filter-group-${groupKey}`;
-        checkbox.value = groupKey;
-        checkbox.checked = true;
+  filterContainer.classList.add('filter-panel');
 
-        checkbox.addEventListener('change', () => {
-            toggleGroup(groupKey, checkbox.checked);
-        });
+  for (const [groupKey, group] of Object.entries(placeGroups)) {
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = `filter-group-${groupKey}`;
+    checkbox.value = groupKey;
+    checkbox.checked = true;
+    checkbox.classList.add('filter-checkbox');
 
-        const label = document.createElement('label');
-        label.htmlFor = checkbox.id;
-        label.textContent = group.label;
+    checkbox.addEventListener('change', () => {
+      toggleGroup(groupKey, checkbox.checked);
+    });
 
-        const wrapper = document.createElement('div');
-        wrapper.appendChild(checkbox);
-        wrapper.appendChild(label);
+    const label = document.createElement('label');
+    label.htmlFor = checkbox.id;
+    label.textContent = group.label;
+    label.classList.add('filter-label');
 
-        filterContainer.appendChild(wrapper);
-    }
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('filter-item');
+    wrapper.appendChild(checkbox);
+    wrapper.appendChild(label);
+
+    filterContainer.appendChild(wrapper);
+  }
 }
 
 createFilterCheckboxes();

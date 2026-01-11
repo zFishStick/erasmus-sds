@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.sds2.classes.entity.Route;
+import com.sds2.classes.entity.User;
+import com.sds2.classes.request.POIRequest;
 import com.sds2.classes.request.UserRequest;
 import com.sds2.classes.response.LoginResponse;
 import com.sds2.dto.RouteDTO;
@@ -22,6 +24,7 @@ import com.sds2.dto.WaypointDTO;
 import com.sds2.service.RoutesService;
 import com.sds2.service.UserService;
 import com.sds2.service.WaypointService;
+import com.sds2.util.PasswordManager;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
@@ -36,6 +39,7 @@ public class UserController {
     private final WaypointService waypointService;
     private final RoutesService routesService;
 
+    public static final String REQUEST = "request";
     public static final String COUNTRY_CODE = "countryCode";
     public static final String DESTINATION = "destination";
     public static final String REDIRECT = "redirect:/user/login";
@@ -58,49 +62,48 @@ public class UserController {
         }
 
     }
-    
-    @PostMapping("/login")
-    public String login(
+
+    @PostMapping("/login/ajax")
+    @ResponseBody
+    public LoginResponse loginAjax(
             @RequestParam String email,
             @RequestParam String password,
             @RequestParam(required = false) String destination,
             @RequestParam(required = false) String countryCode,
-            HttpSession session,
-            Model model) {
+            HttpSession session) {
 
-        LoginResponse result = userService.loginUser(email, password);
+        User user = userService.findById(userService.getUserByEmail(email).id());
 
-        if (!result.isSuccess()) {
-            model.addAttribute("error", result.getMessage());
-            model.addAttribute(DESTINATION, destination);
-            model.addAttribute(COUNTRY_CODE, countryCode);
-            return "login";
+        if (user == null) {
+            return new LoginResponse(false, LoginResponse.LoginStatus.USER_NOT_FOUND, null);
+        }
+
+        if (!PasswordManager.verifyPassword(password, user.getPassword())) {
+            return new LoginResponse(false, LoginResponse.LoginStatus.INVALID_CREDENTIALS, null);
         }
 
         session.setAttribute("user", userService.getUserByEmail(email));
 
-        if (destination != null && !destination.isBlank() &&
+         if (destination != null && !destination.isBlank() &&
             countryCode != null && !countryCode.isBlank()) {
-            return "redirect:/places/" + countryCode + "/" + destination;
+            session.setAttribute(DESTINATION, destination);
+            session.setAttribute(COUNTRY_CODE, countryCode);
         }
 
-
-        return "redirect:/user";
+        return new LoginResponse(true, LoginResponse.LoginStatus.SUCCESS, "/user");
     }
-
-
 
     @GetMapping("/login")
-    public String loginPage(Model model, HttpSession session) {
-
-        String destination = (String) session.getAttribute(DESTINATION);
-        String countryCode = (String) session.getAttribute(COUNTRY_CODE);
-
+    public String loginPage(
+        @RequestParam(required = false) String destination,
+        @RequestParam(required = false) String countryCode,
+        Model model
+    ) {
         model.addAttribute(DESTINATION, destination);
         model.addAttribute(COUNTRY_CODE, countryCode);
-
         return "login";
     }
+
 
 
     @GetMapping("/status")
@@ -123,16 +126,17 @@ public class UserController {
             return REDIRECT;
         }
 
-        // Show all the itineraries for the user
         List<RouteDTO> routes = userService.getUserRoutes(user.id());
+        
+        POIRequest request = (POIRequest) session.getAttribute(REQUEST);
+
+        if (request != null) {
+            model.addAttribute(DESTINATION, request.getDestination());
+            model.addAttribute(COUNTRY_CODE, request.getCountryCode());
+        }
+
+        
         model.addAttribute("itineraries", routes);
-
-        // String city = (String) session.getAttribute("city");
-        // String countryCode = (String) session.getAttribute(COUNTRY_CODE);
-
-        // model.addAttribute("city", city);
-        // model.addAttribute(COUNTRY_CODE, countryCode);
-
         model.addAttribute("user", user);
         return "user";
     }
@@ -144,34 +148,53 @@ public class UserController {
         return "redirect:/";
     }
 
+    @PostMapping("/itineraries")
+    public String loadUserItineraries(
+        @RequestParam String destination,
+        @RequestParam String country,
+        HttpSession session
+    ) {
+        session.setAttribute(DESTINATION, destination);
+        session.setAttribute(COUNTRY_CODE, country);
+
+        return "redirect:/user/itineraries";
+    }
+
+
     @GetMapping("/itineraries")
     public String getUserItineraries(
-            @RequestParam String city,
-            @RequestParam(required = false) String countryCode,
-            HttpSession session,
-            Model model) {
-
+        HttpSession session,
+        Model model
+    ) {
         UserDTO user = (UserDTO) session.getAttribute("user");
+        POIRequest request = (POIRequest) session.getAttribute(REQUEST);
+
+        if (request == null) {
+            return "redirect:/";
+        }
+
         if (user == null) {
-            session.setAttribute(DESTINATION, city);
-            session.setAttribute(COUNTRY_CODE, countryCode);
+            session.setAttribute(DESTINATION, request.getDestination());
+            session.setAttribute(COUNTRY_CODE, request.getCountryCode());
             return REDIRECT;
         }
 
         List<WaypointDTO> waypoints =
             waypointService.findByUserAndCity(
                 user.id(),
-                city,
-                countryCode
+                request.getDestination(),
+                request.getCountryCode()
             );
 
-        model.addAttribute("city", city);
-        model.addAttribute(COUNTRY_CODE, countryCode);
+        model.addAttribute(REQUEST, request);
+        model.addAttribute(DESTINATION, request.getDestination());
+        model.addAttribute(COUNTRY_CODE, request.getCountryCode());
         model.addAttribute("waypoints", waypoints);
-        model.addAttribute("user", user);
+        model.addAttribute("user", user);   
 
         return "itineraries";
     }
+
 
     @GetMapping("/itinerary/{routeIdentifier}")
     public String getItineraryByRouteIdentifier(
