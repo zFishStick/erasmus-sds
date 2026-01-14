@@ -239,7 +239,7 @@ function computeRoute() {
     const travelModeSelect = document.getElementById("travel-mode-select");
 
     const request = {
-        origin: origin.location,
+        origin: originMarker.position,
         destination: destinationObj,
         waypoints: waypointsArr,
         travelMode: travelModeSelect.value

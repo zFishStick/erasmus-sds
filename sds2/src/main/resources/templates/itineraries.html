@@ -84,8 +84,8 @@
 
     </div>
 
-    <input type="hidden" id="route-city" th:value="${city}" />
-    <input type="hidden" id="route-country" th:value="${countryCode}" />
+    <input type="hidden" id="route-city" th:value="${request.destination}" />
+    <input type="hidden" id="route-country" th:value="${request.countryCode}" />
 
     <h1 th:if="${request != null}" class="wpn-text" th:text="|Saved waypoints for ${request.destination}, ${request.countryCode}|">Waypoints</h1>
 

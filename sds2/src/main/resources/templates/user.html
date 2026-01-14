@@ -32,7 +32,7 @@
 
                 <div class="row">
                     <ul class="nav-links">
-                        <li>
+                        <li th:if="${destination != null && countryCode != null}">
                             <form id="itinerary-form"
                                 th:action="@{/user/itineraries}"
                                 method="post">
