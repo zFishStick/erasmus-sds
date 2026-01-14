@@ -2,8 +2,10 @@ package com.sds2.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -136,7 +138,16 @@ public class UserController {
         }
 
         
-        model.addAttribute("itineraries", routes);
+        Map<String, List<RouteDTO>> itinerariesByLocation =
+        routes.stream()
+                .collect(Collectors.groupingBy(
+                        r -> r.city() + ", " + r.country(),
+                        LinkedHashMap::new,
+                        Collectors.toList()
+                ));
+
+        model.addAttribute("itinerariesByLocation", itinerariesByLocation);
+
         model.addAttribute("user", user);
         return "user";
     }

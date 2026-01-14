@@ -44,6 +44,8 @@ public class Route {
     @ManyToOne
     private Waypoint destination;
 
+    private String departureTime;
+
     @ManyToMany
     @JoinTable(
         name = "route_intermediates",

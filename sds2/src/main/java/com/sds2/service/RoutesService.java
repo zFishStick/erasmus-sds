@@ -70,6 +70,9 @@ public class RoutesService {
 
         Route route = Route.builder()
                 .routeIdentifier(req.getRouteIdentifier())
+                .city(req.getCity())
+                .country(req.getCountry())
+                .departureTime(req.getDepartureTime())
                 .origin(origin)
                 .destination(destination)
                 .intermediates(intermediates)
