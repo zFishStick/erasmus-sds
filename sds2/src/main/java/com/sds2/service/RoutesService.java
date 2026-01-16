@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-
 import com.sds2.classes.request.RouteRequest;
 import com.sds2.classes.routeclasses.Route;
 import com.sds2.classes.routeclasses.Waypoint;
@@ -16,9 +14,7 @@ import lombok.AllArgsConstructor;
 @Service
 public class RoutesService {
 
-    private final GoogleAuthService googleAuthService;
     private final RoutesRepository routesRepository;
-    private final WebClient.Builder webClientBuilder;
     private final WaypointService waypointsService;
 
     public String saveRoute(RouteRequest req) {
@@ -37,7 +33,7 @@ public class RoutesService {
         );
 
         if (origin == null) {
-            waypointsService.addWaypoint(req.getOrigin());
+            waypointsService.addWaypointFromRequest(req.getOrigin());
             origin = waypointsService.findWaypointByCoordinates(
                     lat,
                     lng

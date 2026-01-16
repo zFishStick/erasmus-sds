@@ -6,7 +6,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import com.sds2.classes.coordinates.Location;
 import com.sds2.dto.PlacesDTO;
@@ -16,10 +15,6 @@ class PlaceServiceTest {
 
     @Autowired
     private PlaceService placeService;
-    @Autowired
-    private GoogleAuthService googleAuthService;
-    @Autowired
-    private WebClient.Builder webClientBuilder;
 
     @Test
     void searchNearbyTest() {
