@@ -10,10 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import com.sds2.classes.coordinates.Location;
-import com.sds2.classes.entity.Waypoint;
+
 import com.sds2.classes.request.WaypointRequest;
-import com.sds2.service.PlaceService;
 import com.sds2.service.RoutesService;
 import com.sds2.service.WaypointService;
 
@@ -26,39 +24,29 @@ class RouteControllerTest {
     @Mock
     private WaypointService waypointService;
 
-    @Mock
-    private PlaceService placeService;
-
     @InjectMocks
     private RouteController routeController;
 
     @Test
     void addWaypoint_callsServicesAndReturnsOk() {
         WaypointRequest waypointRequest = new WaypointRequest(
-            "Avenida Poznań",
-            "Centrum handlowe, Stanisława Matyi 2, 61-586 Poznań, Poland",
+            "Avenida Poznan",
+            "Centrum handlowe, Stanislawa Matyi 2, 61-586 Poznan, Poland",
             52.4003253,
             16.9135941,
-            "Poznań",
+            "Poznan",
             "Poland",
             1L
         );
 
-        Location location = Location.builder()
-            .latitude(52.4003253)
-            .longitude(16.9135941)
-            .build();
-
-        System.out.println(location.toString());
-
-        when(waypointService.addWaypoint(any(Waypoint.class)))
+        when(waypointService.addWaypointFromRequest(any(WaypointRequest.class)))
             .thenReturn("You have already added this waypoint");
 
         String response = routeController.addWaypoint(waypointRequest);
 
         assertEquals("You have already added this waypoint", response);
 
-        verify(waypointService).addWaypoint(any(Waypoint.class));   
+        verify(waypointService).addWaypointFromRequest(any(WaypointRequest.class));
     }
 
     @Test
