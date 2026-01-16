@@ -3,7 +3,6 @@ package com.sds2.dto;
 import java.io.Serializable;
 
 import com.sds2.classes.Price;
-import com.sds2.classes.coordinates.GeoCode;
 
 public record POIDTO
 (
@@ -14,7 +13,6 @@ public record POIDTO
     Price price,
     String pictures,
     String minimumDuration,
-    String bookingLink,
-    GeoCode coordinates
+    String bookingLink
     
 ) implements Serializable{}

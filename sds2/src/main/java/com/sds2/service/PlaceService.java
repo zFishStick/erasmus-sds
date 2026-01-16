@@ -4,7 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -28,7 +28,7 @@ public class PlaceService {
     private final GoogleAuthService googleAuthService;
     private final WebClient.Builder webClientBuilder;
 
-    private static final String[] HEADER_INFO = {
+    private static final String [] headerInfo = {
         "places.id",
         "places.name",
         "places.displayName.text",
@@ -54,6 +54,10 @@ public class PlaceService {
         }
 
         placesRepository.save(place);
+    }
+
+    public List<Places> findPlacesByCitySummary_City(String city) {
+        return placesRepository.findByCitySummary_CityIgnoreCase(city);
     }
 
     public Places findPlaceByName(String name) {
@@ -102,23 +106,52 @@ public class PlaceService {
     }
 
     public List<PlacesDTO> searchNearby(Location location, String city, String country) {
+
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+
         List<Places> existingPlaces = placesRepository.findByCitySummary_CityAndCitySummary_Country(city, country);
+
         if (!existingPlaces.isEmpty()) {
             return existingPlaces.stream()
                 .map(this::mapToDTO)
                 .toList();
         }
-        Map<String, Object> body = buildNearbyBody(location, 10000.0);
-        PlaceResponse response = callPlacesApi("https://places.googleapis.com/v1/places:searchNearby", body);
-        return mapPlacesToDTOs(response, city, country);
-    }
 
-    public List<PlacesDTO> searchByText(Location location, String city, String country, String query) {
-        if (query == null || query.isBlank()) {
-            return List.of();
+        String url = "https://places.googleapis.com/v1/places:searchNearby";
+
+        // radius in meters
+        double radius = 10000.0;
+
+        String body = String.format(Locale.US, """
+        {
+          "locationRestriction": {
+            "circle": {
+            "center": {
+                "latitude": %f,
+                "longitude": %f
+            },
+            "radius": %f
+            }
+          }
         }
-        Map<String, Object> body = buildTextSearchBody(query, location, 12000.0);
-        PlaceResponse response = callPlacesApi("https://places.googleapis.com/v1/places:searchText", body);
+        """.formatted(latitude, longitude, radius));
+
+        PlaceResponse response = webClientBuilder.build()
+                .post()
+                .uri(url)
+                .header(GoogleBodyEnum.CONTENTTYPE.getValue(), GoogleBodyEnum.APPLICATIONJSON.getValue())
+                .header(GoogleBodyEnum.X_GOOG_API_KEY.getValue(), googleAuthService.getApiKey())
+                .header(GoogleBodyEnum.X_GOOG_FIELD_MASK.getValue(), String.join(",", headerInfo))
+                .bodyValue(body)
+                .retrieve()
+                .bodyToMono(PlaceResponse.class)
+                .block();
+
+        if (response == null) {
+            throw new IllegalStateException("Failed to retrieve nearby places from Google Places API");
+        }
+
         return mapPlacesToDTOs(response, city, country);
     }
 
@@ -133,55 +166,9 @@ public class PlaceService {
                     .toList();
     }
 
-    private PlaceResponse callPlacesApi(String url, Object body) {
-        PlaceResponse response = webClientBuilder.build()
-            .post()
-            .uri(url)
-            .header(GoogleBodyEnum.CONTENTTYPE.getValue(), GoogleBodyEnum.APPLICATIONJSON.getValue())
-            .header(GoogleBodyEnum.X_GOOG_API_KEY.getValue(), googleAuthService.getApiKey())
-            .header(GoogleBodyEnum.X_GOOG_FIELD_MASK.getValue(), String.join(",", HEADER_INFO))
-            .bodyValue(body)
-            .retrieve()
-            .bodyToMono(PlaceResponse.class)
-            .block();
-
-        if (response == null) {
-            throw new IllegalStateException("Failed to retrieve places from Google Places API");
-        }
-
-        return response;
-    }
-
-    private Map<String, Object> buildNearbyBody(Location location, double radius) {
-        return Map.of(
-            "locationRestriction", Map.of(
-                "circle", Map.of(
-                    "center", Map.of(
-                        "latitude", location.getLatitude(),
-                        "longitude", location.getLongitude()
-                    ),
-                    "radius", radius
-                )
-            )
-        );
-    }
-
-    private Map<String, Object> buildTextSearchBody(String query, Location location, double radius) {
-        return Map.of(
-            "textQuery", query,
-            "locationBias", Map.of(
-                "circle", Map.of(
-                    "center", Map.of(
-                        "latitude", location.getLatitude(),
-                        "longitude", location.getLongitude()
-                    ),
-                    "radius", radius
-                )
-            )
-        );
-    }
 
     private String fetchPhotoUri(String photoName) {
+
         String uriString = String.format(
             "https://places.googleapis.com/v1/%s/media?maxWidthPx=400&key=%s",
             photoName,
@@ -203,6 +190,7 @@ public class PlaceService {
             }
 
             return response.getPhotoUri();
+
         } catch (URISyntaxException e) {
             throw new IllegalStateException("Invalid URI syntax: " + uriString, e);
         }
@@ -210,8 +198,48 @@ public class PlaceService {
 
     // DEBUG METHOD
     public List<PlacesDTO> addRemainingNearbyPlaces(Location location, String city, String country) {
-        Map<String, Object> body = buildNearbyBody(location, 10000.0);
-        PlaceResponse response = callPlacesApi("https://places.googleapis.com/v1/places:searchNearby", body);
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+
+        String url = "https://places.googleapis.com/v1/places:searchNearby";
+        
+        // radius in meters
+        double radius = 10000.0;
+
+        String body = """
+        {
+        "locationRestriction": {
+            "circle": {
+            "center": {
+                "latitude": %f,
+                "longitude": %f
+            },
+            "radius": %f
+            }
+        }
+        }
+        """.formatted(latitude, longitude, radius);
+
+        PlaceResponse response = webClientBuilder.build()
+                .post()
+                .uri(url)
+                .header(GoogleBodyEnum.CONTENTTYPE.getValue(), GoogleBodyEnum.APPLICATIONJSON.getValue())
+                .header(GoogleBodyEnum.X_GOOG_API_KEY.getValue(), googleAuthService.getApiKey())
+                .header(GoogleBodyEnum.X_GOOG_FIELD_MASK.getValue(), String.join(",", headerInfo))
+                .bodyValue(body)
+                .retrieve()
+                .bodyToMono(PlaceResponse.class)
+                .block();
+
+        if (response == null) {
+            throw new IllegalStateException("Failed to retrieve nearby places from Google Places API");
+        }
+
         return mapPlacesToDTOs(response, city, country);
     }
+
+    
+
+
+
 }

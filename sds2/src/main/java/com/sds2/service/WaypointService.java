@@ -1,5 +1,6 @@
 package com.sds2.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -14,8 +15,6 @@ import com.sds2.repository.WaypointRepository;
 @Service
 public class WaypointService {
     
-    private static final Logger LOGGER = Logger.getLogger(WaypointService.class.getName());
-
     private final WaypointRepository waypointRepository;
     
     public WaypointService(WaypointRepository waypointRepository) {
@@ -26,7 +25,8 @@ public class WaypointService {
         
         if (waypoint == null) return "Waypoint not provided";
 
-        LOGGER.info("Adding waypoint at coordinates: " + 
+        Logger logger = Logger.getLogger(WaypointService.class.getName());
+        logger.info("Adding waypoint at coordinates: " + 
             waypoint.getLocation().getLatitude() + ", " + 
             waypoint.getLocation().getLongitude()
         );
@@ -44,20 +44,18 @@ public class WaypointService {
         return "Waypoint added successfully";
     }
 
-    public String addWaypointFromRequest(WaypointRequest req) {
-        if (req == null) {
-            return "Waypoint not provided";
-        }
+    public void addWaypoint(WaypointRequest req) {
+        Location location = new Location(req.getLatitude(), req.getLongitude());
         Waypoint waypoint = Waypoint.builder()
                 .destination(req.getDestination())
                 .country(req.getCountry())
                 .name(req.getName())
                 .address(req.getAddress())
-                .location(new Location(req.getLatitude(), req.getLongitude()))
+                .location(location)
                 .via(false)
                 .userId(req.getUserId())
                 .build();
-        return addWaypoint(waypoint);
+        waypointRepository.save(waypoint);
     }
 
     public String removeWaypoint(Long id) {
@@ -66,9 +64,12 @@ public class WaypointService {
     }
 
     public List<WaypointDTO> getWaypointsByDestinationAndCountry(String destination, String country) {
+        List<WaypointDTO> waypointDTOs = new ArrayList<>();
+
         List<Waypoint> waypoints = waypointRepository.findByDestinationAndCountry(destination, country);
-        return waypoints.stream()
-            .map(w -> new WaypointDTO(
+
+        for (Waypoint w : waypoints) {
+            waypointDTOs.add(new WaypointDTO(
                 w.getId(),
                 w.isVia(),
                 w.getName(),
@@ -76,8 +77,9 @@ public class WaypointService {
                 w.getAddress(),
                 w.getDestination(),
                 w.getCountry()
-            ))
-            .toList();
+            ));
+        }
+        return waypointDTOs;
     }
 
     public Waypoint findWaypointByCoordinates(double lat, double lng) {

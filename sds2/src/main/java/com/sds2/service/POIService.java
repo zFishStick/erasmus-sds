@@ -128,8 +128,7 @@ public class POIService {
             poi.getPrice(),
             poi.getInfo().getPictures(),
             poi.getInfo().getMinimumDuration(),
-            poi.getInfo().getBookingLink(),
-            poi.getCoordinates()
+            poi.getInfo().getBookingLink()
         );
     }
 
