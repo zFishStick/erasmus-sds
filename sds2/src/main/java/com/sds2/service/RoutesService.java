@@ -70,6 +70,9 @@ public class RoutesService {
 
         Route route = Route.builder()
                 .routeIdentifier(req.getRouteIdentifier())
+                .city(req.getCity())
+                .country(req.getCountry())
+                .departureTime(req.getDepartureTime())
                 .origin(origin)
                 .destination(destination)
                 .intermediates(intermediates)
@@ -79,6 +82,10 @@ public class RoutesService {
 
         routesRepository.save(route);
         return "Route saved successfully";
+    }
+
+    public Route getRouteByRouteIdentifier(String routeIdentifier) {
+        return routesRepository.findByRouteIdentifier(routeIdentifier);
     }
 
 }

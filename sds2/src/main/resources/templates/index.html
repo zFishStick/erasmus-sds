@@ -13,35 +13,28 @@
     <script src="scripts/user_auth.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
-    <link rel="stylesheet" href="style/style.css" />
     <link rel="stylesheet" href="style/navbar.css" />
+    <link rel="stylesheet" href="style/style.css" />
   </head>
   <body>
 
-    <nav class="navbar">
-      <ul>
-        <header class="site-header" role="banner">
-          <div class="nav-container">
-            <h1 class="site-title">Travel Planner</h1>
-            <p class="site-tagline">Plan your visit quickly and easily</p>
-          </div>
-        </header>
+  <nav class="navbar">
+    <div class="nav-inner">
+      <div class="row">
+        <div class="nav-brand">
+          <h1 class="site-title">Travel Planner</h1>
+          <p class="site-tagline">Plan your visit quickly and easily</p>
+        </div>
+        <ul class="nav-links">
           <li><a th:href="@{/}">Home</a></li>
-          <li th:if="${request != null}">
-              <form action="/user/itineraries" method="get">
-                  <input type="hidden" name="city" th:value="${request.destination}">
-                  <input type="hidden" name="countryCode" th:value="${request.countryCode}">
-                  <button type="submit" class="btn btn-primary">
-                      Waypoints
-                  </button>
-              </form>
-          </li>
           <li>
             <a th:href="@{/user/login}" id="user-auth">Login</a>
-        </li>
+          </li>
         </ul>
-        <div id="filter-container" style="margin-top: 12px;"></div>
-    </nav>
+      </div>
+    </div>
+  </nav>
+
 
     <p id="message" style="color: red;"></p>
 
@@ -66,16 +59,9 @@
                 autocomplete="address-line1"
                 required
               />
-            <i class="fa fa-filter" style="font-size:24px" id="filter-btn"></i>
             </div>
             <datalist id="city-suggestions"></datalist>
             <small id="destination-help" class="muted">City or location you want to visit</small>
-            <div class="filters-div" id="filters-div">
-              <label><input type="checkbox" name="filter" value="museum" /> Museums</label>
-              <label><input type="checkbox" name="filter" value="park" /> Parks</label>
-              <label><input type="checkbox" name="filter" value="historical" /> Historical Sites</label>
-              <label><input type="checkbox" name="filter" value="shopping" /> Shopping</label>
-            </div>
           </div>
 
           <div class="form-grid">
@@ -118,7 +104,7 @@
 
     <footer class="site-footer">
       <div class="container">
-        <p class="muted">SDS2 • Erasmus Tourist Assistant</p>
+        <p class="muted">Travel Planner - Plan your visit quickly and easily!</p>
       </div>
     </footer>
 

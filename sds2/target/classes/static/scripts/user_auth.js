@@ -30,25 +30,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 });
 
-async function attemptLogin() {
-    const form = document.querySelector("form");
-    const formData = new FormData(form);
-    const res = await fetch("/user/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({ email, password })
-        });
-
-        const data = await res.json();
-
-        if (data.success) {
-            window.location.href = "/user";
-        } else {
-            document.getElementById("message").textContent = data.errorMessage;
-    }
-
-}
-
 function initItineraryForm(itinerary_form, userAuthLink) {
 
     itinerary_form.addEventListener("submit", function(e) {
@@ -59,33 +40,50 @@ function initItineraryForm(itinerary_form, userAuthLink) {
     userAuthLink.addEventListener("click", function() {
         itinerary_form.dispatchEvent(new Event("submit"));
     });
-
-
 }
 
-function checkIfUserExists(form) {
+const loginForm = document.getElementById("login-form");
+if (loginForm) {
+    loginForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        attemptLogin();
+    });
+}
 
+async function attemptLogin() {
+    const form = document.getElementById("login-form");
     const formData = new FormData(form);
 
-    fetch("/user/login", {
-        method: "POST",
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
+    const params = new URLSearchParams();
+    for (const [key, value] of formData.entries()) {
+        params.append(key, value);
+    }
+
+    try {
+        const res = await fetch("/user/login/ajax", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: params
+        });
+
+        const data = await res.json();
+
         if (data.success) {
             window.location.href = data.redirectUrl;
         } else {
             document.getElementById("message").textContent = mapMessageCodeToText(data.message);
         }
-    });
+    } catch (err) {
+        console.error(err);
+        document.getElementById("message").textContent = "Server error. Please try again later.";
+    }
 }
 
 function mapMessageCodeToText(code) {
     const messages = {
         "USER_NOT_FOUND": "Please log in or register to view your itinerary.",
-        "INVALID_CREDENTIALS": "Invalid username or password. Please try again."
+        "INVALID_CREDENTIALS": "Invalid username or password. Please try again.",
+        "SUCCESS": ""
     };
     return messages[code] || "An unknown error occurred.";
 }
-

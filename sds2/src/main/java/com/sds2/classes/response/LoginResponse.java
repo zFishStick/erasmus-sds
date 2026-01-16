@@ -12,19 +12,10 @@ public class LoginResponse {
     private String redirectUrl;
 
     public enum LoginStatus {
-        SUCCESS("Login successful"),
-        USER_NOT_FOUND("User not found"),
-        INVALID_CREDENTIALS("Invalid credentials");
-
-        private final String description;
-
-        LoginStatus(String description) {
-            this.description = description;
-        }
-
-        public String getDescription() {
-            return description;
-        }
+        SUCCESS,
+        USER_NOT_FOUND,
+        INVALID_CREDENTIALS
     }
-    
 }
+
+

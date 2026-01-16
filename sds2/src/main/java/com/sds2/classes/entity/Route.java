@@ -32,6 +32,9 @@ public class Route {
 
     private String routeIdentifier;
 
+    private String city;
+    private String country;
+
     @Enumerated(EnumType.ORDINAL)
     private RouteTravelMode travelMode;
 
@@ -40,6 +43,8 @@ public class Route {
 
     @ManyToOne
     private Waypoint destination;
+
+    private String departureTime;
 
     @ManyToMany
     @JoinTable(

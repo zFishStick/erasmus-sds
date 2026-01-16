@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.sds2.classes.coordinates.GeoCode;
@@ -44,7 +45,7 @@ public class POIService {
     }
 
     public List<POIDTO> getPointOfInterests(GeoCode coordinates, String cityName, String countryCode) {
-        List<POI> activities =  poiRepository.findByCityNameOrCountryCode(cityName, countryCode);
+        List<POI> activities =  poiRepository.findByCityNameAndCountryCode(cityName, countryCode);
         if (!activities.isEmpty()) {
             Logger.getLogger(POIService.class.getName()).info("Retrieved POIs from database.");
             return activities.stream()
@@ -59,9 +60,11 @@ public class POIService {
 
     private List<POIDTO> getPointOfInterestsByAPI(GeoCode coordinates, String cityName, String countryCode) {
 
+        int radius = 1; // 0 to 20
+
         String uriString = String.format(Locale.US,
-        "https://api.amadeus.com/v1/shopping/activities?latitude=%f&longitude=%f",
-        coordinates.getLatitude(), coordinates.getLongitude());
+        "https://api.amadeus.com/v1/shopping/activities?latitude=%f&longitude=%f&radius=%d",
+        coordinates.getLatitude(), coordinates.getLongitude(), radius);
 
         URI uri;
         try {
@@ -70,7 +73,14 @@ public class POIService {
             throw new IllegalStateException("Invalid URI syntax: " + uriString, e);
         }
         
+        ExchangeStrategies strategies = ExchangeStrategies.builder()
+            .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(16 * 1024 * 1024)) // 16 MB
+            .build();
+
         POISResponse response = webClientBuilder
+            .build()
+            .mutate()
+            .exchangeStrategies(strategies)
             .build()
             .get()
             .uri(uri)
@@ -87,20 +97,22 @@ public class POIService {
     }
 
     private List<POIDTO> mapToDTOs(POISResponse response, String cityName, String countryCode) {
+        if (response == null || response.getData() == null) {
+            return List.of();
+        }
+
         return response.getData().stream()
             .map(data -> {
-                POI poi = new POI(
-                    cityName,
-                    countryCode,
-                    new POIInfo(data.getName(), data.getType(), data.getDescription(), data.getPictures().get(0), data.getMinimumDuration(), data.getBookingLink()),
-                    data.getPrice(),
-                    data.getGeoCode()
+                POIInfo info = new POIInfo(
+                    data.getName(),
+                    data.getType(),
+                    data.getDescription(),
+                    data.getPictures() != null && !data.getPictures().isEmpty() ? data.getPictures().get(0) : null,
+                    data.getMinimumDuration(),
+                    data.getBookingLink()
                 );
 
-                poi.getInfo().setBookingLink(data.getBookingLink());
-                if (data.getPictures() != null && !data.getPictures().isEmpty()) {
-                    poi.getInfo().setPictures(data.getPictures().get(0));
-                }
+                POI poi = new POI(cityName, countryCode, info, data.getPrice(), data.getGeoCode());
                 addPOI(poi);
                 return mapToDTO(poi);
             })

@@ -66,8 +66,8 @@ class HotelControllerTest {
                 .param("checkInDate", "2025-01-10")
                 .param("checkOutDate", "2025-01-12")
                 .param("size", "5"))
-            .andExpect(status().isOk())
-            .andExpect(view().name("hotels"));
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/hotels"));
     }
 
     @Test
@@ -108,6 +108,6 @@ class HotelControllerTest {
                 .param("checkInDate", "2025-01-10")
                 .param("checkOutDate", "2025-01-12")
                 .param("size", "5"))
-            .andExpect(status().isOk());
+            .andExpect(status().is3xxRedirection());
     }
 }

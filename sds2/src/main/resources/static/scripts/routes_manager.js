@@ -65,7 +65,7 @@ function addWaypointMarker(lat, lng, title) {
 
 async function initMap() {
     
-    await getCurrentPosition();
+    // await getCurrentPosition();
 
     await Promise.all([
         google.maps.importLibrary('marker'),
@@ -160,6 +160,8 @@ function saveRoute() {
         const data = {
             userId: document.getElementById("user-id").value,
             routeIdentifier: document.getElementById("route-identifier").value,
+            city: document.getElementById("route-city").value,
+            country: document.getElementById("route-country").value,
             origin: {
                 name: origin.name,
                 address: origin.address,
@@ -237,7 +239,7 @@ function computeRoute() {
     const travelModeSelect = document.getElementById("travel-mode-select");
 
     const request = {
-        origin: origin.location,
+        origin: originMarker.position,
         destination: destinationObj,
         waypoints: waypointsArr,
         travelMode: travelModeSelect.value
@@ -306,6 +308,8 @@ async function fillWaypointsArray() {
     if (destination) {
         console.log("Destination: " + waypoints[0].name);
     }
+
+    centerMapOnWaypoints();
 }
 
 function addWaypointMarker(lat, lng, title) {
@@ -382,4 +386,16 @@ async function submitRemoveForm() {
     } catch (err) {
         console.error(err);
     }
+}
+
+function centerMapOnWaypoints() {
+    if (waypoints.length === 0) return;
+
+    const bounds = new google.maps.LatLngBounds();
+
+    waypoints.forEach(wp => {
+        bounds.extend(wp.location);
+    });
+
+    map.fitBounds(bounds);
 }
