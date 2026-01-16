@@ -10,7 +10,7 @@
   }
 }
 
-.hotel-card { margin: 14px 0; }
+.hotel-card { margin: 14px 0; width: 400px; }
 .hotel-card h3 { margin: 0 0 6px 0; }
 
 .hotel-actions { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
@@ -37,11 +37,27 @@ html, body { overflow: auto; }
 .table button { height: 38px; }
 
 .hotels-footer { 
-  text-align: center; 
-    margin-bottom: 20px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 20px;
+  margin-top: 16px;
+  align-items: center;
 
   a {
     color: var(--muted);
     text-decoration: underline;
   }
+}
+
+.container {
+  width: min(1300px, 94%) !important;
+}
+
+.hotel-container {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 5px;
+  flex-wrap: wrap;
 }

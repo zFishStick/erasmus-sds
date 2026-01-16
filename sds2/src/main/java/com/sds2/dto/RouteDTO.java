@@ -1,10 +1,14 @@
 package com.sds2.dto;
 
+import java.util.List;
+
 public record RouteDTO(
-    int distanceMeters,
-    String duration,
-    String originName,
-    String destinationName,
-    String encodedPolyline
+    String routeIdentifier,
+    String city,
+    String country,
+    String origin,
+    String destination,
+    List<String> intermediates,
+    String travelMode
 ) {}
 

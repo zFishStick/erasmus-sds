@@ -2,23 +2,19 @@ package com.sds2.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.sds2.classes.CitySummary;
-import com.sds2.classes.Places;
 import com.sds2.classes.coordinates.Location;
+import com.sds2.classes.entity.Places;
 import com.sds2.classes.enums.GoogleBodyEnum;
 import com.sds2.classes.response.PhotoResponse;
 import com.sds2.classes.response.PlaceResponse;
 import com.sds2.classes.response.PlaceResponse.Photo;
-import com.sds2.classes.response.PlaceResponse.PlacesData;
 import com.sds2.dto.PlacesDTO;
 import com.sds2.repository.PlacesRepository;
 
@@ -114,13 +110,13 @@ public class PlaceService {
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
 
-        // List<Places> existingPlaces = placesRepository.findByCitySummary_CityAndCitySummary_Country(city, country);
+        List<Places> existingPlaces = placesRepository.findByCitySummary_CityAndCitySummary_Country(city, country);
 
-        // if (!existingPlaces.isEmpty()) {
-        //     return existingPlaces.stream()
-        //         .map(this::mapToDTO)
-        //         .toList();
-        // }
+        if (!existingPlaces.isEmpty()) {
+            return existingPlaces.stream()
+                .map(this::mapToDTO)
+                .toList();
+        }
 
         String url = "https://places.googleapis.com/v1/places:searchNearby";
 
@@ -155,8 +151,6 @@ public class PlaceService {
         if (response == null) {
             throw new IllegalStateException("Failed to retrieve nearby places from Google Places API");
         }
-
-        System.out.println("Retrieved " + response.getPlaces().size() + " places from Google Places API");
 
         return mapPlacesToDTOs(response, city, country);
     }
@@ -202,44 +196,6 @@ public class PlaceService {
         }
     }
 
-    private static String normalize(String s) {
-        if (s == null) return "";
-        return Normalizer.normalize(s, Normalizer.Form.NFD)
-                        .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
-                        .toLowerCase();
-    }
-
-    private boolean matchesCityAndCountry(PlacesData data, String city, String country) {
-        if (data.getAddressComponents() == null) return false;
-
-        String normCity = normalize(city);
-        String normCountry = normalize(country);
-
-        boolean cityMatch = Arrays.stream(data.getAddressComponents())
-            .filter(Objects::nonNull)
-            .anyMatch(ac ->
-                ac.getTypes() != null &&    
-                ac.getLongText() != null && 
-                Arrays.stream(ac.getTypes())
-                    .filter(Objects::nonNull) 
-                    .anyMatch(t -> t.equals("locality")) &&
-                normalize(ac.getLongText()).equals(normCity)
-            );
-
-        boolean countryMatch = Arrays.stream(data.getAddressComponents())
-            .filter(Objects::nonNull)
-            .anyMatch(ac ->
-                ac.getTypes() != null &&
-                ac.getLongText() != null &&
-                Arrays.stream(ac.getTypes())
-                    .filter(Objects::nonNull)
-                    .anyMatch(t -> t.equals("country")) &&
-                normalize(ac.getLongText()).equals(normCountry)
-            );
-
-        return cityMatch && countryMatch;
-    }
-
     // DEBUG METHOD
     public List<PlacesDTO> addRemainingNearbyPlaces(Location location, String city, String country) {
         double latitude = location.getLatitude();
@@ -281,6 +237,8 @@ public class PlaceService {
 
         return mapPlacesToDTOs(response, city, country);
     }
+
+    
 
 
 
