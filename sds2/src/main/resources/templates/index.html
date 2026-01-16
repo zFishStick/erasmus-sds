@@ -7,8 +7,6 @@
     <title>Travel Planner</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <script src="https://code.jquery.com/jquery-1.12.4.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"></script> 
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"></script>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="scripts/user_auth.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
@@ -82,18 +80,52 @@
         </form>
       </section>
 
+      <section aria-labelledby="ai-itinerary-title" class="card">
+        <h2 id="ai-itinerary-title">AI itinerary assistant</h2>
+        <p class="muted">
+          Describe your preferences and let the AI build a day-by-day plan
+          using the destination and dates above.
+        </p>
+        <div class="form-row">
+          <label for="ai-prompt">Your preferences</label>
+          <textarea
+            id="ai-prompt"
+            name="aiPrompt"
+            rows="4"
+            placeholder="e.g., I prefer museums, local food, and a relaxed pace."
+          ></textarea>
+          <small class="muted">Include interests, budget, and pace.</small>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn btn-primary" id="ai-generate">
+            Generate itinerary
+          </button>
+          <button type="button" class="btn btn-ghost" id="ai-view-itinerary">
+            View itinerary
+          </button>
+        </div>
+        <p id="ai-status" class="ai-status" hidden></p>
+        <div id="ai-result" class="ai-result" hidden>
+          <h3>Itinerary</h3>
+          <p id="ai-feasibility" class="muted"></p>
+          <div id="ai-output" class="ai-output"></div>
+          <h3>Selected activities</h3>
+          <div id="ai-activities" class="ai-activities"></div>
+        </div>
+      </section>
+
       <section aria-live="polite" class="card" id="preview" hidden>
         <h2>Preview</h2>
         <div class="preview-content">
           <p>
             <strong>Destination:</strong>
-            <span data-preview="destination">—</span>
+            <span data-preview="destination">--</span>
           </p>
           <p>
             <strong>From:</strong>
-            <span data-preview="startDate">—</span>
+            <span data-preview="startDate">--</span>
             <strong>to</strong>
-            <span data-preview="endDate">—</span>
+            <span data-preview="endDate">--</span>
           </p>
           <p class="muted">
             Loading available activities, wait a moment please...
@@ -104,12 +136,14 @@
 
     <footer class="site-footer">
       <div class="container">
-        <p class="muted">Travel Planner - Plan your visit quickly and easily!</p>
+        <p class="muted">SDS2 - Erasmus Tourist Assistant</p>
       </div>
     </footer>
 
     <script src="scripts/input_script.js?id=1"></script>
     <script src="scripts/main.js"></script>
+    <script src="scripts/chatbot.js"></script>
 
   </body>
   </html>
+

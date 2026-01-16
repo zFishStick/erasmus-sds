@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.sds2.classes.Price;
+import com.sds2.classes.coordinates.GeoCode;
 import com.sds2.dto.POIDTO;
 import com.sds2.service.POIService;
 
@@ -40,7 +41,8 @@ class POISControllerTest {
             new Price(30.0, "EUR"),
             "http://example.com/louvre1.jpg,http://example.com/louvre2.jpg",
             "2 hours",
-            "http://example.com/louvre"  
+            "http://example.com/louvre",
+            new GeoCode(48.8606, 2.3376)
         );
 
         when(poiService.getPointOfInterests(any(), any(), any()))

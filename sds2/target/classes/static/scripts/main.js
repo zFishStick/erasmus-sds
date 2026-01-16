@@ -37,7 +37,7 @@
     preview.hidden = false;
     const set = (key, val) => {
       const el = document.querySelector(`[data-preview="${key}"]`);
-      if (el) el.textContent = val || "—";
+      if (el) el.textContent = val || "--";
     };
     set("destination", data.destination);
     set("startDate", data.startDate);
@@ -72,4 +72,5 @@
   });
 
 })();
+
 
