@@ -58,9 +58,11 @@ public class POISController {
                 : List.of();
 
         int total = activities.size();
-        // Use Math.clamp instead of manual min/max calculations when available
-        int fromIndex = Math.clamp(page * size, 0, total);
-        int toIndex = Math.clamp(fromIndex + size, 0, total);
+        long from = Math.clamp((long) page * size, 0L, total);
+        long to = Math.clamp(from + size, 0L, total);
+
+        int fromIndex = (int) from;
+        int toIndex = (int) to;
         List<POIDTO> pagedActivities = (fromIndex < toIndex) ? activities.subList(fromIndex, toIndex) : List.of();
 
         model.addAttribute(PoisEnum.CITY.getValue(), destination);

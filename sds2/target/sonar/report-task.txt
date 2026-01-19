@@ -2,5 +2,5 @@ projectKey=travel-planner
 serverUrl=http://localhost:9000
 serverVersion=25.12.0.117093
 dashboardUrl=http://localhost:9000/dashboard?id=travel-planner
-ceTaskId=bde55f4f-f0d6-4134-9118-152a6e5b8ccf
-ceTaskUrl=http://localhost:9000/api/ce/task?id=bde55f4f-f0d6-4134-9118-152a6e5b8ccf
+ceTaskId=86bbc1d2-791a-4bbe-9748-caa2882dc324
+ceTaskUrl=http://localhost:9000/api/ce/task?id=86bbc1d2-791a-4bbe-9748-caa2882dc324
