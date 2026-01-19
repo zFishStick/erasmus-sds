@@ -2,6 +2,7 @@ package com.sds2.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import com.sds2.classes.coordinates.Location;
 import com.sds2.classes.request.WaypointRequest;
 import com.sds2.service.PlaceService;
 import com.sds2.service.RoutesService;
@@ -45,21 +45,14 @@ class RouteControllerTest {
             1L
         );
 
-        Location location = Location.builder()
-            .latitude(52.4003253)
-            .longitude(16.9135941)
-            .build();
-
-        System.out.println(location.toString());
-
-        when(waypointService.addWaypointForUser(any(WaypointRequest.class), waypointRequest.getUserId()))
+        when(waypointService.addWaypointForUser(any(WaypointRequest.class), eq(waypointRequest.getUserId())))
             .thenReturn("You have already added this waypoint");
 
         Map<String, String> response = routeController.addWaypoint(waypointRequest);
 
         assertEquals("You have already added this waypoint", response.get("message"));
 
-        verify(waypointService).addWaypointForUser(any(WaypointRequest.class), waypointRequest.getUserId());   
+        verify(waypointService).addWaypointForUser(any(WaypointRequest.class), eq(waypointRequest.getUserId()));   
     }
 
     @Test

@@ -48,7 +48,6 @@ public class PlaceService {
         }
 
         Places existingPlace = placesRepository.findByName(place.getName());
-        System.out.println("Checking existence for place: " + place.getName());
         if (existingPlace != null) {
             return; 
         }
