@@ -19,16 +19,6 @@ let lat,lng;
 
 let routeSetted = false;
 
-function getCurrentPosition() {
-    return new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(pos => {
-            lat = pos.coords.latitude;
-            lng = pos.coords.longitude;
-            center = { lat: lat, lng: lng };
-            resolve();
-        }, reject);
-    });
-}
 
 function setOriginFromCoordinates(lat, lng) {
 
@@ -64,8 +54,6 @@ function addWaypointMarker(lat, lng, title) {
 }
 
 async function initMap() {
-    
-    // await getCurrentPosition();
 
     await Promise.all([
         google.maps.importLibrary('marker'),
@@ -141,6 +129,7 @@ function initRouteButton() {
 }
 
 function saveRoute() {
+
     const form = document.getElementById("route-form");
 
     form.addEventListener("submit", async (e) => {
@@ -158,7 +147,6 @@ function saveRoute() {
         );
 
         const data = {
-            userId: document.getElementById("user-id").value,
             routeIdentifier: document.getElementById("route-identifier").value,
             city: document.getElementById("route-city").value,
             country: document.getElementById("route-country").value,
@@ -185,6 +173,7 @@ function saveRoute() {
         });
 
         const result = await response.text();
+        
         alert(result);
     });
 }
@@ -304,10 +293,6 @@ async function fillWaypointsArray() {
     });
 
     destination = waypoints.length > 0 ? waypoints[0].location : null;
-
-    if (destination) {
-        console.log("Destination: " + waypoints[0].name);
-    }
 
     centerMapOnWaypoints();
 }

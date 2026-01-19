@@ -2,6 +2,9 @@ package com.sds2.dto;
 
 import java.util.List;
 
+import com.sds2.classes.entity.Route;
+
+
 public record RouteDTO(
     String routeIdentifier,
     String city,
@@ -10,5 +13,19 @@ public record RouteDTO(
     String destination,
     List<String> intermediates,
     String travelMode
-) {}
+) {
+    public static RouteDTO fromEntity(Route route) {
+        return new RouteDTO(
+            route.getRouteIdentifier(),
+            route.getCity(),
+            route.getCountry(),
+            route.getOrigin().getName(),
+            route.getDestination().getName(),
+            route.getIntermediates().stream()
+                .map(intermediate -> intermediate.getName())
+                .toList(),
+            route.getTravelMode().toString()
+        );
+    }
+}
 

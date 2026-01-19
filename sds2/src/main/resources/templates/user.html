@@ -52,19 +52,28 @@
         </div>
     </nav>
 
-    <main id="main" class="container" role="main">
+    <p th:if="${message != null}"
+       th:text="${message}"
+       class="container alert-info">
+        Message
+    </p>
+
+    <main id="main" class="container user-card" role="main">
         <section class="container card">
-        <h1 th:text="'Hello ' + ${user.username}"> User not found</h1>
-        <div>
-            <p th:text="'Email: ' + ${user.email}">Email not found</p>
-        </div>
+            <h1 th:text="|Hello ${user.username}!|"> User not found</h1>
+            <p th:text="'Here are your saved itineraries.'">
+                Saved Itineraries
+            </p>
+            <div>
+                <p th:text="'Email: ' + ${user.email}">Email not found</p>
+            </div>
 
-        <form method="post" action="/user/login">
-            <input type="hidden" name="destination" th:value="${destination}">
-            <input type="hidden" name="countryCode" th:value="${countryCode}">
-        </form>
+            <form method="post" action="/user/login">
+                <input type="hidden" name="destination" th:value="${destination}">
+                <input type="hidden" name="countryCode" th:value="${countryCode}">
+            </form>
 
-        <button class="btn back-btn"><a th:href="@{/user/logout}">Sign out</a></button>
+            <a class="btn btn-ghost" style="text-decoration: none;" th:href="@{/user/logout}">Sign out</a>
         </section>
     </main>
 
@@ -130,6 +139,10 @@
                        th:href="@{|/user/itinerary/${itinerary.routeIdentifier}|}">
                         View itinerary
                     </a>
+                    <a class="btn-secondary"
+                       th:href="@{|/user/itinerary/delete/${itinerary.routeIdentifier}|}">
+                        Delete itinerary
+                    </a>
                 </footer>
 
             </article>
@@ -137,6 +150,12 @@
         </div>
     </div>
 </div>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p class="muted">Travel Planner - Plan your visit quickly and easily!</p>
+      </div>
+    </footer>
 
 
 </body>

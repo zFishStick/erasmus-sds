@@ -1,20 +1,22 @@
 package com.sds2.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.sds2.classes.entity.Waypoint;
 import com.sds2.classes.request.RouteRequest;
 import com.sds2.classes.request.WaypointRequest;
+import com.sds2.dto.UserDTO;
 import com.sds2.dto.WaypointDTO;
 import com.sds2.service.PlaceService;
 import com.sds2.service.RoutesService;
 import com.sds2.service.WaypointService;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,9 +34,9 @@ public class RouteController {
 
     @PostMapping("/waypoint/add")
     @ResponseBody
-    public String addWaypoint(@RequestBody WaypointRequest waypointRequest) {
-        Waypoint waypoint = new Waypoint(waypointRequest);
-        return waypointService.addWaypoint(waypoint);
+    public Map<String, String> addWaypoint(@RequestBody WaypointRequest waypointRequest) {
+        String result = waypointService.addWaypointForUser(waypointRequest, waypointRequest.getUserId());
+        return Map.of("message", result);
     }
 
     @PostMapping("/waypoint/remove/{id}")
@@ -45,15 +47,17 @@ public class RouteController {
 
     @PostMapping("/save")
     @ResponseBody
-    public String saveRoute(@RequestBody RouteRequest routeRequest) {
-        return routesService.saveRoute(routeRequest);
-    }
-    
+    public String saveRoute(
+        @RequestBody RouteRequest routeRequest,
+        HttpSession session
+    ) {
+        UserDTO userDTO = (UserDTO) session.getAttribute("user");
 
-    @PostMapping("/create/{city}")
-    @ResponseBody
-    public String createRoute(@PathVariable String city, RouteRequest routeRequest) {
-        return routesService.saveRoute(routeRequest);     
+        if (userDTO == null) {
+            return "User not authenticated";
+        }
+
+        return routesService.saveRoute(routeRequest, userDTO.id());
     }
 
     @GetMapping("/itinerary/{country}/{destination}")

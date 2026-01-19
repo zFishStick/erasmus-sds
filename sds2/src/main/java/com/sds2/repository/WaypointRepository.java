@@ -11,8 +11,4 @@ import com.sds2.classes.entity.Waypoint;
 public interface WaypointRepository extends JpaRepository<Waypoint, Long> {
     Waypoint findByLocation_LatitudeAndLocation_Longitude(double lat, double lng);
     List<Waypoint> findByDestinationAndCountry(String destination, String country);
-    List<Waypoint> findByUserIdAndDestinationIgnoreCase(Long userId, String city);
-    List<Waypoint> findByUserIdAndDestinationAndCountryIgnoreCase(
-        Long userId, String city, String countryCode
-    );
 }

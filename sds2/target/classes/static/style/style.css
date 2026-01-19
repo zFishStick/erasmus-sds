@@ -163,3 +163,100 @@ input:focus {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255,255,255,0.2);
 }
+
+.alert-info {
+  background: rgba(91, 140, 255, 0.1);
+  border: 1px solid rgba(91, 140, 255, 0.2);
+  color: var(--primary);
+  border-radius: 10px;
+  margin-top: 20px;
+  text-align: center;
+  padding: 20px;
+}
+
+.section-header {
+  margin: 28px 0 16px;
+}
+.section-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+.section-subtitle {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.itinerary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.itinerary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.itinerary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+
+.itinerary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.itinerary-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.badge {
+  background: rgba(91, 140, 255, 0.15);
+  color: var(--primary);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.itinerary-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chip {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+}
+
+.itinerary-footer {
+  margin-top: auto;
+}

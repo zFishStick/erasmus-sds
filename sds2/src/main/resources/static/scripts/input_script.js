@@ -40,10 +40,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let lastItems = [];
   let labelMap = new Map();
 
-  /* ---------------------------------------------------------------------- */
-  /*  HELPERS                                                               */
-  /* ---------------------------------------------------------------------- */
-
   function clearDatalist() {
     datalist.innerHTML = "";
     labelMap.clear();
@@ -55,15 +51,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const trimmed = text.trim();
     const normLabel = normalizeText(trimmed);
 
-    // 1. match exact label
     if (labelMap.has(trimmed)) return labelMap.get(trimmed);
 
-    // 2. match label ignoring diacritics
     for (const [k, v] of labelMap.entries()) {
       if (normalizeText(k) === normLabel) return v;
     }
 
-    // 3. match only city name
     const cityOnly = trimmed.split(",")[0].trim();
     const normCity = normalizeText(cityOnly);
 
@@ -113,10 +106,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /* ---------------------------------------------------------------------- */
-  /*  INPUT LISTENER                                                        */
-  /* ---------------------------------------------------------------------- */
-
   input.addEventListener("input", () => {
     clearTimeout(debounceTimer);
 
@@ -150,18 +139,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 300);
   });
 
-  /* ---------------------------------------------------------------------- */
-  /*  CHANGE LISTENER                                                       */
-  /* ---------------------------------------------------------------------- */
-
   input.addEventListener("change", () => {
     const match = matchCityFromText(input.value);
     if (match) selectedCity = match;
   });
-
-  /* ---------------------------------------------------------------------- */
-  /*  FORM SUBMIT                                                           */
-  /* ---------------------------------------------------------------------- */
 
   form.addEventListener("submit", async event => {
     event.preventDefault();
@@ -192,8 +173,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
-
-/* -------------------------------------------------------------------------- */
 
 function codeToCountryName(code) {
   const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
