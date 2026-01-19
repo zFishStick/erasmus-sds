@@ -223,17 +223,12 @@ public class UserController {
 
         RouteDTO routeDTO = RouteDTO.fromEntity(route);
 
-        System.out.println("Route found: " + route);
-
         List<WaypointDTO> waypoints = new ArrayList<>(
                 route.getIntermediates()
                         .stream()
                         .map(WaypointDTO::fromEntity)
                         .toList()
         );
-
-
-        System.out.println("Intermediates: " + waypoints);
 
         waypoints.add(0, WaypointDTO.fromEntity(route.getOrigin()));
         waypoints.add(WaypointDTO.fromEntity(route.getDestination()));

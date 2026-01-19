@@ -82,11 +82,16 @@
 
     <h1 th:if="${request != null}" class="wpn-text" th:text="|Saved waypoints for ${request.destination}, ${request.countryCode}|">Waypoints</h1>
 
-    <div class="container alert-info" th:if="${waypoints == null or #lists.isEmpty(waypoints)}">
-        <p>No waypoints found, the map won't be displayed.</p>
+    <div class="container alert-info" th:if="${waypoints == null or #lists.isEmpty(waypoints) 
+        or waypoints.size() == 1}">
+        <p th:if="${waypoints == null or #lists.isEmpty(waypoints) }">
+            No waypoints saved yet. Please add waypoints to create an itinerary.
+        </p>
+        <p th:if="${waypoints != null and waypoints.size() == 1 }">
+            At least two waypoints are required to create an itinerary. Please add more waypoints.
+        </p>
     </div>
 
-    
     <p th:if="${message != null}"
        th:text="${message}"
        class="container alert-info">

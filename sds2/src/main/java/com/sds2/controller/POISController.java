@@ -25,13 +25,14 @@ import lombok.AllArgsConstructor;
 public class POISController {
 
     private final POIService poiService;
+    private static final String REQUEST = "request";
 
     @PostMapping
     public String searchCityByCoordinates(POIRequest poiRequest, HttpSession session) {
         GeoCode geoCode = new GeoCode(poiRequest.getLatitude(), poiRequest.getLongitude());
         List<POIDTO> activities = poiService.getPointOfInterests(geoCode, poiRequest.getDestination(), poiRequest.getCountryCode());
 
-        session.setAttribute("request", poiRequest);
+        session.setAttribute(REQUEST, poiRequest);
         session.setAttribute(PoisEnum.POISDATA.getValue(), activities);
 
         return "redirect:/pois/" + poiRequest.getCountryCode() + "/" + poiRequest.getDestination();
@@ -46,9 +47,9 @@ public class POISController {
             Model model,
             HttpSession session) {
 
-        POIRequest request = (POIRequest) session.getAttribute("request");
+        POIRequest request = (POIRequest) session.getAttribute(REQUEST);
         if (request != null) {
-            model.addAttribute("request", request);
+            model.addAttribute(REQUEST, request);
         }
 
         Object obj = session.getAttribute(PoisEnum.POISDATA.getValue());
@@ -57,8 +58,9 @@ public class POISController {
                 : List.of();
 
         int total = activities.size();
-        int fromIndex = Math.min(Math.max(page * size, 0), total);
-        int toIndex = Math.min(fromIndex + size, total);
+        // Use Math.clamp instead of manual min/max calculations when available
+        int fromIndex = Math.clamp(page * size, 0, total);
+        int toIndex = Math.clamp(fromIndex + size, 0, total);
         List<POIDTO> pagedActivities = (fromIndex < toIndex) ? activities.subList(fromIndex, toIndex) : List.of();
 
         model.addAttribute(PoisEnum.CITY.getValue(), destination);

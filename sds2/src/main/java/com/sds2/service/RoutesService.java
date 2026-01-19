@@ -29,8 +29,6 @@ public class RoutesService {
 
     public String saveRoute(RouteRequest req, Long userId) {
 
-        System.out.println("Saving route for user ID: " + userId);
-
         Double oriLat = req.getOrigin().getLatitude();
         Double oriLng = req.getOrigin().getLongitude();
 
