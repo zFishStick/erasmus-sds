@@ -4,18 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Travel Planner - Place Details</title>
-    <link rel="stylesheet" href="/./style/style.css"/>
-    <link rel="stylesheet" href="/./style/places.css"/>
+    <link rel="stylesheet" href="/style/style.css"/>
+    <link rel="stylesheet" href="/style/places.css"/>
+    <link rel="stylesheet" href="/style/navbar.css"/>
+    <script src="/scripts/user_auth.js"></script>
 </head>
 <body>
 
+    <nav class="navbar">
+        <div class="nav-inner">
+        <div class="row">
+            <div class="nav-brand">
+            <h1 class="site-title">Travel Planner</h1>
+            <p class="site-tagline">Plan your visit quickly and easily</p>
+            </div>
+            <ul class="nav-links">
+            <li><a th:href="@{/}">Home</a></li>
+            <li>
+                <a th:href="@{/user/login}" id="user-auth">Login</a>
+            </li>
+            </ul>
+        </div>
+        </div>
+    </nav>
+
     <form method="post">
-        <!-- <input type="hidden" name="destination" th:value="${place.destination}" /> -->
-        <!-- <input type="hidden" name="countryCode" th:value="${place.countryCode}" /> -->
         <input type="hidden" id="latitude" name="latitude" th:value="${place.location.latitude}" />
         <input type="hidden" id="longitude" name="longitude" th:value="${place.location.longitude}" />
-        <!-- <input type="hidden" name="startDate" th:value="${place.startDate}" />
-        <input type="hidden" name="endDate" th:value="${place.endDate}" /> -->
     </form>
 
     <div class="place-wrapper">
@@ -46,7 +61,7 @@
 
                 <div class="map" id="gmap"></div>
                     
-                <script src="/./scripts/google_map.js"></script>
+                <script src="/scripts/google_map.js"></script>
                     
                 <script
                     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKmFHtLzbE2Q6tHjZi2h31tBgkNfSoD8U&libraries=maps,marker&callback=initMap" async defer>
@@ -54,9 +69,8 @@
 
             </div>
         </div>
-        <div class="back-actions">
-            <a class="btn-ghost" href="/" >Back to home</a>
-            <a class="btn-primary" href="javascript:history.back()">Back to places</a>
+        <div class="back-actions" style="display: flex; justify-content: center;">
+            <a class="btn-ghost" th:href="@{/}">Back</a>
         </div>
     </div>
     

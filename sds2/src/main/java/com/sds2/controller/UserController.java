@@ -163,12 +163,11 @@ public class UserController {
     @PostMapping("/itineraries")
     public String loadUserItineraries(
         @RequestParam String destination,
-        @RequestParam String country,
+        @RequestParam String countryCode,
         HttpSession session
     ) {
         session.setAttribute(DESTINATION, destination);
-        session.setAttribute(COUNTRY_CODE, country);
-
+        session.setAttribute(COUNTRY_CODE, countryCode);
         return "redirect:/user/itineraries";
     }
 

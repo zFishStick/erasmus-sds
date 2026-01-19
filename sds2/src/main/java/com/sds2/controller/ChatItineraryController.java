@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/api/chat")
 public class ChatItineraryController {
     private final ChatItineraryService chatItineraryService;
+    private static final String ERROR = "error";
 
     @PostMapping("/itinerary")
     public ResponseEntity<?> createItinerary(@RequestBody ChatItineraryRequest request) {
@@ -27,17 +28,17 @@ public class ChatItineraryController {
             ChatItineraryResponse response = chatItineraryService.generateItinerary(request);
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of(ERROR, ex.getMessage()));
         } catch (IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("error", ex.getMessage()));
+                .body(Map.of(ERROR, ex.getMessage()));
         } catch (Exception ex) {
             String message = ex.getMessage();
             if (message == null || message.isBlank()) {
                 message = "Failed to generate itinerary.";
             }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("error", message));
+                .body(Map.of(ERROR, message));
         }
     }
 }

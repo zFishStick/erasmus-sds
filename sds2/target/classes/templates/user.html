@@ -38,7 +38,7 @@
                                 th:action="@{/user/itineraries}"
                                 method="post">
                                 <input type="hidden" name="destination" th:value="${destination}">
-                                <input type="hidden" name="country" th:value="${countryCode}">
+                                <input type="hidden" name="countryCode" th:value="${countryCode}">
                                 <button type="submit"
                                         id="view-itinerary-btn" class="btn btn-primary"
                                         th:text="|Saved Waypoint for ${destination}|">

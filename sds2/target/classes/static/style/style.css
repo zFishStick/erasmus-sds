@@ -119,6 +119,7 @@ input:focus {
   background: #0f1731;
   color: var(--text);
   font-weight: 600;
+  text-decoration: none;
 }
 .btn-primary {
   background: linear-gradient(180deg, var(--primary) 0%, var(--primary-900) 100%) !important;
