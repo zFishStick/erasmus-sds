@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CityService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">sds2</a> &gt; <a href="index.source.html" class="el_package">com.sds2.service</a> &gt; <span class="el_source">CityService.java</span></div><h1>CityService.java</h1><pre class="source lang-java linenums">package com.sds2.service;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Locale;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import com.sds2.classes.entity.City;
+import com.sds2.classes.response.CityResponse;
+import com.sds2.dto.CityDTO;
+import com.sds2.repository.CityRepository;
+
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
+@Service
+public class CityService {
+    private final CityRepository cityRepository;
+    private final AmadeusAuthService amadeusAuthService;
+    private final WebClient.Builder webClientBuilder;
+
+    public List&lt;CityDTO&gt; getCity(String name) throws IOException {
+
+<span class="nc" id="L30">        List&lt;City&gt; cities = cityRepository.findByNameStartingWithIgnoreCase(name);</span>
+
+<span class="nc bnc" id="L32" title="All 2 branches missed.">        if (!cities.isEmpty()) {</span>
+<span class="nc" id="L33">            return cities.stream()</span>
+<span class="nc" id="L34">                    .map(this::mapToDTO)</span>
+<span class="nc" id="L35">                    .toList();</span>
+        }
+        
+<span class="nc" id="L38">        String uriString = String.format(Locale.US, &quot;https://api.amadeus.com/v1/reference-data/locations/cities?keyword=%s&amp;max=5&quot;,</span>
+<span class="nc" id="L39">                URLEncoder.encode(name, StandardCharsets.UTF_8));</span>
+
+        URI uri;
+        try {
+<span class="nc" id="L43">            uri = new URI(uriString);</span>
+<span class="nc" id="L44">        } catch (URISyntaxException e) {</span>
+<span class="nc" id="L45">            throw new IllegalStateException(&quot;Invalid URI syntax: &quot; + uriString, e);</span>
+<span class="nc" id="L46">        }</span>
+        
+<span class="nc" id="L48">        CityResponse response = webClientBuilder</span>
+<span class="nc" id="L49">                .build()</span>
+<span class="nc" id="L50">                .get()</span>
+<span class="nc" id="L51">                .uri(uri)</span>
+<span class="nc" id="L52">                .header(&quot;Authorization&quot;, &quot;Bearer &quot; + amadeusAuthService.getAccessToken())</span>
+<span class="nc" id="L53">                .retrieve()</span>
+<span class="nc" id="L54">                .bodyToMono(CityResponse.class)</span>
+<span class="nc" id="L55">                .block();</span>
+
+<span class="nc bnc" id="L57" title="All 4 branches missed.">        if (response == null || response.getData() == null) {</span>
+<span class="nc" id="L58">            throw new IOException(&quot;Failed to retrieve city data from Amadeus API&quot;);</span>
+        }
+
+<span class="nc" id="L61">        return mapToDTOs(response);</span>
+    }
+
+    private List&lt;CityDTO&gt; mapToDTOs(CityResponse response) {
+<span class="nc" id="L65">        return response.getData().stream()</span>
+<span class="nc" id="L66">                .filter(c -&gt; {</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">                    if (c.getGeoCode() == null) return false;</span>
+<span class="nc" id="L68">                    Double lat = c.getGeoCode().getLatitude();</span>
+<span class="nc" id="L69">                    Double lon = c.getGeoCode().getLongitude();</span>
+<span class="nc bnc" id="L70" title="All 8 branches missed.">                    return lat != null &amp;&amp; lon != null &amp;&amp; (Double.compare(lat, 0.0) != 0 || Double.compare(lon, 0.0) != 0);</span>
+                })
+<span class="nc" id="L72">                .map(c -&gt; {</span>
+<span class="nc" id="L73">                    City city = new City(</span>
+<span class="nc" id="L74">                            c.getName(),</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">                            c.getAddress() != null ? c.getAddress().getCountryCode() : &quot;N/A&quot;,</span>
+<span class="nc" id="L76">                            c.getGeoCode().getLatitude(),</span>
+<span class="nc" id="L77">                            c.getGeoCode().getLongitude()</span>
+                    );
+<span class="nc" id="L79">                    city = cityRepository.save(city);</span>
+<span class="nc" id="L80">                    return mapToDTO(city);</span>
+                })
+<span class="nc" id="L82">                .toList();</span>
+    }
+
+    private CityDTO mapToDTO(City city) {
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        String country = (city.getCountry() != null) ? city.getCountry() : &quot;N/A&quot;;</span>
+<span class="nc" id="L87">        double latitude = city.getCoordinates().getLatitude();</span>
+<span class="nc" id="L88">        double longitude = city.getCoordinates().getLongitude();</span>
+<span class="nc" id="L89">        return new CityDTO(city.getName(), country, latitude, longitude);</span>
+    }
+
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

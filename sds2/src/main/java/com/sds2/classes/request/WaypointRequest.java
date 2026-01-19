@@ -13,8 +13,9 @@ import lombok.ToString;
 public class WaypointRequest {
     private String name;
     private String address;
-    private Double lat;
-    private Double lng;
+    private Double latitude;
+    private Double longitude;
     private String destination;
     private String country;
+    private Long userId;
 }

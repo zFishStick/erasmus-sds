@@ -1,53 +1,55 @@
 package com.sds2.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.sds2.classes.coordinates.Location;
+import com.sds2.classes.entity.User;
+import com.sds2.classes.entity.Waypoint;
 import com.sds2.classes.request.WaypointRequest;
-import com.sds2.classes.routeclasses.Waypoint;
 import com.sds2.dto.WaypointDTO;
 import com.sds2.repository.WaypointRepository;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class WaypointService {
     
     private final WaypointRepository waypointRepository;
-    
-    public WaypointService(WaypointRepository waypointRepository) {
-        this.waypointRepository = waypointRepository;
-    }
+    private final UserService userService;
 
-    public String addWaypoint(Waypoint waypoint) {
-        if (waypoint == null) return "Waypoint not provided";
+    public String addWaypointForUser(WaypointRequest req, Long userId) {
+        User user = userService.findById(userId);
 
-        boolean exists = waypointRepository.findByLocation_LatitudeAndLocation_Longitude(
-            waypoint.getLocation().getLatitude(),
-            waypoint.getLocation().getLongitude()
-        ) != null;
+        Waypoint existing = waypointRepository.findByLocation_LatitudeAndLocation_Longitude(
+            req.getLatitude(), req.getLongitude()
+        );
 
-        if (exists) {
+        if (existing != null && user.getSavedWaypoints().contains(existing)) {
             return "You have already added this waypoint";
         }
 
-        waypointRepository.save(waypoint);
-        return "Waypoint added successfully";
-    }
-
-
-    public void addWaypoint(WaypointRequest req) {
-        Location location = new Location(req.getLat(), req.getLng());
-        Waypoint waypoint = Waypoint.builder()
+        Waypoint wp;
+        if (existing == null) {
+            wp = Waypoint.builder()
                 .destination(req.getDestination())
                 .country(req.getCountry())
                 .name(req.getName())
                 .address(req.getAddress())
-                .location(location)
+                .location(new Location(req.getLatitude(), req.getLongitude()))
                 .via(false)
                 .build();
-        waypointRepository.save(waypoint);
+            waypointRepository.save(wp);
+        } else {
+            wp = existing;
+        }
+
+        user.getSavedWaypoints().add(wp);
+        userService.saveUser(user);
+
+        return "Waypoint added successfully";
     }
 
     public String removeWaypoint(Long id) {
@@ -56,12 +58,9 @@ public class WaypointService {
     }
 
     public List<WaypointDTO> getWaypointsByDestinationAndCountry(String destination, String country) {
-        List<WaypointDTO> waypointDTOs = new ArrayList<>();
-
         List<Waypoint> waypoints = waypointRepository.findByDestinationAndCountry(destination, country);
-
-        for (Waypoint w : waypoints) {
-            waypointDTOs.add(new WaypointDTO(
+        return waypoints.stream()
+            .map(w -> new WaypointDTO(
                 w.getId(),
                 w.isVia(),
                 w.getName(),
@@ -69,13 +68,36 @@ public class WaypointService {
                 w.getAddress(),
                 w.getDestination(),
                 w.getCountry()
-            ));
-        }
-        return waypointDTOs;
+            ))
+            .toList();
     }
 
     public Waypoint findWaypointByCoordinates(double lat, double lng) {
         return waypointRepository.findByLocation_LatitudeAndLocation_Longitude(lat, lng);
     }
+
+    public List<WaypointDTO> findByUserAndCity(Long userId, String city, String countryCode) {
+        User user = userService.findById(userId);
+
+        return user.getSavedWaypoints()
+            .stream()
+            .filter(wp -> wp.getDestination().equalsIgnoreCase(city)
+                    && (countryCode == null || wp.getCountry().equalsIgnoreCase(countryCode)))
+            .map(WaypointDTO::fromEntity)
+            .toList();
+    }
+
+
+    public void removeWaypointsByUserAndCityAndCountry(Long userId, String city, String country) {
+        User user = userService.findById(userId);
+
+        user.getSavedWaypoints().removeIf(
+            wp -> wp.getDestination().equalsIgnoreCase(city) &&
+                wp.getCountry().equalsIgnoreCase(country)
+        );
+
+        userService.saveUser(user);
+    }
+
 
 }

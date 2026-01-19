@@ -11,7 +11,6 @@
   const start = $("#start-date");
   const end = $("#end-date");
   const filterBtn = $("#filter-btn");
-  const filtersDiv = $("#filters-div");
 
   function setTodayMinDates() {
     const today = new Date();
@@ -37,7 +36,7 @@
     preview.hidden = false;
     const set = (key, val) => {
       const el = document.querySelector(`[data-preview="${key}"]`);
-      if (el) el.textContent = val || "—";
+      if (el) el.textContent = val || "--";
     };
     set("destination", data.destination);
     set("startDate", data.startDate);
@@ -62,14 +61,6 @@
 
   setTodayMinDates();
 
-  filtersDiv.style.display = "none";
-  filterBtn?.addEventListener("click", () => {
-    if (filtersDiv.style.display === "none") {
-      filtersDiv.style.display = "flex";
-    } else {
-      filtersDiv.style.display = "none";
-    }
-  });
-
 })();
+
 

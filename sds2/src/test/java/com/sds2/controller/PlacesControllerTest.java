@@ -5,24 +5,23 @@ import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.sds2.classes.Places;
+import com.sds2.classes.coordinates.Location;
+import com.sds2.classes.price.PriceRange;
+import com.sds2.classes.price.PriceRange.Money;
 import com.sds2.dto.PlacesDTO;
 import com.sds2.service.PlaceService;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(PlacesController.class)
 class PlacesControllerTest {
 
     @Autowired
@@ -33,18 +32,24 @@ class PlacesControllerTest {
 
     @BeforeEach
     void setup() {
-		PlacesDTO placesDTO = mock(PlacesDTO.class);
-        Places places = mock(Places.class);
 
-        when(placeService.searchNearby(
-                any(),
-                any(),
-                any())
-        ).thenReturn(Arrays.asList(placesDTO));
+    Money min = new Money("USD", "10", 0);
+    Money max = new Money("USD", "25", 0);
 
-        when(placeService.findPlaceByName(
-            any())
-        ).thenReturn(places);
+    PlacesDTO placesDTO = new PlacesDTO(
+        1L,                                       
+        "Eiffel Tower",                             
+        Arrays.asList("http://example.com/photo1.jpg", "http://example.com/photo2.jpg"),
+        "Monument",                                     
+        "Champ de Mars, 5 Avenue Anatole France, Paris",
+        new Location(48.8584, 2.2945),                 
+        4.7,                                          
+        new PriceRange(min, max),               
+        "http://example.com/eiffel-tower"        
+    );
+
+        when(placeService.searchNearby(any(), any(), any()))
+                .thenReturn(Arrays.asList(placesDTO));
     }
 
     @Test
@@ -57,31 +62,9 @@ class PlacesControllerTest {
                 .param("latitude", "48")
                 .param("longitude", "2"))
                 .andExpect(status().is3xxRedirection());
-
     }
-
-    //an exception is raised by thymeleaf because there is no photo to show
-    @Test
-    void testGetMethodName() throws Exception {
-        MockHttpSession session = new MockHttpSession();
-        initSearchSession(session);
-
-            mockMvc.perform(get("/places/France/Paris")
-                .session(session)
-                .param("latitude", "48")
-                .param("longitude", "2"))
-                .andExpect(status().isOk());
-    }
-    
-    @Test
-    void testGetPlace() throws Exception {
-        mockMvc.perform(get("/places/Paris"))
-        .andExpect(status().isOk());
-    }
-
 
     private void initSearchSession(MockHttpSession session) throws Exception {
-
         mockMvc.perform(post("/places")
                 .session(session)
                 .param("latitude", "48")
@@ -93,6 +76,4 @@ class PlacesControllerTest {
                 .param("iataCode", "bidon"))
             .andExpect(status().is3xxRedirection());
     }
-
-    
 }

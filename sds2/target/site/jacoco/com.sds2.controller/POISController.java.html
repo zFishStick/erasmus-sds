@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>POISController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">sds2</a> &gt; <a href="index.source.html" class="el_package">com.sds2.controller</a> &gt; <span class="el_source">POISController.java</span></div><h1>POISController.java</h1><pre class="source lang-java linenums">package com.sds2.controller;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.sds2.classes.coordinates.GeoCode;
+import com.sds2.classes.enums.PoisEnum;
+import com.sds2.classes.request.POIRequest;
+import com.sds2.dto.POIDTO;
+import com.sds2.service.POIService;
+
+import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
+@Controller
+@RequestMapping(&quot;/pois&quot;)
+public class POISController {
+
+    private final POIService poiService;
+    private static final String REQUEST = &quot;request&quot;;
+
+    @PostMapping
+    public String searchCityByCoordinates(POIRequest poiRequest, HttpSession session) {
+<span class="fc" id="L32">        GeoCode geoCode = new GeoCode(poiRequest.getLatitude(), poiRequest.getLongitude());</span>
+<span class="fc" id="L33">        List&lt;POIDTO&gt; activities = poiService.getPointOfInterests(geoCode, poiRequest.getDestination(), poiRequest.getCountryCode());</span>
+
+<span class="fc" id="L35">        session.setAttribute(REQUEST, poiRequest);</span>
+<span class="fc" id="L36">        session.setAttribute(PoisEnum.POISDATA.getValue(), activities);</span>
+
+<span class="fc" id="L38">        return &quot;redirect:/pois/&quot; + poiRequest.getCountryCode() + &quot;/&quot; + poiRequest.getDestination();</span>
+    }
+
+    @GetMapping(&quot;/{countryCode}/{destination}&quot;)
+    public String showPoisPage(
+            @PathVariable String destination,
+            @PathVariable String countryCode,
+            @RequestParam(defaultValue = &quot;0&quot;) int page,
+            @RequestParam(defaultValue = &quot;5&quot;) int size,
+            Model model,
+            HttpSession session) {
+
+<span class="fc" id="L50">        POIRequest request = (POIRequest) session.getAttribute(REQUEST);</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">        if (request != null) {</span>
+<span class="fc" id="L52">            model.addAttribute(REQUEST, request);</span>
+        }
+
+<span class="fc" id="L55">        Object obj = session.getAttribute(PoisEnum.POISDATA.getValue());</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">        List&lt;POIDTO&gt; activities = (obj instanceof List&lt;?&gt; list) </span>
+<span class="fc" id="L57">                ? list.stream().filter(POIDTO.class::isInstance).map(POIDTO.class::cast).toList()</span>
+<span class="pc" id="L58">                : List.of();</span>
+
+<span class="fc" id="L60">        int total = activities.size();</span>
+<span class="fc" id="L61">        long from = Math.clamp((long) page * size, 0L, total);</span>
+<span class="fc" id="L62">        long to = Math.clamp(from + size, 0L, total);</span>
+
+<span class="fc" id="L64">        int fromIndex = (int) from;</span>
+<span class="fc" id="L65">        int toIndex = (int) to;</span>
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        List&lt;POIDTO&gt; pagedActivities = (fromIndex &lt; toIndex) ? activities.subList(fromIndex, toIndex) : List.of();</span>
+
+<span class="fc" id="L68">        model.addAttribute(PoisEnum.CITY.getValue(), destination);</span>
+<span class="fc" id="L69">        model.addAttribute(PoisEnum.COUNTRY.getValue(), countryCode);</span>
+<span class="fc" id="L70">        model.addAttribute(PoisEnum.POISDATA.getValue(), pagedActivities);</span>
+<span class="fc" id="L71">        model.addAttribute(&quot;currentPage&quot;, page);</span>
+<span class="fc" id="L72">        model.addAttribute(&quot;pageSize&quot;, size);</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        model.addAttribute(&quot;totalPages&quot;, size &gt; 0 ? (int) Math.ceil((double) total / size) : 0);</span>
+
+<span class="fc" id="L75">        return &quot;pois&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

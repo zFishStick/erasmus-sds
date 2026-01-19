@@ -1,0 +1,97 @@
+html, body {
+    overflow-y: auto;
+}
+
+
+
+.btn-primary {
+  display: inline-block;
+  text-decoration: none;
+  background: linear-gradient(180deg, var(--primary), var(--primary-900));
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  box-shadow: 0 0 0 0 var(--ring);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 4px var(--ring);
+}
+
+.btn-secondary {
+  display: inline-block;
+  text-decoration: none;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--muted);
+}
+
+.user-card {
+    display: flex;
+    justify-content: center;
+}
+
+.user-card .card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    color: #f9fafb;
+    padding: 30px 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    width: 100%;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.user-card .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.4);
+}
+
+.user-card h1 {
+    font-size: 2.8rem;
+    margin-bottom: 15px;
+    margin-top: 0;
+}
+
+.user-card p {
+    margin-bottom: 15px;
+    font-size: 1rem;
+}
+
+.user-card div p {
+    font-weight: 500;
+}
+
+.user-card .btn {
+    display: inline-block;
+    padding: 10px 25px;
+    border-radius: 8px;
+    border: 1px solid #f9fafb;
+    color: #f9fafb;
+    background-color: transparent;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.user-card .btn:hover {
+    background-color: #f9fafb;
+    color: #1f2937;
+}

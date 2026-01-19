@@ -1,0 +1,11 @@
+# flyctl launch added from .github\java-upgrade\.gitignore
+
+.github\java-upgrade\**\*
+
+# flyctl launch added from .idea\.gitignore
+# Default ignored files
+.idea\shelf
+.idea\workspace.xml
+# Editor-based HTTP Client requests
+.idea\httpRequests
+fly.toml

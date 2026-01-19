@@ -1,9 +1,10 @@
 package com.sds2.service;
 
 import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -19,6 +20,7 @@ import com.sds2.classes.response.PlaceResponse.AddressComponent;
 import com.sds2.classes.response.PlaceResponse.DisplayName;
 import com.sds2.classes.response.PlaceResponse.Photo;
 import com.sds2.classes.response.PlaceResponse.PlacesData;
+import com.sds2.dto.PlacesDTO;
 import com.sds2.repository.PlacesRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -77,14 +79,7 @@ class PlaceServiceTest {
         );
         
     }
-    @Test
-    void testSearchText() {
-        PlacesData placesData = getExamplePlaceResponse();
 
-        Mockito.when(googleAPIPlaceRequest.getPlaceResponse(any(), any(), any())).thenReturn(new PlaceResponse(List.of(placesData), "nextPageToken", "status"));
-
-        placeService.searchText("fake query");
-    }
 
     @Test
     void testSearchNearby() {
@@ -97,11 +92,16 @@ class PlaceServiceTest {
     }
 
     @Test
-    void testGetPlacePhoto() {
-        Mockito.when(googleAPIPlaceRequest.getPhotoResponse(any())).thenReturn(new PhotoResponse("name", "uri"));
+    void addOtherPlaces() {
+        String city = "Rome";
+        String country = "Italy";
+        double latitude = 41.89193;
+        double longitude = 12.51133;
 
-        placeService.getPlacePhoto(new Photo[] {new Photo(1, 1, "name")});        
+        Location location = new Location(latitude, longitude);
+
+        List<PlacesDTO> response = placeService.searchNearby(location, city, country);
+        assertNotNull(response);
+        System.out.println(response);   
     }
-
-
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.sds2.classes.Price;
 import com.sds2.classes.coordinates.GeoCode;
-import com.sds2.classes.hotel.Hotel;
+import com.sds2.classes.entity.Hotel;
 import com.sds2.classes.hotel.HotelAddress;
 import com.sds2.classes.response.HotelResponse;
 import com.sds2.classes.response.SuperClassResponse;

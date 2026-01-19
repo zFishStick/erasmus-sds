@@ -10,7 +10,7 @@ import java.util.Locale;
 
 import org.springframework.stereotype.Service;
 
-import com.sds2.classes.City;
+import com.sds2.classes.entity.City;
 import com.sds2.classes.response.CityResponse;
 import com.sds2.dto.CityDTO;
 import com.sds2.repository.CityRepository;

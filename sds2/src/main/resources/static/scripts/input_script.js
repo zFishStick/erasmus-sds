@@ -40,10 +40,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let lastItems = [];
   let labelMap = new Map();
 
-  /* ---------------------------------------------------------------------- */
-  /*  HELPERS                                                               */
-  /* ---------------------------------------------------------------------- */
-
   function clearDatalist() {
     datalist.innerHTML = "";
     labelMap.clear();
@@ -55,15 +51,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const trimmed = text.trim();
     const normLabel = normalizeText(trimmed);
 
-    // 1. match exact label
     if (labelMap.has(trimmed)) return labelMap.get(trimmed);
 
-    // 2. match label ignoring diacritics
     for (const [k, v] of labelMap.entries()) {
       if (normalizeText(k) === normLabel) return v;
     }
 
-    // 3. match only city name
     const cityOnly = trimmed.split(",")[0].trim();
     const normCity = normalizeText(cityOnly);
 
@@ -72,6 +65,11 @@ document.addEventListener("DOMContentLoaded", () => {
       lastItems.find(it => normalizeText(it.name).startsWith(normCity)) ||
       null
     );
+  }
+
+  function syncSelectedCityInputs() {
+    if (!selectedCity) return;
+    assignValuesToHiddenInputs(selectedCity, hiddenInputs);
   }
 
   function updateDatalist(items, query) {
@@ -113,10 +111,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /* ---------------------------------------------------------------------- */
-  /*  INPUT LISTENER                                                        */
-  /* ---------------------------------------------------------------------- */
-
   input.addEventListener("input", () => {
     clearTimeout(debounceTimer);
 
@@ -127,9 +121,10 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-      const localMatch = matchCityFromText(value);
+    const localMatch = matchCityFromText(value);
     if (localMatch) {
       selectedCity = localMatch;
+      syncSelectedCityInputs();
       if (value.includes(",")) return;
     }
 
@@ -147,21 +142,17 @@ document.addEventListener("DOMContentLoaded", () => {
         items.find(it => normalizeText(it.name) === normCity) ||
         items[0] ||
         null;
+      syncSelectedCityInputs();
     }, 300);
   });
 
-  /* ---------------------------------------------------------------------- */
-  /*  CHANGE LISTENER                                                       */
-  /* ---------------------------------------------------------------------- */
-
   input.addEventListener("change", () => {
     const match = matchCityFromText(input.value);
-    if (match) selectedCity = match;
+    if (match) {
+      selectedCity = match;
+      syncSelectedCityInputs();
+    }
   });
-
-  /* ---------------------------------------------------------------------- */
-  /*  FORM SUBMIT                                                           */
-  /* ---------------------------------------------------------------------- */
 
   form.addEventListener("submit", async event => {
     event.preventDefault();
@@ -192,8 +183,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
-
-/* -------------------------------------------------------------------------- */
 
 function codeToCountryName(code) {
   const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
