@@ -3,8 +3,9 @@
 import java.io.Serializable;
 
 import com.sds2.classes.Price;
+import com.sds2.classes.coordinates.GeoCode;
 
-<span class="fc" id="L7">public record POIDTO</span>
+<span class="fc" id="L8">public record POIDTO</span>
 (
     String cityName,
     String name, 
@@ -13,7 +14,8 @@ import com.sds2.classes.Price;
     Price price,
     String pictures,
     String minimumDuration,
-    String bookingLink
+    String bookingLink,
+    GeoCode coordinates
     
 ) implements Serializable{}
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -9,9 +9,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = &quot;hotel&quot;)
+@AllArgsConstructor
 public class Hotel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,28 +26,28 @@ public class Hotel {
     @Embedded
     private GeoCode coordinates;
 
-<span class="fc" id="L27">    public Hotel() {}</span>
+<span class="fc" id="L29">    public Hotel() {}</span>
 
-<span class="fc" id="L29">    public Hotel(String hotelId, String name, String iataCode, HotelAddress address, GeoCode coordinates) {</span>
-<span class="fc" id="L30">        this.hotelId = hotelId;</span>
-<span class="fc" id="L31">        this.name = name;</span>
-<span class="fc" id="L32">        this.iataCode = iataCode;</span>
-<span class="fc" id="L33">        this.address = address;</span>
-<span class="fc" id="L34">        this.coordinates = coordinates;</span>
-<span class="fc" id="L35">    }</span>
+<span class="fc" id="L31">    public Hotel(String hotelId, String name, String iataCode, HotelAddress address, GeoCode coordinates) {</span>
+<span class="fc" id="L32">        this.hotelId = hotelId;</span>
+<span class="fc" id="L33">        this.name = name;</span>
+<span class="fc" id="L34">        this.iataCode = iataCode;</span>
+<span class="fc" id="L35">        this.address = address;</span>
+<span class="fc" id="L36">        this.coordinates = coordinates;</span>
+<span class="fc" id="L37">    }</span>
 
-<span class="fc" id="L37">    public Long getId() { return id; }</span>
-<span class="fc" id="L38">    public String getHotelId() { return hotelId; }</span>
-<span class="fc" id="L39">    public String getName() { return name; }</span>
-<span class="fc" id="L40">    public HotelAddress getAddress() { return address; }</span>
-<span class="fc" id="L41">    public GeoCode getCoordinates() { return coordinates; }</span>
-<span class="fc" id="L42">    public String getIataCode() { return iataCode; }</span>
+<span class="fc" id="L39">    public Long getId() { return id; }</span>
+<span class="fc" id="L40">    public String getHotelId() { return hotelId; }</span>
+<span class="fc" id="L41">    public String getName() { return name; }</span>
+<span class="fc" id="L42">    public HotelAddress getAddress() { return address; }</span>
+<span class="fc" id="L43">    public GeoCode getCoordinates() { return coordinates; }</span>
+<span class="fc" id="L44">    public String getIataCode() { return iataCode; }</span>
 
-<span class="fc" id="L44">    public void setId(Long id) { this.id = id; }</span>
-<span class="fc" id="L45">    public void setHotelId(String hotelId) { this.hotelId = hotelId; }</span>
-<span class="fc" id="L46">    public void setName(String name) { this.name = name; }</span>
-<span class="nc" id="L47">    public void setAddress(HotelAddress address) { this.address = address; }</span>
-<span class="fc" id="L48">    public void setCoordinates(GeoCode coordinates) { this.coordinates = coordinates; }</span>
-<span class="fc" id="L49">    public void setIataCode(String iataCode) { this.iataCode = iataCode; }</span>
+<span class="fc" id="L46">    public void setId(Long id) { this.id = id; }</span>
+<span class="fc" id="L47">    public void setHotelId(String hotelId) { this.hotelId = hotelId; }</span>
+<span class="fc" id="L48">    public void setName(String name) { this.name = name; }</span>
+<span class="nc" id="L49">    public void setAddress(HotelAddress address) { this.address = address; }</span>
+<span class="fc" id="L50">    public void setCoordinates(GeoCode coordinates) { this.coordinates = coordinates; }</span>
+<span class="fc" id="L51">    public void setIataCode(String iataCode) { this.iataCode = iataCode; }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

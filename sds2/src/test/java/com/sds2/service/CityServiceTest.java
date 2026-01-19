@@ -11,8 +11,8 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.sds2.classes.City;
 import com.sds2.classes.coordinates.GeoCode;
+import com.sds2.classes.entity.City;
 import com.sds2.classes.response.CityResponse;
 import com.sds2.classes.response.CityResponse.Address;
 import com.sds2.classes.response.CityResponse.CityData;

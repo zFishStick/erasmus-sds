@@ -6,25 +6,25 @@ import java.util.Objects;
 	
 	@Override
 	public boolean equals(Object o) {
-<span class="nc bnc" id="L9" title="All 2 branches missed.">		if (this == o) return true;</span>
-<span class="nc bnc" id="L10" title="All 6 branches missed.">		if (!(o instanceof CityDTO(String otherName, String otherCountry, double otherLatitude, double otherLongitude))) return false;</span>
-<span class="nc bnc" id="L11" title="All 2 branches missed.">		return Objects.equals(name, otherName)</span>
-<span class="nc bnc" id="L12" title="All 2 branches missed.">				&amp;&amp; Objects.equals(country, otherCountry)</span>
-<span class="nc bnc" id="L13" title="All 2 branches missed.">				&amp;&amp; Double.compare(latitude, otherLatitude) == 0</span>
-<span class="nc bnc" id="L14" title="All 2 branches missed.">				&amp;&amp; Double.compare(longitude, otherLongitude) == 0;</span>
+<span class="fc bfc" id="L9" title="All 2 branches covered.">		if (this == o) return true;</span>
+<span class="pc bpc" id="L10" title="3 of 6 branches missed.">		if (!(o instanceof CityDTO(String otherName, String otherCountry, double otherLatitude, double otherLongitude))) return false;</span>
+<span class="fc bfc" id="L11" title="All 2 branches covered.">		return Objects.equals(name, otherName)</span>
+<span class="pc bpc" id="L12" title="1 of 2 branches missed.">				&amp;&amp; Objects.equals(country, otherCountry)</span>
+<span class="pc bpc" id="L13" title="1 of 2 branches missed.">				&amp;&amp; Double.compare(latitude, otherLatitude) == 0</span>
+<span class="pc bpc" id="L14" title="1 of 2 branches missed.">				&amp;&amp; Double.compare(longitude, otherLongitude) == 0;</span>
 	}
 
 	@Override
 	public int hashCode() {
-<span class="nc" id="L19">		int result = Objects.hash(name, country);</span>
-<span class="nc" id="L20">		result = 31 * result + Double.hashCode(latitude);</span>
-<span class="nc" id="L21">		result = 31 * result + Double.hashCode(longitude);</span>
-<span class="nc" id="L22">		return result;</span>
+<span class="fc" id="L19">		int result = Objects.hash(name, country);</span>
+<span class="fc" id="L20">		result = 31 * result + Double.hashCode(latitude);</span>
+<span class="fc" id="L21">		result = 31 * result + Double.hashCode(longitude);</span>
+<span class="fc" id="L22">		return result;</span>
 	}
 
 	@Override
 	public String toString() {
-<span class="nc" id="L27">		return &quot;CityDTO[name=&quot; + name + &quot;, country=&quot; + country + &quot;, coordinates=(&quot; + latitude + &quot;, &quot; + longitude + &quot;)]&quot;;</span>
+<span class="fc" id="L27">		return &quot;CityDTO[name=&quot; + name + &quot;, country=&quot; + country + &quot;, coordinates=(&quot; + latitude + &quot;, &quot; + longitude + &quot;)]&quot;;</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

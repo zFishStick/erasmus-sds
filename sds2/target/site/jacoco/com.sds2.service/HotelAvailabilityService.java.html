@@ -15,38 +15,38 @@ public class HotelAvailabilityService {
 
     private HotelService hotelService;
 
-<span class="nc" id="L18">    public HotelAvailabilityService(HotelService hotelService) {</span>
-<span class="nc" id="L19">        this.hotelService = hotelService;</span>
-<span class="nc" id="L20">    }</span>
+<span class="fc" id="L18">    public HotelAvailabilityService(HotelService hotelService) {</span>
+<span class="fc" id="L19">        this.hotelService = hotelService;</span>
+<span class="fc" id="L20">    }</span>
 
     public Map&lt;String, HotelAvailability&gt; loadAvailability(
             List&lt;HotelDTO&gt; hotels,
             HotelSearchContext ctx
     ) {
-<span class="nc" id="L26">        Map&lt;String, HotelAvailability&gt; result = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L26">        Map&lt;String, HotelAvailability&gt; result = new HashMap&lt;&gt;();</span>
 
-<span class="nc bnc" id="L28" title="All 2 branches missed.">        for (var h : hotels) {</span>
-<span class="nc bnc" id="L29" title="All 2 branches missed.">            if (h.hotelId() == null) continue;</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        for (var h : hotels) {</span>
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">            if (h.hotelId() == null) continue;</span>
 
-<span class="nc" id="L31">            var price = hotelService.getLowestPriceForHotel(</span>
-<span class="nc" id="L32">                    h.hotelId(),</span>
+<span class="fc" id="L31">            var price = hotelService.getLowestPriceForHotel(</span>
+<span class="fc" id="L32">                    h.hotelId(),</span>
                     1, // adults
-<span class="nc bnc" id="L34" title="All 2 branches missed.">                    ctx != null ? ctx.checkInDate() : null,</span>
-<span class="nc bnc" id="L35" title="All 2 branches missed.">                    ctx != null ? ctx.checkOutDate() : null</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">                    ctx != null ? ctx.checkInDate() : null,</span>
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">                    ctx != null ? ctx.checkOutDate() : null</span>
             );
 
-<span class="nc bnc" id="L38" title="All 2 branches missed.">            if (price == null) {</span>
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">            if (price == null) {</span>
 <span class="nc" id="L39">                result.put(h.hotelId(), new HotelAvailability(&quot;unavailable&quot;, null, null));</span>
             } else {
-<span class="nc" id="L41">                result.put(h.hotelId(), new HotelAvailability(</span>
+<span class="fc" id="L41">                result.put(h.hotelId(), new HotelAvailability(</span>
                         &quot;available&quot;,
-<span class="nc" id="L43">                        (price).getAmount(),</span>
-<span class="nc" id="L44">                        (price).getCurrencyCode()</span>
+<span class="fc" id="L43">                        (price).getAmount(),</span>
+<span class="fc" id="L44">                        (price).getCurrencyCode()</span>
                 ));
             }
-<span class="nc" id="L47">        }</span>
+<span class="fc" id="L47">        }</span>
 
-<span class="nc" id="L49">        return result;</span>
+<span class="fc" id="L49">        return result;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

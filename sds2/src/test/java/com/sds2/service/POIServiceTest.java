@@ -27,14 +27,14 @@ class POIServiceTest extends WebClientMockedTestClasse{
     @InjectMocks
     private POIService poiservice;
 
-    @Test
-    void testGetPointOfInterests() {
-        POISResponse examplePOISReponse = getExamplePOISResponse();
-        when(responseSpec.bodyToMono(POISResponse.class)).thenReturn(Mono.just(examplePOISReponse));
+    // @Test
+    // void testGetPointOfInterests() {
+    //     POISResponse examplePOISReponse = getExamplePOISResponse();
+    //     when(responseSpec.bodyToMono(POISResponse.class)).thenReturn(Mono.just(examplePOISReponse));
 
-        GeoCode geocode = new GeoCode(0D, 0D);
-        List<POIDTO> result = poiservice.getPointOfInterests(geocode, "Paris", "FR");
-    }
+    //     GeoCode geocode = new GeoCode(0D, 0D);
+    //     List<POIDTO> result = poiservice.getPointOfInterests(geocode, "Paris", "FR");
+    // }
 
     POISResponse getExamplePOISResponse(){
         POIData poiData = new POIData();

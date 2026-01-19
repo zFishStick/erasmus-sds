@@ -4,7 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -26,9 +26,10 @@ public class PlaceService {
     
     private final PlacesRepository placesRepository;
     private final GoogleAuthService googleAuthService;
+    private final GoogleAPIPlaceRequestService googleAPIPlaceRequestService;
     private final WebClient.Builder webClientBuilder;
 
-<span class="fc" id="L31">    private static final String [] headerInfo = {</span>
+<span class="fc" id="L32">    private static final String[] HEADER_INFO = {</span>
         &quot;places.id&quot;,
         &quot;places.name&quot;,
         &quot;places.displayName.text&quot;,
@@ -43,203 +44,169 @@ public class PlaceService {
     };
 
     public void addPlace(Places place) {
-<span class="nc bnc" id="L46" title="All 2 branches missed.">        if (place == null) {</span>
-<span class="nc" id="L47">            throw new IllegalArgumentException(&quot;Place cannot be null&quot;);</span>
+<span class="nc bnc" id="L47" title="All 2 branches missed.">        if (place == null) {</span>
+<span class="nc" id="L48">            throw new IllegalArgumentException(&quot;Place cannot be null&quot;);</span>
         }
 
-<span class="nc" id="L50">        Places existingPlace = placesRepository.findByName(place.getName());</span>
-<span class="nc bnc" id="L51" title="All 2 branches missed.">        if (existingPlace != null) {</span>
-<span class="nc" id="L52">            return; </span>
+<span class="nc" id="L51">        Places existingPlace = placesRepository.findByName(place.getName());</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        if (existingPlace != null) {</span>
+<span class="nc" id="L53">            return; </span>
         }
 
-<span class="nc" id="L55">        placesRepository.save(place);</span>
-<span class="nc" id="L56">    }</span>
-
-    public List&lt;Places&gt; findPlacesByCitySummary_City(String city) {
-<span class="nc" id="L59">        return placesRepository.findByCitySummary_CityIgnoreCase(city);</span>
-    }
+<span class="nc" id="L56">        placesRepository.save(place);</span>
+<span class="nc" id="L57">    }</span>
 
     public Places findPlaceByName(String name) {
-<span class="nc" id="L63">        Places p = placesRepository.findByText(name);</span>
-<span class="nc bnc" id="L64" title="All 2 branches missed.">        if (p == null) {</span>
-<span class="nc" id="L65">            throw new IllegalStateException(&quot;Place with name &quot; + name + &quot; not found&quot;);</span>
+<span class="nc" id="L60">        Places p = placesRepository.findByText(name);</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        if (p == null) {</span>
+<span class="nc" id="L62">            throw new IllegalStateException(&quot;Place with name &quot; + name + &quot; not found&quot;);</span>
         }
-<span class="nc" id="L67">        return p;</span>
+<span class="nc" id="L64">        return p;</span>
     }
 
     public List&lt;PlacesDTO&gt; mapPlacesToDTOs(PlaceResponse response, String city, String country) {
-<span class="nc" id="L71">        return response.getPlaces().stream()</span>
-<span class="nc" id="L72">            .map(data -&gt; {                </span>
-<span class="nc" id="L73">                Places places = Places.builder()</span>
-<span class="nc" id="L74">                    .citySummary(new CitySummary(city, country))</span>
-<span class="nc" id="L75">                    .name(data.getName())</span>
-<span class="nc" id="L76">                    .text(data.getDisplayName().getText())</span>
-<span class="nc" id="L77">                    .photoUrl(getPlacePhoto(data.getPhotos()))</span>
-<span class="nc" id="L78">                    .type(data.getPrimaryType())</span>
-<span class="nc" id="L79">                    .address(data.getFormattedAddress())</span>
-<span class="nc" id="L80">                    .location(data.getLocation())</span>
-<span class="nc" id="L81">                    .rating(data.getRating())</span>
-<span class="nc" id="L82">                    .priceRange(data.getPriceRange())</span>
-<span class="nc" id="L83">                    .websiteUri(data.getWebsiteUri())</span>
-<span class="nc" id="L84">                    .build();</span>
+<span class="nc" id="L68">        return response.getPlaces().stream()</span>
+<span class="nc" id="L69">            .map(data -&gt; {                </span>
+<span class="nc" id="L70">                Places places = Places.builder()</span>
+<span class="nc" id="L71">                    .citySummary(new CitySummary(city, country))</span>
+<span class="nc" id="L72">                    .name(data.getName())</span>
+<span class="nc" id="L73">                    .text(data.getDisplayName().getText())</span>
+<span class="nc" id="L74">                    .photoUrl(getPlacePhoto(data.getPhotos()))</span>
+<span class="nc" id="L75">                    .type(data.getPrimaryType())</span>
+<span class="nc" id="L76">                    .address(data.getFormattedAddress())</span>
+<span class="nc" id="L77">                    .location(data.getLocation())</span>
+<span class="nc" id="L78">                    .rating(data.getRating())</span>
+<span class="nc" id="L79">                    .priceRange(data.getPriceRange())</span>
+<span class="nc" id="L80">                    .websiteUri(data.getWebsiteUri())</span>
+<span class="nc" id="L81">                    .build();</span>
 
-<span class="nc" id="L86">                addPlace(places);</span>
-<span class="nc" id="L87">                return mapToDTO(places);</span>
-            })
-<span class="nc" id="L89">            .toList();</span>
+<span class="nc" id="L83">                    addPlace(places);</span>
+<span class="nc" id="L84">                    return mapToDTO(places);</span>
+<span class="nc" id="L85">                }).toList();</span>
     }
 
 
     public PlacesDTO mapToDTO(Places places) {
-<span class="nc" id="L94">        return new PlacesDTO(</span>
-<span class="nc" id="L95">            places.getId(),</span>
-<span class="nc" id="L96">            places.getText(),</span>
-<span class="nc" id="L97">            places.getPhotoUrl(),</span>
-<span class="nc" id="L98">            places.getType(),</span>
-<span class="nc" id="L99">            places.getAddress(),</span>
-<span class="nc" id="L100">            places.getLocation(),</span>
-<span class="nc" id="L101">            places.getRating(),</span>
-<span class="nc" id="L102">            places.getPriceRange(),</span>
-<span class="nc" id="L103">            places.getWebsiteUri()</span>
+<span class="nc" id="L90">        return new PlacesDTO(</span>
+<span class="nc" id="L91">            places.getId(),</span>
+<span class="nc" id="L92">            places.getText(),</span>
+<span class="nc" id="L93">            places.getPhotoUrl(),</span>
+<span class="nc" id="L94">            places.getType(),</span>
+<span class="nc" id="L95">            places.getAddress(),</span>
+<span class="nc" id="L96">            places.getLocation(),</span>
+<span class="nc" id="L97">            places.getRating(),</span>
+<span class="nc" id="L98">            places.getPriceRange(),</span>
+<span class="nc" id="L99">            places.getWebsiteUri()</span>
         );
     }
 
     public List&lt;PlacesDTO&gt; searchNearby(Location location, String city, String country) {
-
-<span class="nc" id="L109">        double latitude = location.getLatitude();</span>
-<span class="nc" id="L110">        double longitude = location.getLongitude();</span>
-
-<span class="nc" id="L112">        List&lt;Places&gt; existingPlaces = placesRepository.findByCitySummary_CityAndCitySummary_Country(city, country);</span>
-
-<span class="nc bnc" id="L114" title="All 2 branches missed.">        if (!existingPlaces.isEmpty()) {</span>
-<span class="nc" id="L115">            return existingPlaces.stream()</span>
-<span class="nc" id="L116">                .map(this::mapToDTO)</span>
-<span class="nc" id="L117">                .toList();</span>
+<span class="nc" id="L104">        List&lt;Places&gt; existingPlaces = placesRepository.findByCitySummary_CityAndCitySummary_Country(city, country);</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        if (!existingPlaces.isEmpty()) {</span>
+<span class="nc" id="L106">            return existingPlaces.stream()</span>
+<span class="nc" id="L107">                .map(this::mapToDTO)</span>
+<span class="nc" id="L108">                .toList();</span>
         }
+<span class="nc" id="L110">        Map&lt;String, Object&gt; body = buildNearbyBody(location, 10000.0);</span>
+<span class="nc" id="L111">        PlaceResponse response = callPlacesApi(&quot;https://places.googleapis.com/v1/places:searchNearby&quot;, body);</span>
+<span class="nc" id="L112">        return mapPlacesToDTOs(response, city, country);</span>
+    }
 
-<span class="nc" id="L120">        String url = &quot;https://places.googleapis.com/v1/places:searchNearby&quot;;</span>
-
-        // radius in meters
-<span class="nc" id="L123">        double radius = 10000.0;</span>
-
-<span class="nc" id="L125">        String body = String.format(Locale.US, &quot;&quot;&quot;</span>
-        {
-          &quot;locationRestriction&quot;: {
-            &quot;circle&quot;: {
-            &quot;center&quot;: {
-                &quot;latitude&quot;: %f,
-                &quot;longitude&quot;: %f
-            },
-            &quot;radius&quot;: %f
-            }
-          }
+    public List&lt;PlacesDTO&gt; searchByText(Location location, String city, String country, String query) {
+<span class="nc bnc" id="L116" title="All 4 branches missed.">        if (query == null || query.isBlank()) {</span>
+<span class="nc" id="L117">            return List.of();</span>
         }
-<span class="nc" id="L137">        &quot;&quot;&quot;.formatted(latitude, longitude, radius));</span>
-
-<span class="nc" id="L139">        PlaceResponse response = webClientBuilder.build()</span>
-<span class="nc" id="L140">                .post()</span>
-<span class="nc" id="L141">                .uri(url)</span>
-<span class="nc" id="L142">                .header(GoogleBodyEnum.CONTENTTYPE.getValue(), GoogleBodyEnum.APPLICATIONJSON.getValue())</span>
-<span class="nc" id="L143">                .header(GoogleBodyEnum.X_GOOG_API_KEY.getValue(), googleAuthService.getApiKey())</span>
-<span class="nc" id="L144">                .header(GoogleBodyEnum.X_GOOG_FIELD_MASK.getValue(), String.join(&quot;,&quot;, headerInfo))</span>
-<span class="nc" id="L145">                .bodyValue(body)</span>
-<span class="nc" id="L146">                .retrieve()</span>
-<span class="nc" id="L147">                .bodyToMono(PlaceResponse.class)</span>
-<span class="nc" id="L148">                .block();</span>
-
-<span class="nc bnc" id="L150" title="All 2 branches missed.">        if (response == null) {</span>
-<span class="nc" id="L151">            throw new IllegalStateException(&quot;Failed to retrieve nearby places from Google Places API&quot;);</span>
-        }
-
-<span class="nc" id="L154">        return mapPlacesToDTOs(response, city, country);</span>
+<span class="nc" id="L119">        Map&lt;String, Object&gt; body = buildTextSearchBody(query, location, 12000.0);</span>
+<span class="nc" id="L120">        PlaceResponse response = callPlacesApi(&quot;https://places.googleapis.com/v1/places:searchText&quot;, body);</span>
+<span class="nc" id="L121">        return mapPlacesToDTOs(response, city, country);</span>
     }
 
     public List&lt;String&gt; getPlacePhoto(Photo[] photos) {
-<span class="nc bnc" id="L158" title="All 4 branches missed.">        if (photos == null || photos.length == 0) {</span>
-<span class="nc" id="L159">            return List.of();</span>
+<span class="nc bnc" id="L125" title="All 4 branches missed.">        if (photos == null || photos.length == 0) {</span>
+<span class="nc" id="L126">            return List.of();</span>
         }
 
-<span class="nc" id="L162">        return Arrays.stream(photos)</span>
-<span class="nc" id="L163">                    .limit(3)</span>
-<span class="nc" id="L164">                    .map(photo -&gt; fetchPhotoUri(photo.getName()))</span>
-<span class="nc" id="L165">                    .toList();</span>
+<span class="nc" id="L129">        return Arrays.stream(photos)</span>
+<span class="nc" id="L130">                    .limit(3)</span>
+<span class="nc" id="L131">                    .map(photo -&gt; fetchPhotoUri(photo.getName()))</span>
+<span class="nc" id="L132">                    .toList();</span>
     }
 
+    private PlaceResponse callPlacesApi(String url, Object body) {
+<span class="nc" id="L136">        PlaceResponse response = webClientBuilder.build()</span>
+<span class="nc" id="L137">            .post()</span>
+<span class="nc" id="L138">            .uri(url)</span>
+<span class="nc" id="L139">            .header(GoogleBodyEnum.CONTENTTYPE.getValue(), GoogleBodyEnum.APPLICATIONJSON.getValue())</span>
+<span class="nc" id="L140">            .header(GoogleBodyEnum.X_GOOG_API_KEY.getValue(), googleAuthService.getApiKey())</span>
+<span class="nc" id="L141">            .header(GoogleBodyEnum.X_GOOG_FIELD_MASK.getValue(), String.join(&quot;,&quot;, HEADER_INFO))</span>
+<span class="nc" id="L142">            .bodyValue(body)</span>
+<span class="nc" id="L143">            .retrieve()</span>
+<span class="nc" id="L144">            .bodyToMono(PlaceResponse.class)</span>
+<span class="nc" id="L145">            .block();</span>
+
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        if (response == null) {</span>
+<span class="nc" id="L148">            throw new IllegalStateException(&quot;Failed to retrieve places from Google Places API&quot;);</span>
+        }
+
+<span class="nc" id="L151">        return response;</span>
+    }
+
+    private Map&lt;String, Object&gt; buildNearbyBody(Location location, double radius) {
+<span class="nc" id="L155">        return Map.of(</span>
+<span class="nc" id="L156">            &quot;locationRestriction&quot;, Map.of(</span>
+<span class="nc" id="L157">                &quot;circle&quot;, Map.of(</span>
+<span class="nc" id="L158">                    &quot;center&quot;, Map.of(</span>
+<span class="nc" id="L159">                        &quot;latitude&quot;, location.getLatitude(),</span>
+<span class="nc" id="L160">                        &quot;longitude&quot;, location.getLongitude()</span>
+                    ),
+<span class="nc" id="L162">                    &quot;radius&quot;, radius</span>
+                )
+            )
+        );
+    }
+
+    private Map&lt;String, Object&gt; buildTextSearchBody(String query, Location location, double radius) {
+<span class="nc" id="L169">        return Map.of(</span>
+            &quot;textQuery&quot;, query,
+<span class="nc" id="L171">            &quot;locationBias&quot;, Map.of(</span>
+<span class="nc" id="L172">                &quot;circle&quot;, Map.of(</span>
+<span class="nc" id="L173">                    &quot;center&quot;, Map.of(</span>
+<span class="nc" id="L174">                        &quot;latitude&quot;, location.getLatitude(),</span>
+<span class="nc" id="L175">                        &quot;longitude&quot;, location.getLongitude()</span>
+                    ),
+<span class="nc" id="L177">                    &quot;radius&quot;, radius</span>
+                )
+            )
+        );
+    }
 
     private String fetchPhotoUri(String photoName) {
-
-<span class="nc" id="L171">        String uriString = String.format(</span>
+<span class="nc" id="L184">        String uriString = String.format(</span>
             &quot;https://places.googleapis.com/v1/%s/media?maxWidthPx=400&amp;key=%s&quot;,
             photoName,
-<span class="nc" id="L174">            googleAuthService.getApiKey()</span>
+<span class="nc" id="L187">            googleAuthService.getApiKey()</span>
         );
 
         try {
-<span class="nc" id="L178">            URI uri = new URI(uriString);</span>
-<span class="nc" id="L179">            PhotoResponse response = webClientBuilder</span>
-<span class="nc" id="L180">                    .build()</span>
-<span class="nc" id="L181">                    .get()</span>
-<span class="nc" id="L182">                    .uri(uri)</span>
-<span class="nc" id="L183">                    .retrieve()</span>
-<span class="nc" id="L184">                    .bodyToMono(PhotoResponse.class)</span>
-<span class="nc" id="L185">                    .block();</span>
+<span class="nc" id="L191">            URI uri = new URI(uriString);</span>
 
-<span class="nc bnc" id="L187" title="All 4 branches missed.">            if (response == null || response.getPhotoUri() == null) {</span>
-<span class="nc" id="L188">                throw new IllegalStateException(&quot;Failed to retrieve photoUri from Google API for &quot; + photoName);</span>
+<span class="nc" id="L193">            PhotoResponse response = googleAPIPlaceRequestService.getPhotoResponse(uri);</span>
+
+<span class="nc bnc" id="L195" title="All 4 branches missed.">            if (response == null || response.getPhotoUri() == null) {</span>
+<span class="nc" id="L196">                throw new IllegalStateException(&quot;Failed to retrieve photoUri from Google API for &quot; + photoName);</span>
             }
 
-<span class="nc" id="L191">            return response.getPhotoUri();</span>
-
-<span class="nc" id="L193">        } catch (URISyntaxException e) {</span>
-<span class="nc" id="L194">            throw new IllegalStateException(&quot;Invalid URI syntax: &quot; + uriString, e);</span>
+<span class="nc" id="L199">            return response.getPhotoUri();</span>
+<span class="nc" id="L200">        } catch (URISyntaxException e) {</span>
+<span class="nc" id="L201">            throw new IllegalStateException(&quot;Invalid URI syntax: &quot; + uriString, e);</span>
         }
     }
 
     // DEBUG METHOD
     public List&lt;PlacesDTO&gt; addRemainingNearbyPlaces(Location location, String city, String country) {
-<span class="nc" id="L200">        double latitude = location.getLatitude();</span>
-<span class="nc" id="L201">        double longitude = location.getLongitude();</span>
-
-<span class="nc" id="L203">        String url = &quot;https://places.googleapis.com/v1/places:searchNearby&quot;;</span>
-        
-        // radius in meters
-<span class="nc" id="L206">        double radius = 10000.0;</span>
-
-<span class="nc" id="L208">        String body = &quot;&quot;&quot;</span>
-        {
-        &quot;locationRestriction&quot;: {
-            &quot;circle&quot;: {
-            &quot;center&quot;: {
-                &quot;latitude&quot;: %f,
-                &quot;longitude&quot;: %f
-            },
-            &quot;radius&quot;: %f
-            }
-        }
-        }
-<span class="nc" id="L220">        &quot;&quot;&quot;.formatted(latitude, longitude, radius);</span>
-
-<span class="nc" id="L222">        PlaceResponse response = webClientBuilder.build()</span>
-<span class="nc" id="L223">                .post()</span>
-<span class="nc" id="L224">                .uri(url)</span>
-<span class="nc" id="L225">                .header(GoogleBodyEnum.CONTENTTYPE.getValue(), GoogleBodyEnum.APPLICATIONJSON.getValue())</span>
-<span class="nc" id="L226">                .header(GoogleBodyEnum.X_GOOG_API_KEY.getValue(), googleAuthService.getApiKey())</span>
-<span class="nc" id="L227">                .header(GoogleBodyEnum.X_GOOG_FIELD_MASK.getValue(), String.join(&quot;,&quot;, headerInfo))</span>
-<span class="nc" id="L228">                .bodyValue(body)</span>
-<span class="nc" id="L229">                .retrieve()</span>
-<span class="nc" id="L230">                .bodyToMono(PlaceResponse.class)</span>
-<span class="nc" id="L231">                .block();</span>
-
-<span class="nc bnc" id="L233" title="All 2 branches missed.">        if (response == null) {</span>
-<span class="nc" id="L234">            throw new IllegalStateException(&quot;Failed to retrieve nearby places from Google Places API&quot;);</span>
-        }
-
-<span class="nc" id="L237">        return mapPlacesToDTOs(response, city, country);</span>
+<span class="nc" id="L207">        Map&lt;String, Object&gt; body = buildNearbyBody(location, 10000.0);</span>
+<span class="nc" id="L208">        PlaceResponse response = callPlacesApi(&quot;https://places.googleapis.com/v1/places:searchNearby&quot;, body);</span>
+<span class="nc" id="L209">        return mapPlacesToDTOs(response, city, country);</span>
     }
-
-    
-
-
-
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

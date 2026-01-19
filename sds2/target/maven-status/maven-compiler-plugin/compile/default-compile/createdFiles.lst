@@ -1,3 +1,6 @@
+com\sds2\service\AmadeusAPICall.class
+com\sds2\classes\response\HotelDetailResponse.class
+com\sds2\service\GoogleAPIPlaceRequestService.class
 com\sds2\controller\UserController.class
 com\sds2\classes\enums\HotelEnum.class
 com\sds2\service\HotelOfferService.class
@@ -79,6 +82,7 @@ com\sds2\classes\response\POISResponse.class
 com\sds2\classes\entity\City.class
 com\sds2\classes\response\HotelOfferResponse.class
 com\sds2\service\chat\ChatItineraryFormatter.class
+com\sds2\classes\response\SuperClassResponse.class
 com\sds2\dto\HotelBookingResult.class
 com\sds2\service\PlaceService.class
 com\sds2\controller\CityController.class

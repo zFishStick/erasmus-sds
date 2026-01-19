@@ -35,27 +35,27 @@
 
     <div class="place-wrapper">
         <div class="place-body">
-            <div class="place-photos">
+            <div class="place-photos" th:if="${place != null and not #lists.isEmpty(place.photoUrl)}">
                 <div th:each="photoUrl : ${place.photoUrl}">
-                    <img th:if="${photoUrl != null}" th:src="${photoUrl}" alt="img"/>
+                    <img th:src="${photoUrl}" alt="img"/>
                 </div>
             </div>
             <div class="meta-block">
                 <div class="place-header">
-                    <h1 th:text="${place.name}" id="place-name">Place Name</h1>
+                    <h1 th:if="${place != null and place.name != null}" th:text="${place.name}" id="place-name">Place Name</h1>
                 </div>
-                <p><span class="meta-label">Address:</span> <span th:text="${place.address}">Place Address</span></p>
-                <p><span class="meta-label">Type:</span> <span th:text="${place.type}">Place Type</span></p>
-                <p th:if="${place.priceRange != null}">
+                <p><span class="meta-label">Address:</span> <span th:if="${place != null and place.address != null}" th:text="${place.address}">Place Address</span></p>
+                <p><span class="meta-label">Type:</span> <span th:if="${place != null and place.type != null}" th:text="${place.type}">Place Type</span></p>
+                <p th:if="${place != null and place.priceRange != null}">
                     <span class="meta-label">Price Range:</span>
                     <span th:text="${place.priceRange}">Price Range</span>
                 </p>
-                <p th:if="${place.priceRange != null}">
+                <p th:if="${place != null and place.priceRange != null}">
                     <span class="main-text">Price Range:</span>
                     <span th:text="|From ${place.priceRange.startPrice.units} ${place.priceRange.startPrice.currencyCode} to ${place.priceRange.endPrice.units} ${place.priceRange.endPrice.currencyCode}|">Price Range</span>
                 </p>
-                <p><span class="meta-label">Rating:</span> <span th:text="${place.rating}">Place Rating</span></p>
-                <p th:if="${place.websiteUri != null}" class="link-strong">
+                <p><span class="meta-label">Rating:</span> <span th:if="${place != null and place.rating != null}" th:text="${place.rating}">Place Rating</span></p>
+                <p th:if="${place != null and place.websiteUri != null}" class="link-strong">
                     Website: <a th:href="${place.websiteUri}" th:text="${place.websiteUri}">Website Link</a>
                 </p>
 

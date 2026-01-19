@@ -261,8 +261,8 @@ public class ChatActivityResolver {
             longitude = place.location().getLongitude();
         }
         Double amount = parsePrice(place.priceRange());
-        String currency = place.priceRange() != null && place.priceRange().getStartPrice() != null
-            ? place.priceRange().getStartPrice().getCurrencyCode()
+        String currency = place.priceRange() != null && place.priceRange().startPrice() != null
+            ? place.priceRange().startPrice().currencyCode()
             : null;
 
         return new ActivityCandidate(
@@ -284,8 +284,8 @@ public class ChatActivityResolver {
     }
 
     private Double parsePrice(com.sds2.classes.price.PriceRange priceRange) {
-        if (priceRange == null || priceRange.getStartPrice() == null) return null;
-        String units = priceRange.getStartPrice().getUnits();
+        if (priceRange == null || priceRange.startPrice() == null) return null;
+        String units = priceRange.startPrice().units();
         if (units == null || units.isBlank()) return null;
         try {
             return Double.parseDouble(units);

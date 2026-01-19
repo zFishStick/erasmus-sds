@@ -5,24 +5,24 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
-<span class="nc" id="L8">public class HotelOfferResponse {</span>
+<span class="fc" id="L8">public class HotelOfferResponse {</span>
 
     private List&lt;HotelOfferData&gt; data;
 
-<span class="nc" id="L12">    public List&lt;HotelOfferData&gt; getData() { return data; }</span>
+<span class="fc" id="L12">    public List&lt;HotelOfferData&gt; getData() { return data; }</span>
 
-<span class="nc" id="L14">    public void setData(List&lt;HotelOfferData&gt; data) { this.data = data; }</span>
+<span class="fc" id="L14">    public void setData(List&lt;HotelOfferData&gt; data) { this.data = data; }</span>
     
-<span class="nc" id="L16">    public static class HotelOfferData {</span>
+<span class="fc" id="L16">    public static class HotelOfferData {</span>
         private List&lt;OfferItem&gt; offers;
 
-<span class="nc" id="L19">        public List&lt;OfferItem&gt; getOffers() { return offers; }</span>
+<span class="fc" id="L19">        public List&lt;OfferItem&gt; getOffers() { return offers; }</span>
 
-<span class="nc" id="L21">        public void setOffers(List&lt;OfferItem&gt; offers) { this.offers = offers; }</span>
+<span class="fc" id="L21">        public void setOffers(List&lt;OfferItem&gt; offers) { this.offers = offers; }</span>
     }
 
     @Getter @Setter
-<span class="nc" id="L25">    public static class OfferItem {</span>
+<span class="fc" id="L25">    public static class OfferItem {</span>
         private String id;
         private String checkInDate;
         private String checkOutDate;
@@ -33,30 +33,30 @@ import lombok.Setter;
     }
 
     @Getter @Setter
-<span class="nc" id="L36">    public static class OfferGuests {</span>
+<span class="fc" id="L36">    public static class OfferGuests {</span>
         private Integer adults;
     }
     
     @Getter @Setter
-<span class="nc" id="L41">    public static class OfferPrice {</span>
+<span class="fc" id="L41">    public static class OfferPrice {</span>
         private String currency;
         private String total;
     }
 
     @Getter @Setter
-<span class="nc" id="L47">    public static class OfferRoom {</span>
+<span class="fc" id="L47">    public static class OfferRoom {</span>
         private String type;
         private OfferRoomTypeEstimated typeEstimated;
         private OfferRoomDescription description;
     }
 
     @Getter @Setter
-<span class="nc" id="L54">    public static class OfferRoomTypeEstimated {</span>
+<span class="fc" id="L54">    public static class OfferRoomTypeEstimated {</span>
         private String category;
     }
 
     @Getter @Setter
-<span class="nc" id="L59">    public static class OfferRoomDescription {</span>
+<span class="fc" id="L59">    public static class OfferRoomDescription {</span>
         private String text;
         private String lang;
     }

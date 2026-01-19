@@ -7,13 +7,13 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import com.sds2.classes.Price;
 import com.sds2.classes.coordinates.GeoCode;
 import com.sds2.classes.entity.Hotel;
 import com.sds2.classes.hotel.HotelAddress;
 import com.sds2.classes.response.HotelResponse;
+import com.sds2.classes.response.SuperClassResponse;
 import com.sds2.dto.HotelDTO;
 import com.sds2.dto.HotelDetailsDTO;
 import com.sds2.dto.HotelOfferDTO;
@@ -23,225 +23,213 @@ import com.sds2.repository.HotelRepository;
 public class HotelService {
     private final HotelRepository hotelRepository;
     private final HotelOfferService hotelOfferService;
-    private final AmadeusAuthService amadeusAuthService;
-    private final WebClient.Builder webClientBuilder;
+    private final AmadeusAPICall amadeusAPICall;
 
     public HotelService(
-            AmadeusAuthService amadeusAuthService,
+            AmadeusAPICall amadeusAPICall,
             HotelOfferService hotelOfferService,
-            HotelRepository hotelRepository,
-            WebClient.Builder webClientBuilder
-<span class="nc" id="L34">    ) {</span>
-<span class="nc" id="L35">        this.amadeusAuthService = amadeusAuthService;</span>
-<span class="nc" id="L36">        this.hotelOfferService = hotelOfferService;</span>
-<span class="nc" id="L37">        this.hotelRepository = hotelRepository;</span>
-<span class="nc" id="L38">        this.webClientBuilder = webClientBuilder;</span>
-<span class="nc" id="L39">    }</span>
+            HotelRepository hotelRepository
+<span class="fc" id="L32">    ) {</span>
+<span class="fc" id="L33">        this.amadeusAPICall = amadeusAPICall;</span>
+<span class="fc" id="L34">        this.hotelOfferService = hotelOfferService;</span>
+<span class="fc" id="L35">        this.hotelRepository = hotelRepository;</span>
+<span class="fc" id="L36">    }</span>
 
     public void addHotel(Hotel hotel) {
-<span class="nc bnc" id="L42" title="All 2 branches missed.">        if (hotel == null) {</span>
-<span class="nc" id="L43">            throw new IllegalArgumentException(&quot;Hotel cannot be null&quot;);</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">        if (hotel == null) {</span>
+<span class="nc" id="L40">            throw new IllegalArgumentException(&quot;Hotel cannot be null&quot;);</span>
         }
 
-<span class="nc bnc" id="L46" title="All 2 branches missed.">        if (hotel.getHotelId() != null) {</span>
-<span class="nc" id="L47">            Hotel existing = hotelRepository.findByHotelId(hotel.getHotelId());</span>
-<span class="nc bnc" id="L48" title="All 2 branches missed.">            if (existing != null) {</span>
-<span class="nc" id="L49">                return;</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">        if (hotel.getHotelId() != null) {</span>
+<span class="nc" id="L44">            Hotel existing = hotelRepository.findByHotelId(hotel.getHotelId());</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">            if (existing != null) {</span>
+<span class="nc" id="L46">                return;</span>
             }
         }
 
-<span class="nc" id="L53">        hotelRepository.save(hotel);</span>
-<span class="nc" id="L54">    }</span>
+<span class="nc" id="L50">        hotelRepository.save(hotel);</span>
+<span class="nc" id="L51">    }</span>
 
     public List&lt;HotelDetailsDTO&gt; getHotelById(String hotelId, int adults, String checkInDate, String checkOutDate) {
-<span class="nc" id="L57">        Hotel hotel = hotelRepository.findByHotelId(hotelId);</span>
+<span class="fc" id="L54">        Hotel hotel = hotelRepository.findByHotelId(hotelId);</span>
 
-<span class="nc bnc" id="L59" title="All 2 branches missed.">        if (hotel == null) {</span>
-<span class="nc" id="L60">            return List.of();</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">        if (hotel == null) {</span>
+<span class="nc" id="L57">            return List.of();</span>
         }
 
-<span class="nc" id="L63">        List&lt;HotelOfferDTO&gt; offers = hotelOfferService.getOffersByHotelId(hotelId, adults, checkInDate, checkOutDate);</span>
+<span class="fc" id="L60">        List&lt;HotelOfferDTO&gt; offers = hotelOfferService.getOffersByHotelId(hotelId, adults, checkInDate, checkOutDate);</span>
 
-<span class="nc" id="L65">        HotelDTO hotelDTO = mapToDTO(hotel);</span>
+<span class="fc" id="L62">        HotelDTO hotelDTO = mapToDTO(hotel);</span>
 
-<span class="nc" id="L67">        List&lt;HotelDetailsDTO&gt; details = offers.stream()</span>
-<span class="nc" id="L68">                .map(offer -&gt; new HotelDetailsDTO(hotelDTO.withOffer(offer), offer))</span>
-<span class="nc" id="L69">                .toList();</span>
+<span class="fc" id="L64">        List&lt;HotelDetailsDTO&gt; details = offers.stream()</span>
+<span class="fc" id="L65">                .map(offer -&gt; new HotelDetailsDTO(hotelDTO.withOffer(offer), offer))</span>
+<span class="fc" id="L66">                .toList();</span>
 
-<span class="nc bnc" id="L71" title="All 2 branches missed.">        if (details.isEmpty()) {</span>
-<span class="nc" id="L72">            return List.of(new HotelDetailsDTO(hotelDTO, null));</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">        if (details.isEmpty()) {</span>
+<span class="nc" id="L69">            return List.of(new HotelDetailsDTO(hotelDTO, null));</span>
         }
 
-<span class="nc" id="L75">        return details;</span>
+<span class="fc" id="L72">        return details;</span>
     }
 
     public Price getLowestPriceForHotel(String hotelId, int adults, String checkInDate, String checkOutDate) {
-<span class="nc" id="L79">        List&lt;HotelOfferDTO&gt; offers = hotelOfferService.getOffersByHotelId(hotelId, adults, checkInDate, checkOutDate);</span>
-<span class="nc" id="L80">        return offers.stream()</span>
-<span class="nc" id="L81">                .map(HotelOfferDTO::price)</span>
-<span class="nc bnc" id="L82" title="All 4 branches missed.">                .filter(price -&gt; price != null &amp;&amp; price.getAmount() &gt; 0)</span>
-<span class="nc" id="L83">                .min((p1, p2) -&gt; Double.compare(p1.getAmount(), p2.getAmount()))</span>
-<span class="nc" id="L84">                .orElse(null);</span>
+<span class="fc" id="L76">        List&lt;HotelOfferDTO&gt; offers = hotelOfferService.getOffersByHotelId(hotelId, adults, checkInDate, checkOutDate);</span>
+<span class="fc" id="L77">        return offers.stream()</span>
+<span class="fc" id="L78">                .map(HotelOfferDTO::price)</span>
+<span class="pc bpc" id="L79" title="2 of 4 branches missed.">                .filter(price -&gt; price != null &amp;&amp; price.getAmount() &gt; 0)</span>
+<span class="pc" id="L80">                .min((p1, p2) -&gt; Double.compare(p1.getAmount(), p2.getAmount()))</span>
+<span class="fc" id="L81">                .orElse(null);</span>
     }
 
     public List&lt;HotelDTO&gt; getHotelsByCoordinates(Double latitude, Double longitude, String cityName, String countryCode) {
 
-<span class="nc" id="L89">        List&lt;Hotel&gt; hotels = List.of();</span>
+<span class="nc" id="L86">        List&lt;Hotel&gt; hotels = List.of();</span>
 
-<span class="nc" id="L91">        String normalizedCity = normalize(cityName);</span>
-<span class="nc" id="L92">        String normalizedCountry = normalize(countryCode);</span>
+<span class="nc" id="L88">        String normalizedCity = normalize(cityName);</span>
+<span class="nc" id="L89">        String normalizedCountry = normalize(countryCode);</span>
 
-<span class="nc bnc" id="L94" title="All 4 branches missed.">        if (normalizedCity != null &amp;&amp; normalizedCountry != null) {</span>
-<span class="nc" id="L95">            hotels = hotelRepository.findByAddress_CityNameIgnoreCaseAndAddress_CountryCodeIgnoreCase(normalizedCity, normalizedCountry);</span>
+<span class="nc bnc" id="L91" title="All 4 branches missed.">        if (normalizedCity != null &amp;&amp; normalizedCountry != null) {</span>
+<span class="nc" id="L92">            hotels = hotelRepository.findByAddress_CityNameIgnoreCaseAndAddress_CountryCodeIgnoreCase(normalizedCity, normalizedCountry);</span>
         }
 
-<span class="nc bnc" id="L98" title="All 4 branches missed.">        if (hotels.isEmpty() &amp;&amp; normalizedCity != null) {</span>
-<span class="nc" id="L99">            hotels = hotelRepository.findByAddress_CityNameIgnoreCase(normalizedCity);</span>
+<span class="nc bnc" id="L95" title="All 4 branches missed.">        if (hotels.isEmpty() &amp;&amp; normalizedCity != null) {</span>
+<span class="nc" id="L96">            hotels = hotelRepository.findByAddress_CityNameIgnoreCase(normalizedCity);</span>
         }
 
-<span class="nc bnc" id="L102" title="All 4 branches missed.">        if (hotels.isEmpty() &amp;&amp; normalizedCountry != null) {</span>
-<span class="nc" id="L103">            hotels = hotelRepository.findByAddress_CountryCodeIgnoreCase(normalizedCountry);</span>
+<span class="nc bnc" id="L99" title="All 4 branches missed.">        if (hotels.isEmpty() &amp;&amp; normalizedCountry != null) {</span>
+<span class="nc" id="L100">            hotels = hotelRepository.findByAddress_CountryCodeIgnoreCase(normalizedCountry);</span>
         }
 
-<span class="nc bnc" id="L106" title="All 6 branches missed.">        if (hotels.isEmpty() &amp;&amp; latitude != null &amp;&amp; longitude != null) {</span>
-<span class="nc" id="L107">            hotels = hotelRepository.findByCoordinates_LatitudeAndCoordinates_Longitude(latitude, longitude);</span>
+<span class="nc bnc" id="L103" title="All 6 branches missed.">        if (hotels.isEmpty() &amp;&amp; latitude != null &amp;&amp; longitude != null) {</span>
+<span class="nc" id="L104">            hotels = hotelRepository.findByCoordinates_LatitudeAndCoordinates_Longitude(latitude, longitude);</span>
         }
 
-<span class="nc bnc" id="L110" title="All 2 branches missed.">        if (!hotels.isEmpty()) {</span>
-<span class="nc" id="L111">            return hotels.stream()</span>
-<span class="nc" id="L112">                    .map(this::mapToDTO)</span>
-<span class="nc" id="L113">                    .toList();</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        if (!hotels.isEmpty()) {</span>
+<span class="nc" id="L108">            return hotels.stream()</span>
+<span class="nc" id="L109">                    .map(this::mapToDTO)</span>
+<span class="nc" id="L110">                    .toList();</span>
         }
 
-<span class="nc" id="L116">        Logger.getLogger(HotelService.class.getName()).info(&quot;No hotels found in database for given destination.&quot;);</span>
+<span class="nc" id="L113">        Logger.getLogger(HotelService.class.getName()).info(&quot;No hotels found in database for given destination.&quot;);</span>
 
-<span class="nc" id="L118">        return getHotelsByCoordinatesFromAPI(latitude, longitude, normalizedCity, normalizedCountry);</span>
+<span class="nc" id="L115">        return getHotelsByCoordinatesFromAPI(latitude, longitude, normalizedCity, normalizedCountry);</span>
 
     }
 
     private List&lt;HotelDTO&gt; getHotelsByCoordinatesFromAPI(Double latitude, Double longitude, String cityName, String countryCode) {
 
-<span class="nc" id="L124">        String url = String.format(Locale.US,</span>
+<span class="nc" id="L121">        String url = String.format(Locale.US,</span>
                 &quot;https://api.amadeus.com/v1/reference-data/locations/hotels/by-geocode?latitude=%f&amp;longitude=%f&amp;radius=2&quot;, latitude, longitude);
 
         URI uri;
         try {
-<span class="nc" id="L129">            uri = new URI(url);</span>
-<span class="nc" id="L130">        } catch (URISyntaxException e) {</span>
-<span class="nc" id="L131">            Logger.getLogger(HotelService.class.getName()).severe(&quot;Invalid URI syntax: &quot; + e.getMessage());</span>
-<span class="nc" id="L132">            return List.of();</span>
-<span class="nc" id="L133">        }</span>
+<span class="nc" id="L126">            uri = new URI(url);</span>
+<span class="nc" id="L127">        } catch (URISyntaxException e) {</span>
+<span class="nc" id="L128">            Logger.getLogger(HotelService.class.getName()).severe(&quot;Invalid URI syntax: &quot; + e.getMessage());</span>
+<span class="nc" id="L129">            return List.of();</span>
+<span class="nc" id="L130">        }</span>
 
-<span class="nc" id="L135">        HotelResponse response = webClientBuilder</span>
-<span class="nc" id="L136">                .build()</span>
-<span class="nc" id="L137">                .get()</span>
-<span class="nc" id="L138">                .uri(uri)</span>
-<span class="nc" id="L139">                .header(&quot;Authorization&quot;, &quot;Bearer &quot; + amadeusAuthService.getAccessToken())</span>
-<span class="nc" id="L140">                .retrieve()</span>
-<span class="nc" id="L141">                .bodyToMono(HotelResponse.class)</span>
-<span class="nc" id="L142">                .block();</span>
+<span class="nc" id="L132">        HotelResponse response = amadeusAPICall.getAPIResponse(HotelResponse.class, uri);</span>
 
-<span class="nc bnc" id="L144" title="All 4 branches missed.">        if (response == null || response.getData() == null) {</span>
-<span class="nc" id="L145">            throw new IllegalStateException(&quot;Failed to retrieve hotels from API: response data is null&quot;);</span>
+<span class="nc bnc" id="L134" title="All 4 branches missed.">        if (response == null || response.getData() == null) {</span>
+<span class="nc" id="L135">            throw new IllegalStateException(&quot;Failed to retrieve hotels from API: response data is null&quot;);</span>
         }
 
-<span class="nc" id="L148">        return mapToDTOs(response, latitude, longitude, cityName, countryCode);</span>
+<span class="nc" id="L138">        return mapToDTOs(response, latitude, longitude, cityName, countryCode);</span>
     }
 
     private List&lt;HotelDTO&gt; mapToDTOs(HotelResponse response, Double defaultLat, Double defaultLon, String defaultCity, String defaultCountry) {
-<span class="nc" id="L152">        return response.getData().stream()</span>
-<span class="nc" id="L153">                .map(data -&gt; {</span>
-<span class="nc" id="L154">                    GeoCode geoCode = resolveCoordinates(data, defaultLat, defaultLon);</span>
-<span class="nc" id="L155">                    HotelAddress address = mapHotelAddress(data.getAddress(), defaultCity, defaultCountry);</span>
-<span class="nc" id="L156">                    Hotel hotel = new Hotel(</span>
-<span class="nc" id="L157">                            data.getHotelId(),</span>
-<span class="nc" id="L158">                            data.getName(),</span>
-<span class="nc" id="L159">                            data.getIataCode(),</span>
+<span class="nc" id="L142">        return response.getData().stream()</span>
+<span class="nc" id="L143">                .map(data -&gt; {</span>
+<span class="nc" id="L144">                    GeoCode geoCode = resolveCoordinates(data, defaultLat, defaultLon);</span>
+<span class="nc" id="L145">                    HotelAddress address = mapHotelAddress(data.getAddress(), defaultCity, defaultCountry);</span>
+<span class="nc" id="L146">                    Hotel hotel = new Hotel(</span>
+<span class="nc" id="L147">                            data.getHotelId(),</span>
+<span class="nc" id="L148">                            data.getName(),</span>
+<span class="nc" id="L149">                            data.getIataCode(),</span>
                             address,
                             geoCode
                     );
-<span class="nc" id="L163">                    addHotel(hotel);</span>
-<span class="nc" id="L164">                    return mapToDTO(hotel);</span>
+<span class="nc" id="L153">                    addHotel(hotel);</span>
+<span class="nc" id="L154">                    return mapToDTO(hotel);</span>
                 })
-<span class="nc" id="L166">                .toList();</span>
+<span class="nc" id="L156">                .toList();</span>
     }
 
     private HotelDTO mapToDTO(Hotel hotel) {
 
-<span class="nc" id="L171">        return new HotelDTO(</span>
-<span class="nc" id="L172">                hotel.getHotelId(),</span>
-<span class="nc" id="L173">                hotel.getName(),</span>
-<span class="nc" id="L174">                hotel.getCoordinates(),</span>
-<span class="nc" id="L175">                hotel.getAddress(),</span>
-<span class="nc" id="L176">                List.of()</span>
+<span class="fc" id="L161">        return new HotelDTO(</span>
+<span class="fc" id="L162">                hotel.getHotelId(),</span>
+<span class="fc" id="L163">                hotel.getName(),</span>
+<span class="fc" id="L164">                hotel.getCoordinates(),</span>
+<span class="fc" id="L165">                hotel.getAddress(),</span>
+<span class="fc" id="L166">                List.of()</span>
         );
     }
 
     private GeoCode resolveCoordinates(HotelResponse.HotelData data, Double defaultLat, Double defaultLon) {
-<span class="nc bnc" id="L181" title="All 2 branches missed.">        if (data.getGeoCode() != null) {</span>
-<span class="nc" id="L182">            return data.getGeoCode();</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        if (data.getGeoCode() != null) {</span>
+<span class="nc" id="L172">            return data.getGeoCode();</span>
         }
 
-<span class="nc" id="L185">        GeoCode enriched = fetchHotelCoordinates(data.getHotelId());</span>
-<span class="nc bnc" id="L186" title="All 2 branches missed.">        if (enriched != null) {</span>
-<span class="nc" id="L187">            return enriched;</span>
+<span class="nc" id="L175">        GeoCode enriched = fetchHotelCoordinates(data.getHotelId());</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">        if (enriched != null) {</span>
+<span class="nc" id="L177">            return enriched;</span>
         }
 
-<span class="nc bnc" id="L190" title="All 2 branches missed.">        double lat = defaultLat != null ? defaultLat : 0;</span>
-<span class="nc bnc" id="L191" title="All 2 branches missed.">        double lon = defaultLon != null ? defaultLon : 0;</span>
-<span class="nc" id="L192">        return new GeoCode(lat, lon);</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        double lat = defaultLat != null ? defaultLat : 0;</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">        double lon = defaultLon != null ? defaultLon : 0;</span>
+<span class="nc" id="L182">        return new GeoCode(lat, lon);</span>
     }
 
     private GeoCode fetchHotelCoordinates(String hotelId) {
-<span class="nc bnc" id="L196" title="All 4 branches missed.">        if (hotelId == null || hotelId.isBlank()) {</span>
-<span class="nc" id="L197">            return null;</span>
+<span class="nc bnc" id="L186" title="All 4 branches missed.">        if (hotelId == null || hotelId.isBlank()) {</span>
+<span class="nc" id="L187">            return null;</span>
         }
+<span class="nc" id="L189">        String url = &quot;https://api.amadeus.com/v1/reference-data/locations/hotels/&quot; + hotelId;</span>
 
-<span class="nc" id="L200">        String url = String.format(</span>
-            &quot;https://api.amadeus.com/v1/reference-data/locations/hotels/%s&quot;, hotelId);
-
+        URI uri;
         try {
-<span class="nc" id="L204">            HotelDetailResponse response = webClientBuilder</span>
-<span class="nc" id="L205">                    .build()</span>
-<span class="nc" id="L206">                    .get()</span>
-<span class="nc" id="L207">                    .uri(url)</span>
-<span class="nc" id="L208">                    .header(&quot;Authorization&quot;, &quot;Bearer &quot; + amadeusAuthService.getAccessToken())</span>
-<span class="nc" id="L209">                    .retrieve()</span>
-<span class="nc" id="L210">                    .bodyToMono(HotelDetailResponse.class)</span>
-<span class="nc" id="L211">                    .block();</span>
-<span class="nc bnc" id="L212" title="All 4 branches missed.">            if (response != null &amp;&amp; response.data != null) {</span>
-<span class="nc" id="L213">                GeoCode code = response.data.getGeoCode();</span>
-<span class="nc bnc" id="L214" title="All 2 branches missed.">                if (code != null) {</span>
-<span class="nc" id="L215">                    return code;</span>
+<span class="nc" id="L193">            uri = new URI(url);</span>
+<span class="nc" id="L194">        } catch (URISyntaxException e) {</span>
+<span class="nc" id="L195">            Logger.getLogger(HotelService.class.getName()).severe(&quot;Invalid URI syntax: &quot; + e.getMessage());</span>
+<span class="nc" id="L196">            return new GeoCode();</span>
+<span class="nc" id="L197">        }</span>
+        try {
+<span class="nc" id="L199">            HotelDetailResponse response = amadeusAPICall.getAPIResponse(HotelDetailResponse.class, uri);</span>
+<span class="nc bnc" id="L200" title="All 4 branches missed.">            if (response != null &amp;&amp; response.data != null) {</span>
+<span class="nc" id="L201">                GeoCode code = response.data.getGeoCode();</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">                if (code != null) {</span>
+<span class="nc" id="L203">                    return code;</span>
                 }
             }
-<span class="nc" id="L218">        } catch (Exception ex) {</span>
-<span class="nc" id="L219">            Logger.getLogger(HotelService.class.getName())</span>
-<span class="nc" id="L220">                    .warning(&quot;Unable to enrich coordinates for hotel &quot; + hotelId + &quot;: &quot; + ex.getMessage());</span>
-<span class="nc" id="L221">        }</span>
-<span class="nc" id="L222">        return null;</span>
+<span class="nc" id="L206">        } catch (Exception ex) {</span>
+<span class="nc" id="L207">            Logger.getLogger(HotelService.class.getName())</span>
+<span class="nc" id="L208">                    .warning(&quot;Unable to enrich coordinates for hotel &quot; + hotelId + &quot;: &quot; + ex.getMessage());</span>
+<span class="nc" id="L209">        }</span>
+<span class="nc" id="L210">        return null;</span>
     }
 
     private HotelAddress mapHotelAddress(HotelResponse.Address source, String defaultCity, String defaultCountry) {
-<span class="nc bnc" id="L226" title="All 2 branches missed.">        if (source == null) {</span>
-<span class="nc" id="L227">            return new HotelAddress(null, defaultCity, defaultCountry);</span>
+<span class="nc bnc" id="L214" title="All 2 branches missed.">        if (source == null) {</span>
+<span class="nc" id="L215">            return new HotelAddress(null, defaultCity, defaultCountry);</span>
         }
-<span class="nc" id="L229">        String firstLine = null;</span>
-<span class="nc bnc" id="L230" title="All 4 branches missed.">        if (source.getLines() != null &amp;&amp; !source.getLines().isEmpty()) {</span>
-<span class="nc" id="L231">            firstLine = source.getLines().get(0);</span>
+<span class="nc" id="L217">        String firstLine = null;</span>
+<span class="nc bnc" id="L218" title="All 4 branches missed.">        if (source.getLines() != null &amp;&amp; !source.getLines().isEmpty()) {</span>
+<span class="nc" id="L219">            firstLine = source.getLines().get(0);</span>
         }
-<span class="nc" id="L233">        return new HotelAddress(</span>
+<span class="nc" id="L221">        return new HotelAddress(</span>
                 firstLine,
-<span class="nc bnc" id="L235" title="All 2 branches missed.">                normalize(source.getCityName() != null ? source.getCityName() : defaultCity),</span>
-<span class="nc bnc" id="L236" title="All 2 branches missed.">                normalize(source.getCountryCode() != null ? source.getCountryCode() : defaultCountry)</span>
+<span class="nc bnc" id="L223" title="All 2 branches missed.">                normalize(source.getCityName() != null ? source.getCityName() : defaultCity),</span>
+<span class="nc bnc" id="L224" title="All 2 branches missed.">                normalize(source.getCountryCode() != null ? source.getCountryCode() : defaultCountry)</span>
         );
     }
 
     private String normalize(String value) {
-<span class="nc bnc" id="L241" title="All 2 branches missed.">        return value != null ? value.trim() : null;</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">        return value != null ? value.trim() : null;</span>
     }
 
-    private static class HotelDetailResponse {
+    private static class HotelDetailResponse extends SuperClassResponse {
         private HotelResponse.HotelData data;
     }
 }
