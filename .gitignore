@@ -15,3 +15,11 @@ sonar-project.properties
 .github/
 .scannerwork/
 project.toml
+*.iml
+.DS_Store
+dist/
+build/
+target/
+*.jar
+*.war
+*.ear

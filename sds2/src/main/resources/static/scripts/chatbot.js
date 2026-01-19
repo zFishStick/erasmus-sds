@@ -14,8 +14,17 @@
   const feasibility = $("#ai-feasibility");
   const activitiesContainer = $("#ai-activities");
 
+  let userId = null;
+
+  document.addEventListener("user-auth-ready", (e) => {
+    const user = e.detail.user;
+    userId = user ? user.id : null;
+  });
+
   function getDestinationValue() {
-    return destination?.value.trim() || "";
+    const value = destination?.value.trim() || "";
+    const commaIndex = value.indexOf(",");
+    return commaIndex !== -1 ? value.substring(0, commaIndex).trim() : value;
   }
 
   function getCountryValue() {
@@ -148,6 +157,12 @@
       add.className = "btn btn-ghost";
       add.textContent = "Add to Itinerary";
       add.addEventListener("click", async () => {
+
+      if (!userId) {
+        window.location.href = `/user/login`;
+        return;
+      }
+
         const destinationValue = getDestinationValue();
         const countryValue = getCountryValue();
         if (!destinationValue || !countryValue) {
@@ -160,7 +175,8 @@
           latitude: activity.latitude,
           longitude: activity.longitude,
           destination: destinationValue,
-          country: countryValue
+          country: countryValue,
+          userId: userId
         };
         try {
           const res = await fetch("/routes/waypoint/add", {
@@ -495,7 +511,15 @@
       setStatus("Please select a destination first.", true);
       return;
     }
-    const url = `/routes/itinerary/${encodeURIComponent(countryValue)}/${encodeURIComponent(destinationValue)}`;
+
+    if (userId == null) {
+      window.location.href = `/user/login`;
+      return;
+    }
+    
+    const url = '/user/itineraries?destination=' + encodeURIComponent(destinationValue) +
+      '&country=' + encodeURIComponent(countryValue);
+
     globalThis.location.href = url;
   });
 })();

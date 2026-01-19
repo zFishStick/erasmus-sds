@@ -101,7 +101,7 @@
         </div>
     </nav>
 
-    <p id="message" style="color: red;"></p>
+    <!-- <p id="message" style="color: red;"></p> -->
 
     <form action="">
         <input type="hidden" name="city" th:value="${request.destination}" id="city"/>
@@ -109,13 +109,12 @@
     </form>
 
     <div class="header-section">
-        <div style="display: flex; flex-direction: row; align-items: center; gap:12px;">
+        <div style="display: flex; flex-direction: column;">
             <h1 th:text="|Here's what you can see in ${request.destination}, ${request.countryCode}|" class="place-header">
             Places to visit
             </h1>
-        </div>
-
-        <p id="wpnt-message" style="text-align:center; margin-top:12px;"></p>
+            <p id="wpnt-message" class="alert-info" style="text-align:center; margin-top:12px;"></p>
+        </div>  
     </div>
 
 <div th:if="${places == null or #lists.isEmpty(places)}">
@@ -154,7 +153,7 @@
                         <a class="btn btn-ghost" th:if="${place.location != null}"
                            th:href="${'https://www.google.com/maps/search/?api=1&query=' + place.location.latitude + ',' + place.location.longitude}"
                            target="_blank" rel="noopener">Open in Maps</a>                                      
-                           <form method="post" th:action="@{/routes/waypoint/add}" class="btn btn-ghost add-waypoint-form" style="padding: 0; display: flex;">
+                        <form method="post" th:action="@{/routes/waypoint/add}" class="btn btn-ghost add-waypoint-form" style="padding: 0; display: flex;">
                             <input type="hidden" name="destination" th:value="${request.destination}">
                             <input type="hidden" name="countryCode" th:value="${request.countryCode}">
                             <input type="hidden" name="id" th:value="${place.id}">
@@ -196,22 +195,24 @@
 <script>
 
 document.addEventListener("user-auth-ready", (e) => {
-    const messageElem = document.getElementById("wpnt-message");
     const user = e.detail.user;
     const userId = user ? user.id : null;
+    let messageElem = document.getElementById("wpnt-message");
+
+    if (messageElem.textContent.trim() !== "") {
+        messageElem.style.display = "block";
+    } else {
+        messageElem.style.display = "none";
+    }
 
     document.querySelectorAll(".add-waypoint-form").forEach(form => {
-
         form.addEventListener("submit", async (ev) => {
             ev.preventDefault();
 
-        if (!userId) {
-            alert("Please log in to save waypoints for your itinerary.");
-
-            window.location.href = `/user/login`
-
-            return;
-        }
+            if (!userId) {
+                window.location.href = `/user/login`;
+                return;
+            }
 
             const waypointRequest = {
                 name: form.querySelector("input[name='name']").value,
@@ -230,15 +231,18 @@ document.addEventListener("user-auth-ready", (e) => {
                     body: JSON.stringify(waypointRequest)
                 });
 
-                messageElem.textContent = await res.text();
+                const data = await res.json();
+                messageElem = document.getElementById("wpnt-message");
+                messageElem.style.display = "block";
+                messageElem.textContent = data.message;
 
             } catch (err) {
                 console.error(err);
-                messageElem.textContent = "Error adding waypoint.";
             }
         });
     });
 });
+
 </script>
 
 </html>

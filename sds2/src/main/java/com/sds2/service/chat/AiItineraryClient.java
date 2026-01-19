@@ -85,7 +85,7 @@ public class AiItineraryClient {
         } catch (WebClientResponseException ex) {
             String body = ex.getResponseBodyAsString();
             String message = "OpenAI request failed: " + ex.getStatusCode()
-                + (body == null || body.isBlank() ? "" : " - " + body);
+                + (body.isBlank() ? "" : " - " + body);
             throw new IllegalStateException(message, ex);
         }
 

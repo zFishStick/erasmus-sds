@@ -11,7 +11,6 @@
   const start = $("#start-date");
   const end = $("#end-date");
   const filterBtn = $("#filter-btn");
-  const filtersDiv = $("#filters-div");
 
   function setTodayMinDates() {
     const today = new Date();
@@ -61,15 +60,6 @@
   end?.addEventListener("change", validateDates);
 
   setTodayMinDates();
-
-  filtersDiv.style.display = "none";
-  filterBtn?.addEventListener("click", () => {
-    if (filtersDiv.style.display === "none") {
-      filtersDiv.style.display = "flex";
-    } else {
-      filtersDiv.style.display = "none";
-    }
-  });
 
 })();
 

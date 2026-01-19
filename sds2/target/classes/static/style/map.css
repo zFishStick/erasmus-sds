@@ -70,3 +70,58 @@ gmp-place-autocomplete {
 #map #infowindow-content {
     display: inline;
 }
+
+/* Detail layout */
+.itinerary-detail-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Header */
+.detail-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.detail-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.detail-title h1 {
+  margin: 0;
+  font-size: clamp(1.4rem, 2.8vw, 1.9rem);
+}
+.detail-subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* Route info */
+.route-info h2 {
+  margin-bottom: 10px;
+}
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+/* Section */
+.detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.detail-section h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+/* Empty */
+.empty-state {
+  color: var(--muted);
+}
