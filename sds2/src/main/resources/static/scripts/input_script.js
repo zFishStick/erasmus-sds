@@ -67,6 +67,11 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
+  function syncSelectedCityInputs() {
+    if (!selectedCity) return;
+    assignValuesToHiddenInputs(selectedCity, hiddenInputs);
+  }
+
   function updateDatalist(items, query) {
     clearDatalist();
 
@@ -116,9 +121,10 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-      const localMatch = matchCityFromText(value);
+    const localMatch = matchCityFromText(value);
     if (localMatch) {
       selectedCity = localMatch;
+      syncSelectedCityInputs();
       if (value.includes(",")) return;
     }
 
@@ -136,12 +142,16 @@ document.addEventListener("DOMContentLoaded", () => {
         items.find(it => normalizeText(it.name) === normCity) ||
         items[0] ||
         null;
+      syncSelectedCityInputs();
     }, 300);
   });
 
   input.addEventListener("change", () => {
     const match = matchCityFromText(input.value);
-    if (match) selectedCity = match;
+    if (match) {
+      selectedCity = match;
+      syncSelectedCityInputs();
+    }
   });
 
   form.addEventListener("submit", async event => {
