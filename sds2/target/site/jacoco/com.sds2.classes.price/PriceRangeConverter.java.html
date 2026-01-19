@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PriceRangeConverter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">sds2</a> &gt; <a href="index.source.html" class="el_package">com.sds2.classes.price</a> &gt; <span class="el_source">PriceRangeConverter.java</span></div><h1>PriceRangeConverter.java</h1><pre class="source lang-java linenums">package com.sds2.classes.price;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
+
+@Converter(autoApply = true)
+<span class="nc" id="L9">public class PriceRangeConverter implements AttributeConverter&lt;PriceRange, String&gt; {</span>
+
+<span class="nc" id="L11">    private final ObjectMapper objectMapper = new ObjectMapper();</span>
+
+    @Override
+    public String convertToDatabaseColumn(PriceRange attribute) {
+<span class="nc bnc" id="L15" title="All 2 branches missed.">        if (attribute == null) return null;</span>
+        try {
+<span class="nc" id="L17">            return objectMapper.writeValueAsString(attribute);</span>
+<span class="nc" id="L18">        } catch (Exception e) {</span>
+<span class="nc" id="L19">            throw new IllegalStateException(&quot;Error converting PriceRange to JSON&quot;, e);</span>
+        }
+    }
+
+    @Override
+    public PriceRange convertToEntityAttribute(String dbData) {
+<span class="nc bnc" id="L25" title="All 4 branches missed.">        if (dbData == null || dbData.isEmpty()) return null;</span>
+        try {
+<span class="nc" id="L27">            return objectMapper.readValue(dbData, PriceRange.class);</span>
+<span class="nc" id="L28">        } catch (Exception e) {</span>
+<span class="nc" id="L29">            throw new IllegalStateException(&quot;Error converting JSON to PriceRange&quot;, e);</span>
+        }
+    }
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

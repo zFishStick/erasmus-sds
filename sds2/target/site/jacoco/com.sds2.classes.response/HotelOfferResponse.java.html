@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HotelOfferResponse.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">sds2</a> &gt; <a href="index.source.html" class="el_package">com.sds2.classes.response</a> &gt; <span class="el_source">HotelOfferResponse.java</span></div><h1>HotelOfferResponse.java</h1><pre class="source lang-java linenums">package com.sds2.classes.response;
+
+import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
+
+<span class="nc" id="L8">public class HotelOfferResponse {</span>
+
+    private List&lt;HotelOfferData&gt; data;
+
+<span class="nc" id="L12">    public List&lt;HotelOfferData&gt; getData() { return data; }</span>
+
+<span class="nc" id="L14">    public void setData(List&lt;HotelOfferData&gt; data) { this.data = data; }</span>
+    
+<span class="nc" id="L16">    public static class HotelOfferData {</span>
+        private List&lt;OfferItem&gt; offers;
+
+<span class="nc" id="L19">        public List&lt;OfferItem&gt; getOffers() { return offers; }</span>
+
+<span class="nc" id="L21">        public void setOffers(List&lt;OfferItem&gt; offers) { this.offers = offers; }</span>
+    }
+
+    @Getter @Setter
+<span class="nc" id="L25">    public static class OfferItem {</span>
+        private String id;
+        private String checkInDate;
+        private String checkOutDate;
+        private OfferGuests guests;
+        private OfferPrice price;
+        private OfferRoom room;
+
+    }
+
+    @Getter @Setter
+<span class="nc" id="L36">    public static class OfferGuests {</span>
+        private Integer adults;
+    }
+    
+    @Getter @Setter
+<span class="nc" id="L41">    public static class OfferPrice {</span>
+        private String currency;
+        private String total;
+    }
+
+    @Getter @Setter
+<span class="nc" id="L47">    public static class OfferRoom {</span>
+        private String type;
+        private OfferRoomTypeEstimated typeEstimated;
+        private OfferRoomDescription description;
+    }
+
+    @Getter @Setter
+<span class="nc" id="L54">    public static class OfferRoomTypeEstimated {</span>
+        private String category;
+    }
+
+    @Getter @Setter
+<span class="nc" id="L59">    public static class OfferRoomDescription {</span>
+        private String text;
+        private String lang;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
