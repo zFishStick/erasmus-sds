@@ -45,14 +45,15 @@
                             <form id="itinerary-form"
                                 th:action="@{/user/itineraries}"
                                 method="post">
-                                <input type="hidden" name="city" th:value="${request.destination}">
+                                <input type="hidden" name="destination" th:value="${request.destination}">
                                 <input type="hidden" name="countryCode" th:value="${request.countryCode}">
                                 <input type="hidden" name="latitude" th:value="${request.latitude}" />
                                 <input type="hidden" name="longitude" th:value="${request.longitude}" />
                                 <input type="hidden" name="startDate" th:value="${request.checkInDate}" />
                                 <input type="hidden" name="endDate" th:value="${request.checkOutDate}" />
                                 <button type="submit"
-                                        id="view-itinerary-btn" class="btn btn-primary">
+                                        id="view-itinerary-btn" class="btn btn-primary" 
+                                        th:text="|Saved Waypoints for ${request.destination}, ${request.countryCode}|">
                                     Saved Waypoints
                                 </button>
                             </form>
@@ -71,19 +72,10 @@
                                 </button>
                             </form>
                         </li>
-
-                        <li th:if="${request != null}">
-                            <form th:action="@{/hotels}" method="post">
-                                <input type="hidden" name="destination" th:value="${request.destination}" />
-                                <input type="hidden" name="countryCode" th:value="${request.countryCode}" />
-                                <input type="hidden" name="latitude" th:value="${request.latitude}" />
-                                <input type="hidden" name="longitude" th:value="${request.longitude}" />
-                                <input type="hidden" name="checkInDate" th:value="${request.checkInDate}" />
-                                <input type="hidden" name="checkOutDate" th:value="${request.checkOutDate}" />
-                                <button type="submit" class="btn btn-primary">
-                                    Book a Hotel
-                                </button>
-                            </form>
+                        <li>
+                            <button type="submit" class="btn btn-primary">
+                                Book a Hotel
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -92,7 +84,7 @@
     </nav>
 
 <header class="site-header hotels-header" th:if="${request != null}">
-    <h1 th:text="|Hotels in ${request.destination}|">Hotels</h1>
+    <h1 th:text="|Hotels in ${request.destination}, ${request.countryCode}|">Hotels</h1>
     <p class="hotels-meta">
         <span>Center coordinates: </span>
         <span th:text="${#numbers.formatDecimal(request.latitude, 1, 6)}"></span>,
@@ -103,7 +95,7 @@
     </p>
     <p class="hotels-meta">
         <strong>Dates:</strong>
-        <span th:text="${request.checkInDate}"></span> -> <span th:text="${request.checkOutDate}"></span>
+        <p th:text="|${request.checkInDate} - ${request.checkOutDate}"></p>
     </p>
 </header>
 

@@ -210,7 +210,6 @@ document.addEventListener("user-auth-ready", (e) => {
             ev.preventDefault();
 
             if (!userId) {
-                alert("Please log in to save waypoints for your itinerary.");
                 window.location.href = `/user/login`;
                 return;
             }

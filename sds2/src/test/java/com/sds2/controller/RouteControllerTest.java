@@ -14,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import com.sds2.classes.request.WaypointRequest;
-import com.sds2.service.PlaceService;
 import com.sds2.service.RoutesService;
 import com.sds2.service.WaypointService;
 
@@ -27,20 +26,17 @@ class RouteControllerTest {
     @Mock
     private WaypointService waypointService;
 
-    @Mock
-    private PlaceService placeService;
-
     @InjectMocks
     private RouteController routeController;
 
     @Test
     void addWaypoint_callsServicesAndReturnsOk() {
         WaypointRequest waypointRequest = new WaypointRequest(
-            "Avenida Poznań",
-            "Centrum handlowe, Stanisława Matyi 2, 61-586 Poznań, Poland",
+            "Avenida Poznan",
+            "Centrum handlowe, Stanislawa Matyi 2, 61-586 Poznan, Poland",
             52.4003253,
             16.9135941,
-            "Poznań",
+            "Poznan",
             "Poland",
             1L
         );

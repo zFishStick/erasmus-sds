@@ -294,6 +294,13 @@ async function fillWaypointsArray() {
 
     destination = waypoints.length > 0 ? waypoints[0].location : null;
 
+    if (waypoints.length === 0 || waypoints.length === 1) {
+        document.getElementById("map-container").style.display = "none";
+        return;
+    } else {
+        document.getElementById("map-container").style.display = "block";
+    }
+
     centerMapOnWaypoints();
 }
 
@@ -374,7 +381,6 @@ async function submitRemoveForm() {
 }
 
 function centerMapOnWaypoints() {
-    if (waypoints.length === 0) return;
 
     const bounds = new google.maps.LatLngBounds();
 

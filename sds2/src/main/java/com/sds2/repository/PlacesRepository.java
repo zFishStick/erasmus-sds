@@ -13,5 +13,4 @@ public interface PlacesRepository extends JpaRepository<Places, Long> {
     Places findByText(String text); //text is the name of the place, not the field 'name'
     List<Places> findByCitySummary_CityAndCitySummary_Country(String city, String country);
     Places findByName(String name);
-    List<Places> findByCitySummary_CityIgnoreCase(String city);
 }

@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import com.sds2.classes.entity.Route;
 import com.sds2.classes.entity.User;
@@ -21,9 +20,7 @@ import lombok.AllArgsConstructor;
 @Service
 public class RoutesService {
 
-    private final GoogleAuthService googleAuthService;
     private final RoutesRepository routesRepository;
-    private final WebClient.Builder webClientBuilder;
     private final WaypointService waypointsService;
     private final UserService userService;
 

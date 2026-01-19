@@ -12,7 +12,6 @@ import com.sds2.classes.request.RouteRequest;
 import com.sds2.classes.request.WaypointRequest;
 import com.sds2.dto.UserDTO;
 import com.sds2.dto.WaypointDTO;
-import com.sds2.service.PlaceService;
 import com.sds2.service.RoutesService;
 import com.sds2.service.WaypointService;
 
@@ -30,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class RouteController {
     private final RoutesService routesService;
     private final WaypointService waypointService;
-    private final PlaceService placesService;
 
     @PostMapping("/waypoint/add")
     @ResponseBody

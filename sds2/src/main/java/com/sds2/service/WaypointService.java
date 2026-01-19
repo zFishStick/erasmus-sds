@@ -1,6 +1,5 @@
 package com.sds2.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -59,12 +58,9 @@ public class WaypointService {
     }
 
     public List<WaypointDTO> getWaypointsByDestinationAndCountry(String destination, String country) {
-        List<WaypointDTO> waypointDTOs = new ArrayList<>();
-
         List<Waypoint> waypoints = waypointRepository.findByDestinationAndCountry(destination, country);
-
-        for (Waypoint w : waypoints) {
-            waypointDTOs.add(new WaypointDTO(
+        return waypoints.stream()
+            .map(w -> new WaypointDTO(
                 w.getId(),
                 w.isVia(),
                 w.getName(),
@@ -72,9 +68,8 @@ public class WaypointService {
                 w.getAddress(),
                 w.getDestination(),
                 w.getCountry()
-            ));
-        }
-        return waypointDTOs;
+            ))
+            .toList();
     }
 
     public Waypoint findWaypointByCoordinates(double lat, double lng) {
