@@ -22,7 +22,9 @@
   });
 
   function getDestinationValue() {
-    return destination?.value.trim() || "";
+    const value = destination?.value.trim() || "";
+    const commaIndex = value.indexOf(",");
+    return commaIndex !== -1 ? value.substring(0, commaIndex).trim() : value;
   }
 
   function getCountryValue() {
@@ -173,7 +175,8 @@
           latitude: activity.latitude,
           longitude: activity.longitude,
           destination: destinationValue,
-          country: countryValue
+          country: countryValue,
+          userId: userId
         };
         try {
           const res = await fetch("/routes/waypoint/add", {

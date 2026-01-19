@@ -98,7 +98,7 @@
         Message
     </p>
 
-    <main class="container" role="main" th:if="${waypoints != null and !#lists.isEmpty(waypoints)}">
+    <main class="container" id="map-container" role="main" th:if="${waypoints != null and !#lists.isEmpty(waypoints)}">
 
         <div th:if="${waypoints != null and !#lists.isEmpty(waypoints)}" class="itinerary-card">
             <div th:each="waypoint : ${waypoints}" class="waypoint-item">
@@ -165,6 +165,10 @@
      <div style="display: flex; justify-content: center;">
         <button onclick="window.history.back();" class="back-btn">Back</button>
      </div>
+
+    <footer class="site-footer">
+        <p class="muted">Travel Planner - Plan your visit quickly and easily!</p>
+    </footer>
 
 
     <script type="module"

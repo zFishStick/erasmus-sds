@@ -34,7 +34,11 @@
   </nav>
 
 
-    <p id="message" style="color: red;"></p>
+    <p th:if="${message != null}"
+       th:text="${message}"
+       class="container alert-info">
+        Message
+    </p>
 
     <main id="main" class="container" role="main">
       <section aria-labelledby="trip-planner-title" class="card">
