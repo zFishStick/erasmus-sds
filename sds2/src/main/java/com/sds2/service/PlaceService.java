@@ -9,12 +9,10 @@ import java.util.Locale;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import com.sds2.classes.CitySummary;
 import com.sds2.classes.Places;
 import com.sds2.classes.coordinates.Location;
-import com.sds2.classes.enums.GoogleBodyEnum;
 import com.sds2.classes.response.PhotoResponse;
 import com.sds2.classes.response.PlaceResponse;
 import com.sds2.classes.response.PlaceResponse.Photo;
@@ -30,7 +28,7 @@ public class PlaceService {
     
     private final PlacesRepository placesRepository;
     private final GoogleAuthService googleAuthService;
-    private final WebClient.Builder webClientBuilder;
+    private final GoogleAPIPlaceRequestService googleAPIPlaceRequestService;
 
     private String [] headerInfo = {
         "places.id",
@@ -83,16 +81,7 @@ public class PlaceService {
         }
         """.formatted(query);
 
-        PlaceResponse response = webClientBuilder.build()
-                .post()
-                .uri(url)
-                .header(GoogleBodyEnum.CONTENTTYPE.getValue(), GoogleBodyEnum.APPLICATIONJSON.getValue())
-                .header(GoogleBodyEnum.X_GOOG_API_KEY.getValue(), googleAuthService.getApiKey())
-                .header(GoogleBodyEnum.X_GOOG_FIELD_MASK.getValue(), String.join(",", headerInfo))
-                .bodyValue(textQueryBody)
-                .retrieve()
-                .bodyToMono(PlaceResponse.class)
-                .block();
+        PlaceResponse response = googleAPIPlaceRequestService.getPlaceResponse(textQueryBody, headerInfo, url);
 
         if (response == null) {
             throw new IllegalStateException("Failed to retrieve place from Google Places API");
@@ -104,7 +93,7 @@ public class PlaceService {
     private List<PlacesDTO> mapPlacesToDTOs(PlaceResponse response, String city, String country) {
         return response.getPlaces().stream()
             .filter(data -> matchesCityAndCountry(data, city, country))
-            .map(data -> {                
+            .map(data -> {
                 Places places = Places.builder()
                     .citySummary(new CitySummary(city, country))
                     .name(data.getName())
@@ -118,10 +107,9 @@ public class PlaceService {
                     .websiteUri(data.getWebsiteUri())
                     .build();
 
-                addPlace(places);
-                return mapToDTO(places);
-            })
-            .toList();
+                    addPlace(places);
+                    return mapToDTO(places);
+                }).toList();
     }
 
 
@@ -171,22 +159,11 @@ public class PlaceService {
         }
         }
         """.formatted(latitude, longitude, radius));
-
-        PlaceResponse response = webClientBuilder.build()
-                .post()
-                .uri(url)
-                .header(GoogleBodyEnum.CONTENTTYPE.getValue(), GoogleBodyEnum.APPLICATIONJSON.getValue())
-                .header(GoogleBodyEnum.X_GOOG_API_KEY.getValue(), googleAuthService.getApiKey())
-                .header(GoogleBodyEnum.X_GOOG_FIELD_MASK.getValue(), String.join(",", headerInfo))
-                .bodyValue(body)
-                .retrieve()
-                .bodyToMono(PlaceResponse.class)
-                .block();
+        PlaceResponse response = googleAPIPlaceRequestService.getPlaceResponse(body, headerInfo, url);
 
         if (response == null) {
             throw new IllegalStateException("Failed to retrieve nearby places from Google Places API");
         }
-
         return mapPlacesToDTOs(response, city, country);
     }
 
@@ -212,13 +189,8 @@ public class PlaceService {
 
         try {
             URI uri = new URI(uriString);
-            PhotoResponse response = webClientBuilder
-                    .build()
-                    .get()
-                    .uri(uri)
-                    .retrieve()
-                    .bodyToMono(PhotoResponse.class)
-                    .block();
+
+            PhotoResponse response = googleAPIPlaceRequestService.getPhotoResponse(uri);
 
             if (response == null || response.getPhotoUri() == null) {
                 throw new IllegalStateException("Failed to retrieve photoUri from Google API for " + photoName);
@@ -254,6 +226,8 @@ public class PlaceService {
                     .anyMatch(t -> t.equals("locality")) &&
                 normalize(ac.getLongText()).equals(normCity)
             );
+
+            
 
         boolean countryMatch = Arrays.stream(data.getAddressComponents())
             .filter(Objects::nonNull)
@@ -293,16 +267,7 @@ public class PlaceService {
         }
         """.formatted(latitude, longitude, radius);
 
-        PlaceResponse response = webClientBuilder.build()
-                .post()
-                .uri(url)
-                .header(GoogleBodyEnum.CONTENTTYPE.getValue(), GoogleBodyEnum.APPLICATIONJSON.getValue())
-                .header(GoogleBodyEnum.X_GOOG_API_KEY.getValue(), googleAuthService.getApiKey())
-                .header(GoogleBodyEnum.X_GOOG_FIELD_MASK.getValue(), String.join(",", headerInfo))
-                .bodyValue(body)
-                .retrieve()
-                .bodyToMono(PlaceResponse.class)
-                .block();
+        PlaceResponse response = googleAPIPlaceRequestService.getPlaceResponse(body, headerInfo, url);
 
         if (response == null) {
             throw new IllegalStateException("Failed to retrieve nearby places from Google Places API");

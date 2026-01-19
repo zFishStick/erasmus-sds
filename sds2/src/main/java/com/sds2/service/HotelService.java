@@ -7,36 +7,32 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import com.sds2.classes.Price;
 import com.sds2.classes.coordinates.GeoCode;
+import com.sds2.classes.hotel.Hotel;
 import com.sds2.classes.hotel.HotelAddress;
 import com.sds2.classes.response.HotelResponse;
+import com.sds2.classes.response.SuperClassResponse;
 import com.sds2.dto.HotelDTO;
 import com.sds2.dto.HotelDetailsDTO;
 import com.sds2.dto.HotelOfferDTO;
 import com.sds2.repository.HotelRepository;
 
-import com.sds2.classes.hotel.Hotel;
-
 @Service
 public class HotelService {
     private final HotelRepository hotelRepository;
     private final HotelOfferService hotelOfferService;
-    private final AmadeusAuthService amadeusAuthService;
-    private final WebClient.Builder webClientBuilder;
+    private final AmadeusAPICall amadeusAPICall;
 
     public HotelService(
-            AmadeusAuthService amadeusAuthService,
+            AmadeusAPICall amadeusAPICall,
             HotelOfferService hotelOfferService,
-            HotelRepository hotelRepository,
-            WebClient.Builder webClientBuilder
+            HotelRepository hotelRepository
     ) {
-        this.amadeusAuthService = amadeusAuthService;
+        this.amadeusAPICall = amadeusAPICall;
         this.hotelOfferService = hotelOfferService;
         this.hotelRepository = hotelRepository;
-        this.webClientBuilder = webClientBuilder;
     }
 
     public void addHotel(Hotel hotel) {
@@ -133,14 +129,7 @@ public class HotelService {
             return List.of();
         }
 
-        HotelResponse response = webClientBuilder
-                .build()
-                .get()
-                .uri(uri)
-                .header("Authorization", "Bearer " + amadeusAuthService.getAccessToken())
-                .retrieve()
-                .bodyToMono(HotelResponse.class)
-                .block();
+        HotelResponse response = amadeusAPICall.getAPIResponse(HotelResponse.class, uri);
 
         if (response == null || response.getData() == null) {
             throw new IllegalStateException("Failed to retrieve hotels from API: response data is null");
@@ -198,15 +187,16 @@ public class HotelService {
             return null;
         }
         String url = "https://api.amadeus.com/v1/reference-data/locations/hotels/" + hotelId;
+
+        URI uri;
         try {
-            HotelDetailResponse response = webClientBuilder
-                    .build()
-                    .get()
-                    .uri(url)
-                    .header("Authorization", "Bearer " + amadeusAuthService.getAccessToken())
-                    .retrieve()
-                    .bodyToMono(HotelDetailResponse.class)
-                    .block();
+            uri = new URI(url);
+        } catch (URISyntaxException e) {
+            Logger.getLogger(HotelService.class.getName()).severe("Invalid URI syntax: " + e.getMessage());
+            return new GeoCode();
+        }
+        try {
+            HotelDetailResponse response = amadeusAPICall.getAPIResponse(HotelDetailResponse.class, uri);
             if (response != null && response.data != null) {
                 GeoCode code = response.data.getGeoCode();
                 if (code != null) {
@@ -239,7 +229,7 @@ public class HotelService {
         return value != null ? value.trim() : null;
     }
 
-    private static class HotelDetailResponse {
+    private static class HotelDetailResponse extends SuperClassResponse {
         private HotelResponse.HotelData data;
     }
 }

@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Locale;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import com.sds2.classes.City;
 import com.sds2.classes.response.CityResponse;
@@ -22,8 +21,7 @@ import lombok.AllArgsConstructor;
 @Service
 public class CityService {
     private final CityRepository cityRepository;
-    private final AmadeusAuthService amadeusAuthService;
-    private final WebClient.Builder webClientBuilder;
+    private final AmadeusAPICall amadeusAPICall;
 
     public List<CityDTO> getCity(String name) throws IOException {
 
@@ -45,14 +43,8 @@ public class CityService {
             throw new IllegalStateException("Invalid URI syntax: " + uriString, e);
         }
         
-        CityResponse response = webClientBuilder
-                .build()
-                .get()
-                .uri(uri)
-                .header("Authorization", "Bearer " + amadeusAuthService.getAccessToken())
-                .retrieve()
-                .bodyToMono(CityResponse.class)
-                .block();
+        CityResponse response = amadeusAPICall.getAPIResponse(CityResponse.class, uri);
+                
 
         if (response == null || response.getData() == null) {
             throw new IOException("Failed to retrieve city data from Amadeus API");
@@ -76,6 +68,7 @@ public class CityService {
                             c.getGeoCode().getLatitude(),
                             c.getGeoCode().getLongitude()
                     );
+                    System.out.println("balise"+city!=null);
                     city = cityRepository.save(city);
                     return mapToDTO(city);
                 })

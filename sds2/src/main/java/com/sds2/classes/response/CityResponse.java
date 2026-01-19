@@ -4,36 +4,32 @@ import java.util.List;
 
 import com.sds2.classes.coordinates.GeoCode;
 
-public class CityResponse {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter @Setter
+public class CityResponse extends SuperClassResponse{
     private List<CityData> data;
 
-    public List<CityData> getData() { return data; }
-    public void setData(List<CityData> data) { this.data = data; }
-
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter @Setter
     public static class CityData {
         private String name;
         private Address address;
         private GeoCode geoCode;
         private String iataCode;
-
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
-
-        public Address getAddress() { return address; }
-        public void setAddress(Address address) { this.address = address; }
-
-        public GeoCode getGeoCode() { return geoCode; }
-        public void setGeoCode(GeoCode geoCode) { this.geoCode = geoCode; }
-
-        public String getIataCode() { return iataCode; }
-        public void setIataCode(String iataCode) { this.iataCode = iataCode; }
     }
 
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter @Setter
     public static class Address {
         private String countryCode;
-
-        public String getCountryCode() { return countryCode; }
-        public void setCountryCode(String countryCode) { this.countryCode = countryCode; }
     }
 
 }

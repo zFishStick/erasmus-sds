@@ -8,9 +8,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "hotel")
+@AllArgsConstructor
 public class Hotel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

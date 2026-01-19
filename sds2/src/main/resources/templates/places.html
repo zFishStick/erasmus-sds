@@ -63,7 +63,7 @@
         <div class="column">
             <h2 th:text="${place.name}">Place Name</h2>
             <div class="row">
-                <img th:if="${place.photoUrl[0] != null}" th:src="${place.photoUrl[0]}" alt="Placeholder"/>
+                <img th:if="${not #lists.isEmpty(place.photoUrl)}" th:src="${place.photoUrl[0]}" alt="Placeholder"/>
                 <div class="column">
                     <p><span class="main-text">Address:</span> <span th:text="${place.address}">Place Address</span></p>
                     <p hidden><span class="main-text">Type:</span> <span th:text="${place.type}" class="place-type">Place Type</span></p>
@@ -86,8 +86,8 @@
                             <input type="hidden" name="id" th:value="${place.id}">
                             <input type="hidden" name="name" th:value="${place.name}">
                             <input type="hidden" name="address" th:value="${place.address}">
-                            <input type="hidden" name="latitude" th:value="${place.location.latitude}">
-                            <input type="hidden" name="longitude" th:value="${place.location.longitude}">
+                            <input type="hidden" name="latitude" th:if="${place.location != null}" th:value="${place.location.latitude}">
+                            <input type="hidden" name="longitude" th:if="${place.location != null}" th:value="${place.location.longitude}">
                             <button type="submit" class="btn btn-ghost" style="border: none; margin: 0;">Add to Itinerary</button>
                         </form>
                     </div>

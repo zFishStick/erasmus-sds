@@ -39,12 +39,14 @@ public class PlaceResponse {
     }
 
     @Getter @Setter
+    @AllArgsConstructor
     public static class DisplayName {
         private String text;
         private String languageCode;
     }
 
     @Getter @Setter
+    @AllArgsConstructor
     public static class Photo {
         private int height;
         private int width;
@@ -52,6 +54,7 @@ public class PlaceResponse {
     }
 
     @Getter @Setter
+    @AllArgsConstructor
     public static class AddressComponent {
         private String longText;
         private String shortText;

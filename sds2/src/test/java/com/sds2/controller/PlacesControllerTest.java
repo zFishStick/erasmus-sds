@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.sds2.classes.Places;
 import com.sds2.dto.PlacesDTO;
 import com.sds2.service.PlaceService;
 
@@ -33,6 +34,7 @@ class PlacesControllerTest {
     @BeforeEach
     void setup() {
 		PlacesDTO placesDTO = mock(PlacesDTO.class);
+        Places places = mock(Places.class);
 
         when(placeService.searchNearby(
                 any(),
@@ -42,7 +44,7 @@ class PlacesControllerTest {
 
         when(placeService.findPlaceByName(
             any())
-        ).thenReturn(placesDTO);
+        ).thenReturn(places);
     }
 
     @Test

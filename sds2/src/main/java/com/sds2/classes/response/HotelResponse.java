@@ -5,14 +5,18 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sds2.classes.coordinates.GeoCode;
 
-public class HotelResponse {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter @Getter
+@AllArgsConstructor
+public class HotelResponse extends SuperClassResponse{
 
     private List<HotelData> data;
 
-    public List<HotelData> getData() { return data; }
-
-    public void setData(List<HotelData> data) { this.data = data; }
-
+    @Setter @Getter
+    @AllArgsConstructor
     public static class HotelData {
         private String name;
         private String hotelId;
@@ -20,37 +24,14 @@ public class HotelResponse {
         @JsonProperty("geoCode")
         private GeoCode geoCode;
         private Address address;
-        
-        public String getHotelId() { return hotelId; }
-        public void setHotelId(String hotelId) { this.hotelId = hotelId; }
-
-        public String getIataCode() { return iataCode; }
-        public void setIataCode(String iataCode) { this.iataCode = iataCode; }
-
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
-
-        public GeoCode getGeoCode() { return geoCode; }
-        public void setGeoCode(GeoCode geoCode) { this.geoCode = geoCode; }
-
-        public Address getAddress() { return address; }
-        public void setAddress(Address address) { this.address = address; }
-
     }
 
+    @Setter @Getter
+    @AllArgsConstructor
     public static class Address {
         private String countryCode;
         private String cityName;
         private List<String> lines;
-
-        public String getCountryCode() { return countryCode; }
-        public void setCountryCode(String countryCode) { this.countryCode = countryCode; }
-
-        public String getCityName() { return cityName; }
-        public void setCityName(String cityName) { this.cityName = cityName; }
-
-        public List<String> getLines() { return lines; }
-        public void setLines(List<String> lines) { this.lines = lines; }
     }
     
 }
