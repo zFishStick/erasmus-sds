@@ -5,13 +5,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import com.sds2.classes.coordinates.Location;
-import com.sds2.classes.entity.Waypoint;
 import com.sds2.classes.request.WaypointRequest;
 import com.sds2.service.PlaceService;
 import com.sds2.service.RoutesService;
@@ -51,14 +52,14 @@ class RouteControllerTest {
 
         System.out.println(location.toString());
 
-        when(waypointService.addWaypoint(any(Waypoint.class)))
+        when(waypointService.addWaypointForUser(any(WaypointRequest.class), waypointRequest.getUserId()))
             .thenReturn("You have already added this waypoint");
 
-        String response = routeController.addWaypoint(waypointRequest);
+        Map<String, String> response = routeController.addWaypoint(waypointRequest);
 
-        assertEquals("You have already added this waypoint", response);
+        assertEquals("You have already added this waypoint", response.get("message"));
 
-        verify(waypointService).addWaypoint(any(Waypoint.class));   
+        verify(waypointService).addWaypointForUser(any(WaypointRequest.class), waypointRequest.getUserId());   
     }
 
     @Test
