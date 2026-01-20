@@ -1,11 +1,10 @@
-package com.sds2.classes;
+package com.sds2.classes.entity;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
 import com.sds2.classes.coordinates.GeoCode;
-import com.sds2.classes.entity.City;
 
 class CityTest {
 

@@ -76,4 +76,46 @@ class PlacesControllerTest {
                 .param("iataCode", "bidon"))
             .andExpect(status().is3xxRedirection());
     }
+
+    @Test
+    void getPlacesPaged() throws Exception {
+        MockHttpSession session = new MockHttpSession();
+        initSearchSession(session);
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/places/FR/Paris")
+                .session(session)
+                .param("page", "0")
+                .param("size", "1"))
+            .andExpect(status().isOk())
+            .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.model().attributeExists("places", "request"))
+            .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.model().attribute("currentPage", 0))
+            .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.model().attribute("pageSize", 1));
+    }
+
+    @Test
+    void getPlaceDetails() throws Exception {
+        Money min = new Money("USD", "10", 0);
+        Money max = new Money("USD", "25", 0);
+
+        PlacesDTO placeDTO = new PlacesDTO(
+            1L,
+            "Eiffel Tower",
+            Arrays.asList("http://example.com/photo1.jpg", "http://example.com/photo2.jpg"),
+            "Monument",
+            "Champ de Mars, 5 Avenue Anatole France, Paris",
+            new Location(48.8584, 2.2945),
+            4.7,
+            new PriceRange(min, max),
+            "http://example.com/eiffel-tower"
+        );
+
+        when(placeService.findPlaceByName(any())).thenReturn(null);
+        when(placeService.mapToDTO(any())).thenReturn(placeDTO);
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/places/EiffelTower"))
+            .andExpect(status().isOk())
+            .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.view().name("placeDetails"))
+            .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.model().attributeExists("place"));
+    }
+
 }

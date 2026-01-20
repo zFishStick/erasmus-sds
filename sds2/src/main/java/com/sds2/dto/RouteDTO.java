@@ -3,7 +3,7 @@ package com.sds2.dto;
 import java.util.List;
 
 import com.sds2.classes.entity.Route;
-
+import com.sds2.classes.entity.Waypoint;
 
 public record RouteDTO(
     String routeIdentifier,
@@ -22,7 +22,7 @@ public record RouteDTO(
             route.getOrigin().getName(),
             route.getDestination().getName(),
             route.getIntermediates().stream()
-                .map(intermediate -> intermediate.getName())
+                .map(Waypoint::getName)
                 .toList(),
             route.getTravelMode().toString()
         );
