@@ -125,7 +125,7 @@ public class HotelOfferService {
 <span class="nc bnc" id="L125" title="All 2 branches missed.">        if (source.getTotal() != null) {</span>
             try {
 <span class="nc" id="L127">                amount = Double.parseDouble(source.getTotal());</span>
-<span class="nc" id="L128">            } catch (NumberFormatException ex) {</span>
+<span class="nc" id="L128">            } catch (NumberFormatException _) {</span>
 <span class="nc" id="L129">                Logger.getLogger(HotelOfferService.class.getName()).warning(&quot;Unable to parse price total: &quot; + source.getTotal());</span>
 <span class="nc" id="L130">            }</span>
         }
