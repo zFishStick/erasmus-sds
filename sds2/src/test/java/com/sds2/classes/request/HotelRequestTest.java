@@ -7,11 +7,6 @@ import org.junit.jupiter.api.Test;
 class HotelRequestTest {
 
     @Test
-    void defaultConstructorInitializesFields() {
-        new HotelRequest();
-    }
-
-    @Test
     void constructorAndGettersSetters() {
         HotelRequest req = new HotelRequest("Paris", "FR", 48.85, 2.35, "2025-01-01", "2025-01-05");
         assertEquals("Paris", req.getDestination());

@@ -10,15 +10,15 @@ import org.springframework.web.client.RestClientResponseException;
 
     @ExceptionHandler(RestClientResponseException.class)
     public String handleRestErrors(RestClientResponseException ex, Model model) {
-<span class="nc" id="L13">        model.addAttribute(&quot;error&quot;, &quot;Upstream API error: &quot; + ex.getMessage());</span>
-<span class="nc" id="L14">        model.addAttribute(&quot;details&quot;, ex.getResponseBodyAsString());</span>
-<span class="nc" id="L15">        return &quot;error_page&quot;;</span>
+<span class="fc" id="L13">        model.addAttribute(&quot;error&quot;, &quot;Upstream API error: &quot; + ex.getMessage());</span>
+<span class="fc" id="L14">        model.addAttribute(&quot;details&quot;, ex.getResponseBodyAsString());</span>
+<span class="fc" id="L15">        return &quot;error_page&quot;;</span>
     }
 
     @ExceptionHandler(Exception.class)
     public String handleGeneric(Exception ex, Model model) {
-<span class="nc" id="L20">        model.addAttribute(&quot;error&quot;, ex.getMessage());</span>
-<span class="nc" id="L21">        return &quot;error_page&quot;;</span>
+<span class="fc" id="L20">        model.addAttribute(&quot;error&quot;, ex.getMessage());</span>
+<span class="fc" id="L21">        return &quot;error_page&quot;;</span>
     }
 }
 

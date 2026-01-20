@@ -24,10 +24,10 @@ public class HotelOfferService {
     public HotelOfferService(
         AmadeusAuthService amadeusAuthService,
         WebClient.Builder webClientBuilder
-<span class="fc" id="L27">    ) {</span>
-<span class="fc" id="L28">        this.amadeusAuthService = amadeusAuthService;</span>
-<span class="fc" id="L29">        this.webClientBuilder = webClientBuilder;</span>
-<span class="fc" id="L30">    }</span>
+<span class="nc" id="L27">    ) {</span>
+<span class="nc" id="L28">        this.amadeusAuthService = amadeusAuthService;</span>
+<span class="nc" id="L29">        this.webClientBuilder = webClientBuilder;</span>
+<span class="nc" id="L30">    }</span>
 
     public List&lt;HotelOfferDTO&gt; getOffersByHotelId(String hotelId, int adultsNum, String checkInDate, String checkOutDate) {
 <span class="nc" id="L33">        return getOffersByHotelAndAdultsByAPI(hotelId, adultsNum, checkInDate, checkOutDate);</span>

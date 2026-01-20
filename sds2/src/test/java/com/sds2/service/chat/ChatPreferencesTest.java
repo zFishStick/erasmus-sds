@@ -6,21 +6,6 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-// public record ChatPreferences(Set<String> keywords, boolean freeOnly) {
-//     public boolean matches(String value) {
-//         if (value == null || value.isBlank() || keywords == null || keywords.isEmpty()) {
-//             return false;
-//         }
-//         String lower = TextNormalizer.normalize(value);
-//         for (String keyword : keywords) {
-//             if (lower.contains(keyword)) {
-//                 return true;
-//             }
-//         }
-//         return false;
-//     }
-// }
-
 class ChatPreferencesTest {
 
     @Test

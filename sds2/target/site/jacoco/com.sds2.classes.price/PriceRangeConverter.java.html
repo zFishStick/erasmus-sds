@@ -6,15 +6,15 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
-<span class="fc" id="L9">public class PriceRangeConverter implements AttributeConverter&lt;PriceRange, String&gt; {</span>
+<span class="nc" id="L9">public class PriceRangeConverter implements AttributeConverter&lt;PriceRange, String&gt; {</span>
 
-<span class="fc" id="L11">    private final ObjectMapper objectMapper = new ObjectMapper();</span>
+<span class="nc" id="L11">    private final ObjectMapper objectMapper = new ObjectMapper();</span>
 
     @Override
     public String convertToDatabaseColumn(PriceRange attribute) {
-<span class="pc bpc" id="L15" title="1 of 2 branches missed.">        if (attribute == null) return null;</span>
+<span class="nc bnc" id="L15" title="All 2 branches missed.">        if (attribute == null) return null;</span>
         try {
-<span class="fc" id="L17">            return objectMapper.writeValueAsString(attribute);</span>
+<span class="nc" id="L17">            return objectMapper.writeValueAsString(attribute);</span>
 <span class="nc" id="L18">        } catch (Exception e) {</span>
 <span class="nc" id="L19">            throw new IllegalStateException(&quot;Error converting PriceRange to JSON&quot;, e);</span>
         }
@@ -22,9 +22,9 @@ import jakarta.persistence.Converter;
 
     @Override
     public PriceRange convertToEntityAttribute(String dbData) {
-<span class="pc bpc" id="L25" title="1 of 4 branches missed.">        if (dbData == null || dbData.isEmpty()) return null;</span>
+<span class="nc bnc" id="L25" title="All 4 branches missed.">        if (dbData == null || dbData.isEmpty()) return null;</span>
         try {
-<span class="fc" id="L27">            return objectMapper.readValue(dbData, PriceRange.class);</span>
+<span class="nc" id="L27">            return objectMapper.readValue(dbData, PriceRange.class);</span>
 <span class="nc" id="L28">        } catch (Exception e) {</span>
 <span class="nc" id="L29">            throw new IllegalStateException(&quot;Error converting JSON to PriceRange&quot;, e);</span>
         }

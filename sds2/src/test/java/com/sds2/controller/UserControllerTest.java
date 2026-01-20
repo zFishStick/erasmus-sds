@@ -36,9 +36,6 @@ class UserControllerTest {
     @MockitoBean
     private RoutesService routesService;
 
-    /* =========================
-       GET /user/register
-       ========================= */
     @Test
     void registerPage_returnsRegisterView() throws Exception {
         mockMvc.perform(get("/user/register"))
@@ -46,9 +43,6 @@ class UserControllerTest {
             .andExpect(view().name("register"));
     }
 
-    /* =========================
-       POST /user/register
-       ========================= */
     @Test
     void registerUser_success_redirectsToUser() throws Exception {
         UserDTO dto = new UserDTO(1L, "test@mail.com", "Test");
@@ -71,9 +65,6 @@ class UserControllerTest {
             .andExpect(redirectedUrl("/register?error=User already exists"));
     }
 
-    /* =========================
-       GET /user/login
-       ========================= */
     @Test
     void loginPage_returnsLoginView() throws Exception {
         mockMvc.perform(get("/user/login"))
@@ -81,9 +72,6 @@ class UserControllerTest {
             .andExpect(view().name("login"));
     }
 
-    /* =========================
-       GET /user/status
-       ========================= */
     @Test
     void loginStatus_loggedOut() throws Exception {
         mockMvc.perform(get("/user/status"))
@@ -101,9 +89,6 @@ class UserControllerTest {
             .andExpect(jsonPath("$.loggedIn").value(true));
     }
 
-    /* =========================
-       GET /user
-       ========================= */
     @Test
     void getUser_notLogged_redirectsToLogin() throws Exception {
         mockMvc.perform(get("/user"))
@@ -130,9 +115,6 @@ class UserControllerTest {
             .andExpect(model().attributeExists("itinerariesByLocation"));
     }
 
-    /* =========================
-       GET /user/itineraries
-       ========================= */
     @Test
     void getItineraries_noRequest_redirectsHome() throws Exception {
         mockMvc.perform(get("/user/itineraries"))
@@ -163,9 +145,6 @@ class UserControllerTest {
             .andExpect(model().attributeExists("waypoints"));
     }
 
-    /* =========================
-       GET /user/itinerary/{id}
-       ========================= */
     @Test
     void getItinerary_notLogged_redirectsLogin() throws Exception {
         mockMvc.perform(get("/user/itinerary/abc"))
@@ -173,9 +152,6 @@ class UserControllerTest {
             .andExpect(redirectedUrl("/user/login"));
     }
 
-    /* =========================
-       GET /user/logout
-       ========================= */
     @Test
     void logout_invalidatesSession() throws Exception {
         mockMvc.perform(get("/user/logout"))
@@ -183,9 +159,6 @@ class UserControllerTest {
             .andExpect(redirectedUrl("/"));
     }
 
-    /* =========================
-       POST /user/waypoint/remove/{id}
-       ========================= */
     @Test
     void removeWaypoint_notLogged_redirectsLogin() throws Exception {
         mockMvc.perform(post("/user/waypoint/remove/1"))

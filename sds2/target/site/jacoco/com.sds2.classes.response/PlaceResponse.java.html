@@ -39,20 +39,22 @@ public class PlaceResponse {
     }
 
     @Getter @Setter
-<span class="fc" id="L42">    public static class DisplayName {</span>
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class DisplayName {
         private String text;
         private String languageCode;
     }
 
     @Getter @Setter
-<span class="fc" id="L48">    public static class Photo {</span>
+<span class="fc" id="L50">    public static class Photo {</span>
         private int height;
         private int width;
         private String name;
     }
 
     @Getter @Setter
-<span class="fc" id="L55">    public static class AddressComponent {</span>
+<span class="fc" id="L57">    public static class AddressComponent {</span>
         private String longText;
         private String shortText;
         private String[] types;
