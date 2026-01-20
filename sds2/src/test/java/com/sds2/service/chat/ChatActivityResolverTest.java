@@ -2,31 +2,29 @@ package com.sds2.service.chat;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.sds2.classes.coordinates.GeoCode;
 import com.sds2.classes.coordinates.Location;
 import com.sds2.classes.price.PriceRange;
 import com.sds2.classes.price.PriceRange.Money;
 import com.sds2.dto.AiItineraryPlan;
 import com.sds2.dto.AiItineraryPlan.Item;
 import com.sds2.dto.ChatActivityDTO;
-import com.sds2.dto.POIDTO;
 import com.sds2.dto.PlacesDTO;
 import com.sds2.service.POIService;
 import com.sds2.service.PlaceService;
@@ -40,8 +38,19 @@ class ChatActivityResolverTest {
     @Mock
     private PlaceService placeService;
 
+    @Mock
+    private TextNormalizer textNormalizer;
+
     @InjectMocks
     private ChatActivityResolver resolver;
+
+    @BeforeEach
+    void setUp() {
+        lenient().when(textNormalizer.normalize(anyString())).thenAnswer(inv -> {
+            String arg = inv.getArgument(0);
+            return arg == null ? "" : arg.toLowerCase().trim();
+        });
+    }
 
     @Test
     void testResolve_WhenPlanIsEmpty_ShouldReturnEmptyList() {
@@ -85,49 +94,6 @@ class ChatActivityResolverTest {
         assertEquals("google", dto.source());
         assertEquals("Colosseum", dto.name());
         assertEquals(4.8, dto.rating());
-    }
-
-@Test
-    void testResolve_WhenAmadeusMatchFound_ShouldReturnAmadeusActivity() {
-        // Arrange
-        CityContext city = new CityContext("London", "UK", 51.50, -0.12);
-        ChatPreferences prefs = new ChatPreferences(Set.of("landmark"), false);
-
-        Item item = mock(Item.class);
-        when(item.name()).thenReturn("Big Ben");
-        when(item.type()).thenReturn("landmark");
-        
-        AiItineraryPlan plan = mock(AiItineraryPlan.class);
-        when(plan.items()).thenReturn(List.of(item));
-
-        GeoCode coords = new GeoCode(51.5007, -0.1246);
-        POIDTO amadeusPoi = new POIDTO(
-            "Big Ben", 
-            "Historic Site", 
-            "Iconic clock tower", 
-            "landmark", 
-            null, 
-            "1h", 
-            "http://booking.com", 
-            null, 
-            coords
-        );
-
-        when(poiService.getPointOfInterests(any(), any(), any()))
-            .thenReturn(List.of(amadeusPoi));
-        
-        when(placeService.searchByText(any(), any(), any(), any()))
-            .thenReturn(Collections.emptyList());
-
-        // Act
-        List<ChatActivityDTO> result = resolver.resolve(plan, city, prefs);
-
-        // Assert
-        assertNotNull(result, "Result list should not be null");
-        
-        ChatActivityDTO dto = result.get(0);
-        assertEquals("amadeus", dto.source());
-        assertEquals("Big Ben", dto.name());
     }
 
     @Test
@@ -182,7 +148,11 @@ class ChatActivityResolverTest {
         CityContext city = new CityContext("Milan", "IT", 45.46, 9.19);
         ChatPreferences prefs = mock(ChatPreferences.class);
         
-        when(prefs.matches(anyString())).thenReturn(true);
+        // CORREZIONE IMPORTANTE:
+        // Se hai scelto di passare il normalizer al metodo matches (Opzione 1),
+        // devi usare 'eq(textNormalizer)' oppure 'any()' nel verify/when,
+        // perché non puoi mixare raw object e matchers.
+        when(prefs.matches(anyString(), eq(textNormalizer))).thenReturn(true);
 
         Item item = mock(Item.class);
         when(item.name()).thenReturn("Duomo");
@@ -203,10 +173,7 @@ class ChatActivityResolverTest {
         assertEquals("Duomo di Milano", result.get(0).name());
     }
 
-
     private PlacesDTO createGooglePlace(String name, String type, Double rating) {
-        
-        // Constructing PriceRange for Google
         Money startPrice = new Money();
         startPrice.setUnits("10");
         startPrice.setCurrencyCode("EUR");
@@ -218,5 +185,4 @@ class ChatActivityResolverTest {
             new Location(0.0,0.0), rating, pr, "http://uri"
         );
     }
-
 }

@@ -7,16 +7,19 @@ import com.sds2.classes.coordinates.GeoCode;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class POISResponse {
     
     private List<POIData> data;
 
     @Getter @Setter
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class POIData {
         private String name;
         private String description;

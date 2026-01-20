@@ -2,11 +2,12 @@ package com.sds2.service.chat;
 
 import java.text.Normalizer;
 import java.util.Locale;
+import org.springframework.stereotype.Component;
 
-final class TextNormalizer {
-    private TextNormalizer() {}
+@Component
+public class TextNormalizer {
 
-    static String normalize(String value) {
+    public String normalize(String value) {
         if (value == null) return "";
         String normalized = Normalizer.normalize(value, Normalizer.Form.NFD);
         normalized = normalized.replaceAll("\\p{M}", "");

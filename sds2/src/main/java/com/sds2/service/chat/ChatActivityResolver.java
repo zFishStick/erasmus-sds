@@ -21,7 +21,10 @@ import com.sds2.dto.PlacesDTO;
 import com.sds2.service.POIService;
 import com.sds2.service.PlaceService;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class ChatActivityResolver {
     private static final double NAME_MIN_SCORE = 0.35;
     private static final double NAME_WEIGHT = 0.65;
@@ -32,11 +35,7 @@ public class ChatActivityResolver {
 
     private final POIService poiService;
     private final PlaceService placeService;
-
-    public ChatActivityResolver(POIService poiService, PlaceService placeService) {
-        this.poiService = poiService;
-        this.placeService = placeService;
-    }
+    private final TextNormalizer textNormalizer;
 
     public List<ChatActivityDTO> resolve(
             AiItineraryPlan plan,
@@ -68,7 +67,7 @@ public class ChatActivityResolver {
         Map<String, ChatActivityDTO> cache,
         Set<String> usedKeys
     ) {
-        String key = TextNormalizer.normalize(item.name());
+        String key = textNormalizer.normalize(item.name());
         if (key.isBlank()) return null;
 
         if (cache.containsKey(key)) {
@@ -182,17 +181,17 @@ public class ChatActivityResolver {
 
     private double calculateTypeScore(ActivityCandidate candidate, Item item, ChatPreferences preferences) {
         if (item.type() != null && candidate.type() != null) {
-            String itemType = TextNormalizer.normalize(item.type());
-            String candidateType = TextNormalizer.normalize(candidate.type());
+            String itemType = textNormalizer.normalize(item.type());
+            String candidateType = textNormalizer.normalize(candidate.type());
             if (!itemType.isBlank() && candidateType.contains(itemType)) {
                 return 1.0;
             }
         }
 
         if (preferences != null && (
-                preferences.matches(candidate.type()) ||
-                preferences.matches(candidate.description()) ||
-                preferences.matches(candidate.name()))) {
+                preferences.matches(candidate.type(), textNormalizer) ||
+                preferences.matches(candidate.description(), textNormalizer) ||
+                preferences.matches(candidate.name(), textNormalizer))) {
             return 0.8;
         }
 
@@ -214,8 +213,8 @@ public class ChatActivityResolver {
 
 
     private double nameSimilarity(String left, String right) {
-        String a = TextNormalizer.normalize(left);
-        String b = TextNormalizer.normalize(right);
+        String a = textNormalizer.normalize(left);
+        String b = textNormalizer.normalize(right);
         if (a.isBlank() || b.isBlank()) return 0.0;
         if (a.equals(b)) return 1.0;
         if (a.contains(b) || b.contains(a)) return 0.9;

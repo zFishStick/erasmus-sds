@@ -1,183 +1,372 @@
 package com.sds2.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.sds2.classes.entity.Route;
+import com.sds2.classes.entity.User;
+import com.sds2.classes.entity.Waypoint;
+import com.sds2.classes.enums.RouteTravelMode;
 import com.sds2.classes.request.POIRequest;
 import com.sds2.classes.request.UserRequest;
+import com.sds2.classes.response.LoginResponse;
 import com.sds2.dto.RouteDTO;
 import com.sds2.dto.UserDTO;
+import com.sds2.dto.WaypointDTO;
 import com.sds2.service.RoutesService;
 import com.sds2.service.UserService;
 import com.sds2.service.WaypointService;
+import com.sds2.util.PasswordManager;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.mock.web.MockHttpSession;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
+import jakarta.servlet.http.HttpSession;
 
-@WebMvcTest(UserController.class)
+@ExtendWith(MockitoExtension.class)
 class UserControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockitoBean
+    @Mock
     private UserService userService;
 
-    @MockitoBean
+    @Mock
     private WaypointService waypointService;
 
-    @MockitoBean
+    @Mock
     private RoutesService routesService;
 
+    @Mock
+    private HttpSession session;
+
+    @Mock
+    private Model model;
+
+    @InjectMocks
+    private UserController userController;
+
     @Test
-    void registerPage_returnsRegisterView() throws Exception {
-        mockMvc.perform(get("/user/register"))
-            .andExpect(status().isOk())
-            .andExpect(view().name("register"));
+    void testRegister() {
+        String viewName = userController.register();
+        assertEquals("register", viewName);
     }
 
     @Test
-    void registerUser_success_redirectsToUser() throws Exception {
-        UserDTO dto = new UserDTO(1L, "test@mail.com", "Test");
+    void testRegisterUser_Success() {
+        UserRequest request = new UserRequest();
+        UserDTO userDTO = new UserDTO(1L, "test", "test@email.com");
 
-        when(userService.registerUser(any(UserRequest.class)))
-            .thenReturn(dto);
+        when(userService.registerUser(any(UserRequest.class))).thenReturn(userDTO);
 
-        mockMvc.perform(post("/user/register"))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/user"));
+        String viewName = userController.registerUser(request, session);
+
+        verify(session).setAttribute("user", userDTO);
+        assertEquals("redirect:/user", viewName);
     }
 
     @Test
-    void registerUser_failure_redirectsWithError() throws Exception {
-        when(userService.registerUser(any(UserRequest.class)))
-            .thenReturn(null);
+    void testRegisterUser_Failure() {
+        UserRequest request = new UserRequest();
+        when(userService.registerUser(any(UserRequest.class))).thenReturn(null);
 
-        mockMvc.perform(post("/user/register"))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/register?error=User already exists"));
+        String viewName = userController.registerUser(request, session);
+
+        verify(session, never()).setAttribute(anyString(), any());
+        assertEquals("redirect:/register?error=User already exists", viewName);
     }
 
     @Test
-    void loginPage_returnsLoginView() throws Exception {
-        mockMvc.perform(get("/user/login"))
-            .andExpect(status().isOk())
-            .andExpect(view().name("login"));
+    void testLoginAjax_UserNotFound() {
+        UserDTO userDTO = new UserDTO(1L, "test", "test@email.com");
+        when(userService.getUserByEmail(anyString())).thenReturn(userDTO);
+        when(userService.findById(anyLong())).thenReturn(null);
+
+        LoginResponse response = userController.loginAjax("test@email.com", "password", null, null, session);
+
+        assertFalse(response.isSuccess());
+        assertEquals(LoginResponse.LoginStatus.USER_NOT_FOUND, response.getMessage());
     }
 
     @Test
-    void loginStatus_loggedOut() throws Exception {
-        mockMvc.perform(get("/user/status"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.loggedIn").value(false));
+    void testLoginAjax_InvalidCredentials() {
+        UserDTO userDTO = new UserDTO(1L, "test", "test@email.com");
+        User user = new User();
+        user.setPassword("hashedPassword");
+        
+        when(userService.getUserByEmail(anyString())).thenReturn(userDTO);
+        when(userService.findById(anyLong())).thenReturn(user);
+
+        try (MockedStatic<PasswordManager> passwordManagerMock = mockStatic(PasswordManager.class)) {
+            passwordManagerMock.when(() -> PasswordManager.verifyPassword(anyString(), anyString())).thenReturn(false);
+
+            LoginResponse response = userController.loginAjax("test@email.com", "wrongPassword", null, null, session);
+
+            assertFalse(response.isSuccess());
+            assertEquals(LoginResponse.LoginStatus.INVALID_CREDENTIALS, response.getMessage());
+        }
     }
 
     @Test
-    void loginStatus_loggedIn() throws Exception {
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("user", new UserDTO(1L, "mail", "name"));
+    void testLoginAjax_Success() {
+        String email = "test@email.com";
+        String password = "password";
+        UserDTO userDTO = new UserDTO(1L, "test", email);
+        User user = new User();
+        user.setPassword("hashedPassword");
 
-        mockMvc.perform(get("/user/status").session(session))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.loggedIn").value(true));
+        when(userService.getUserByEmail(email)).thenReturn(userDTO);
+        when(userService.findById(1L)).thenReturn(user);
+
+        try (MockedStatic<PasswordManager> passwordManagerMock = mockStatic(PasswordManager.class)) {
+            passwordManagerMock.when(() -> PasswordManager.verifyPassword(password, "hashedPassword")).thenReturn(true);
+
+            LoginResponse response = userController.loginAjax(email, password, "Rome", "IT", session);
+
+            assertTrue(response.isSuccess());
+            assertEquals(LoginResponse.LoginStatus.SUCCESS, response.getMessage());
+            assertEquals("/user", response.getRedirectUrl());
+            
+            verify(session).setAttribute("user", userDTO);
+            verify(session).setAttribute(UserController.DESTINATION, "Rome");
+            verify(session).setAttribute(UserController.COUNTRY_CODE, "IT");
+        }
     }
 
     @Test
-    void getUser_notLogged_redirectsToLogin() throws Exception {
-        mockMvc.perform(get("/user"))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/user/login"));
+    void testLoginPage() {
+        String destination = "Paris";
+        String countryCode = "FR";
+
+        String viewName = userController.loginPage(destination, countryCode, model);
+
+        verify(model).addAttribute(UserController.DESTINATION, destination);
+        verify(model).addAttribute(UserController.COUNTRY_CODE, countryCode);
+        assertEquals("login", viewName);
     }
 
     @Test
-    void getUser_logged_returnsUserView() throws Exception {
-        UserDTO user = new UserDTO(1L, "mail", "name");
+    void testLoginStatus_LoggedIn() {
+        UserDTO userDTO = new UserDTO(1L, "test", "test@email.com");
+        when(session.getAttribute("user")).thenReturn(userDTO);
 
-        when(userService.getUserRoutes(1L))
-            .thenReturn(List.of(
-                new RouteDTO("r1", "Rome", "IT", "OriginA", "DestinationA", List.of("Point1", "Point2"), "DRIVING"),
-                new RouteDTO("r2", "Rome", "IT", "OriginB", "DestinationB", List.of("Point3", "Point4"), "WALKING")
-            ));
+        Map<String, Object> response = userController.loginStatus(session);
 
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("user", user);
-
-        mockMvc.perform(get("/user").session(session))
-            .andExpect(status().isOk())
-            .andExpect(view().name("user"))
-            .andExpect(model().attributeExists("itinerariesByLocation"));
+        assertTrue((Boolean) response.get("loggedIn"));
+        assertEquals(userDTO, response.get("user"));
     }
 
     @Test
-    void getItineraries_noRequest_redirectsHome() throws Exception {
-        mockMvc.perform(get("/user/itineraries"))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/"));
+    void testLoginStatus_LoggedOut() {
+        when(session.getAttribute("user")).thenReturn(null);
+
+        Map<String, Object> response = userController.loginStatus(session);
+
+        assertFalse((Boolean) response.get("loggedIn"));
+        assertEquals(null, response.get("user"));
     }
 
     @Test
-    void getItineraries_loggedIn_success() throws Exception {
-        UserDTO user = new UserDTO(1L, "mail", "name");
-        POIRequest req = new POIRequest("Rome", "IT",
-            41.9028,
-            12.4964,
-            "2024-07-01",
-            "2024-07-10"
-        );
+    void testGetUserFromSession_NotLoggedIn() {
+        when(session.getAttribute("user")).thenReturn(null);
 
-        when(waypointService.findByUserAndCity(1L, "Rome", "IT"))
-            .thenReturn(List.of());
+        String viewName = userController.getUserFromSession(session, model);
 
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("user", user);
-        session.setAttribute(UserController.REQUEST, req);
-
-        mockMvc.perform(get("/user/itineraries").session(session))
-            .andExpect(status().isOk())
-            .andExpect(view().name("itineraries"))
-            .andExpect(model().attributeExists("waypoints"));
+        assertEquals(UserController.REDIRECT, viewName);
     }
 
     @Test
-    void getItinerary_notLogged_redirectsLogin() throws Exception {
-        mockMvc.perform(get("/user/itinerary/abc"))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/user/login"));
+    void testGetUserFromSession_Success() {
+        UserDTO userDTO = new UserDTO(1L, "test", "test@email.com");
+        POIRequest poiRequest = new POIRequest();
+        poiRequest.setDestination("Berlin");
+        poiRequest.setCountryCode("DE");
+        
+        List<RouteDTO> routes = new ArrayList<>();
+        RouteDTO routeDTO = new RouteDTO(
+                    "Route1",             
+                    "Berlin",  
+                    "Germany",              
+                    "StartPoint",
+                    "EndPoint",       
+                    Collections.emptyList(),
+                    "car"                
+                );
+        routes.add(routeDTO);
+
+        when(session.getAttribute("user")).thenReturn(userDTO);
+        when(userService.getUserRoutes(1L)).thenReturn(routes);
+        when(session.getAttribute(UserController.REQUEST)).thenReturn(poiRequest);
+
+        String viewName = userController.getUserFromSession(session, model);
+
+        verify(model).addAttribute(UserController.DESTINATION, "Berlin");
+        verify(model).addAttribute(UserController.COUNTRY_CODE, "DE");
+        verify(model).addAttribute(eq("itinerariesByLocation"), any(Map.class));
+        verify(model).addAttribute("user", userDTO);
+        assertEquals("user", viewName);
     }
 
     @Test
-    void logout_invalidatesSession() throws Exception {
-        mockMvc.perform(get("/user/logout"))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/"));
+    void testLogout() {
+        String viewName = userController.logout(session);
+        verify(session).invalidate();
+        assertEquals("redirect:/", viewName);
     }
 
     @Test
-    void removeWaypoint_notLogged_redirectsLogin() throws Exception {
-        mockMvc.perform(post("/user/waypoint/remove/1"))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/user/login"));
+    void testLoadUserItineraries() {
+        String destination = "Madrid";
+        String countryCode = "ES";
+
+        String viewName = userController.loadUserItineraries(destination, countryCode, session);
+
+        verify(session).setAttribute(UserController.DESTINATION, destination);
+        verify(session).setAttribute(UserController.COUNTRY_CODE, countryCode);
+        assertEquals("redirect:/user/itineraries", viewName);
     }
 
     @Test
-    void removeWaypoint_logged_success() throws Exception {
-        UserDTO user = new UserDTO(1L, "mail", "name");
+    void testGetUserItineraries_NoUser() {
+        POIRequest request = new POIRequest();
+        request.setDestination("Rome");
+        request.setCountryCode("IT");
 
-        when(userService.removeWaypointFromUser(1L, 1L))
-            .thenReturn("Waypoint removed");
+        when(session.getAttribute(UserController.REQUEST)).thenReturn(request);
+        when(session.getAttribute("user")).thenReturn(null);
 
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("user", user);
+        String viewName = userController.getUserItineraries(session, model);
 
-        mockMvc.perform(post("/user/waypoint/remove/1").session(session))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/user/itineraries"));
+        verify(session).setAttribute(UserController.DESTINATION, "Rome");
+        verify(session).setAttribute(UserController.COUNTRY_CODE, "IT");
+        assertEquals(UserController.REDIRECT, viewName);
+    }
+
+    @Test
+    void testGetUserItineraries_Success() {
+        UserDTO userDTO = new UserDTO(1L, "test", "test@email.com");
+        POIRequest request = new POIRequest();
+        request.setDestination("Rome");
+        request.setCountryCode("IT");
+        List<WaypointDTO> waypoints = Collections.emptyList();
+
+        when(session.getAttribute("user")).thenReturn(userDTO);
+        when(session.getAttribute(UserController.REQUEST)).thenReturn(request);
+        when(waypointService.findByUserAndCity(1L, "Rome", "IT")).thenReturn(waypoints);
+
+        String viewName = userController.getUserItineraries(session, model);
+
+        verify(model).addAttribute("waypoints", waypoints);
+        verify(model).addAttribute("user", userDTO);
+        assertEquals("itineraries", viewName);
+    }
+
+    @Test
+    void testGetItineraryByRouteIdentifier_NoUser() {
+        when(session.getAttribute("user")).thenReturn(null);
+        String viewName = userController.getItineraryByRouteIdentifier("route123", session, model);
+        assertEquals(UserController.REDIRECT, viewName);
+    }
+
+    @Test
+    void testGetItineraryByRouteIdentifier_Success() {
+        UserDTO userDTO = new UserDTO(1L, "test", "test@email.com");
+        String routeId = "route123";
+        
+        Route route = new Route();
+        route.setId(1L);
+        route.setRouteIdentifier(routeId);
+        route.setCity("London");
+        route.setCountry("UK");
+        
+        Waypoint origin = new Waypoint();
+        origin.setName("Origin");
+        Waypoint dest = new Waypoint();
+        dest.setName("Dest");
+        
+        route.setOrigin(origin);
+        route.setDestination(dest);
+        route.setIntermediates(new ArrayList<>());
+        route.setTravelMode(RouteTravelMode.DRIVING);
+
+        when(session.getAttribute("user")).thenReturn(userDTO);
+        when(routesService.getRouteByRouteIdentifier(routeId)).thenReturn(route);
+
+        String viewName = userController.getItineraryByRouteIdentifier(routeId, session, model);
+
+        verify(model).addAttribute(eq("route"), any(RouteDTO.class));
+        verify(model).addAttribute(eq("waypoints"), any(List.class));
+        verify(model).addAttribute("user", userDTO);
+        assertEquals("itineraryDetails", viewName);
+    }
+
+    @Test
+    void testDeleteItineraryByRouteIdentifier_NoUser() {
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+        when(session.getAttribute("user")).thenReturn(null);
+        
+        String viewName = userController.deleteItineraryByRouteIdentifier("route1", session, redirectAttributes);
+        
+        assertEquals(UserController.REDIRECT, viewName);
+    }
+
+    @Test
+    void testDeleteItineraryByRouteIdentifier_Success() {
+        UserDTO userDTO = new UserDTO(1L, "test", "test@email.com");
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+        String routeId = "route1";
+        
+        when(session.getAttribute("user")).thenReturn(userDTO);
+        when(routesService.deleteRouteByRouteIdentifier(routeId)).thenReturn("Deleted successfully");
+
+        String viewName = userController.deleteItineraryByRouteIdentifier(routeId, session, redirectAttributes);
+
+        verify(redirectAttributes).addFlashAttribute("message", "Deleted successfully");
+        assertEquals("redirect:/user", viewName);
+    }
+
+    @Test
+    void testRemoveWaypoint_NoUser() {
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+        when(session.getAttribute("user")).thenReturn(null);
+
+        String viewName = userController.removeWaypoint(1L, session, redirectAttributes);
+
+        assertEquals(UserController.REDIRECT, viewName);
+    }
+
+    @Test
+    void testRemoveWaypoint_Success() {
+        UserDTO userDTO = new UserDTO(1L, "test", "test@email.com");
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+        Long waypointId = 100L;
+
+        when(session.getAttribute("user")).thenReturn(userDTO);
+        when(userService.removeWaypointFromUser(waypointId, 1L)).thenReturn("Removed");
+
+        String viewName = userController.removeWaypoint(waypointId, session, redirectAttributes);
+
+        verify(userService).removeWaypointFromUser(waypointId, 1L);
+        verify(redirectAttributes).addFlashAttribute("message", "Removed");
+        assertEquals("redirect:/user/itineraries", viewName);
     }
 }

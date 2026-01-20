@@ -81,6 +81,7 @@ public class HotelController {
         Model model,
         HttpSession session
     ) {
+        @SuppressWarnings("unchecked")
         List<HotelDTO> hotels =
             (List<HotelDTO>) session.getAttribute(HotelEnum.HOTELS_DATA.getValue());
 
