@@ -14,22 +14,22 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
     public static final String LOCALHOST = &quot;http://localhost:8080&quot;;
 
     public static void main(String[] args) throws URISyntaxException, IOException {
-<span class="nc" id="L17">        SpringApplication.run(Server.class, args);</span>
-<span class="nc" id="L18">        System.setProperty(&quot;java.awt.headless&quot;, &quot;false&quot;);            </span>
+<span class="fc" id="L17">        SpringApplication.run(Server.class, args);</span>
+<span class="fc" id="L18">        System.setProperty(&quot;java.awt.headless&quot;, &quot;false&quot;);            </span>
         try {
-<span class="nc" id="L20">            URI uri = new URI(LOCALHOST);</span>
-<span class="nc bnc" id="L21" title="All 2 branches missed.">            if (Desktop.isDesktopSupported()) {</span>
-<span class="nc" id="L22">                Desktop.getDesktop().browse(uri);</span>
+<span class="fc" id="L20">            URI uri = new URI(LOCALHOST);</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">            if (Desktop.isDesktopSupported()) {</span>
+<span class="fc" id="L22">                Desktop.getDesktop().browse(uri);</span>
             } else {
-<span class="nc" id="L24">                Logger.getLogger(Server.class.getName()).severe(&quot;Desktop is not supported. Please open &quot; + LOCALHOST + &quot; manually.&quot;);</span>
+<span class="fc" id="L24">                Logger.getLogger(Server.class.getName()).severe(&quot;Desktop is not supported. Please open &quot; + LOCALHOST + &quot; manually.&quot;);</span>
             }
-<span class="nc" id="L26">        } catch (IOException e) {</span>
-<span class="nc" id="L27">            throw new IOException(e);</span>
-<span class="nc" id="L28">        } catch (URISyntaxException e) {</span>
+<span class="fc" id="L26">        } catch (IOException e) {</span>
+<span class="fc" id="L27">            throw new IOException(e);</span>
+<span class="nc" id="L28">        } catch (URISyntaxException _) {</span>
 <span class="nc" id="L29">            throw new URISyntaxException(LOCALHOST, &quot;Invalid URI syntax&quot;);</span>
-<span class="nc" id="L30">        }</span>
-<span class="nc" id="L31">        Logger.getLogger(Server.class.getName()).info(&quot;Server executing at &quot; + LOCALHOST);</span>
-<span class="nc" id="L32">    }</span>
+<span class="fc" id="L30">        }</span>
+<span class="fc" id="L31">        Logger.getLogger(Server.class.getName()).info(&quot;Server executing at &quot; + LOCALHOST);</span>
+<span class="fc" id="L32">    }</span>
 }
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

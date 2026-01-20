@@ -6,15 +6,20 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.sds2.classes.coordinates.Location;
 import com.sds2.dto.PlacesDTO;
+import com.sds2.repository.PlacesRepository;
 
 @SpringBootTest
 class PlaceServiceTest {
 
     @Autowired
     private PlaceService placeService;
+
+    @MockitoBean
+    private PlacesRepository placesRepository;
 
     @Test
     void searchNearbyTest() {

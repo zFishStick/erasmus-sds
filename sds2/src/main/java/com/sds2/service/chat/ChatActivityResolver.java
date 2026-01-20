@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
@@ -38,9 +39,9 @@ public class ChatActivityResolver {
     }
 
     public List<ChatActivityDTO> resolve(
-        AiItineraryPlan plan,
-        CityContext city,
-        ChatPreferences preferences
+            AiItineraryPlan plan,
+            CityContext city,
+            ChatPreferences preferences
     ) {
         if (plan == null || plan.items().isEmpty()) {
             return List.of();
@@ -48,39 +49,44 @@ public class ChatActivityResolver {
 
         List<ActivityCandidate> amadeusCandidates = buildAmadeusCandidates(city);
         Map<String, ChatActivityDTO> cache = new HashMap<>();
-        Set<String> used = new HashSet<>();
-        List<ChatActivityDTO> resolved = new ArrayList<>();
+        Set<String> usedKeys = new HashSet<>();
 
-        for (Item item : plan.items()) {
-            if (item == null || item.name() == null || item.name().isBlank()) {
-                continue;
-            }
+        return plan.items().stream()
+                .filter(Objects::nonNull)
+                .filter(item -> item.name() != null && !item.name().isBlank())
+                .map(item -> processItem(item, city, preferences, amadeusCandidates, cache, usedKeys))
+                .filter(Objects::nonNull)
+                .toList();
+
+    }
+
+    private ChatActivityDTO processItem(
+        Item item,
+        CityContext city,
+        ChatPreferences preferences,
+        List<ActivityCandidate> amadeusCandidates,
+        Map<String, ChatActivityDTO> cache,
+        Set<String> usedKeys
+    ) {
         String key = TextNormalizer.normalize(item.name());
-            if (key.isBlank()) {
-                continue;
-            }
-            if (cache.containsKey(key)) {
-                ChatActivityDTO cached = cache.get(key);
-                if (cached != null && used.add(key)) {
-                    resolved.add(cached);
-                }
-                continue;
-            }
+        if (key.isBlank()) return null;
 
-            List<ActivityCandidate> candidates = new ArrayList<>();
-            candidates.addAll(buildGoogleCandidates(item, city));
-            candidates.addAll(filterAmadeusCandidates(amadeusCandidates, item));
-
-            ActivityCandidate best = pickBest(candidates, item, preferences);
-            ChatActivityDTO dto = best == null ? null : toChatActivityDTO(best);
-            cache.put(key, dto);
-            if (dto != null && used.add(key)) {
-                resolved.add(dto);
-            }
+        if (cache.containsKey(key)) {
+            ChatActivityDTO cached = cache.get(key);
+            return (cached != null && usedKeys.add(key)) ? cached : null;
         }
 
-        return resolved;
+        List<ActivityCandidate> candidates = new ArrayList<>();
+        candidates.addAll(buildGoogleCandidates(item, city));
+        candidates.addAll(filterAmadeusCandidates(amadeusCandidates, item.name()));
+
+        ActivityCandidate best = pickBest(candidates, item, preferences);
+        ChatActivityDTO dto = best != null ? toChatActivityDTO(best) : null;
+
+        cache.put(key, dto);
+        return (dto != null && usedKeys.add(key)) ? dto : null;
     }
+
 
     private List<ActivityCandidate> buildAmadeusCandidates(CityContext city) {
         List<POIDTO> activities = poiService.getPointOfInterests(
@@ -123,15 +129,15 @@ public class ChatActivityResolver {
 
     private List<ActivityCandidate> filterAmadeusCandidates(
         List<ActivityCandidate> candidates,
-        Item item
+        String itemName
     ) {
         if (candidates == null || candidates.isEmpty()) {
             return List.of();
         }
         return candidates.stream()
-            .filter(candidate -> nameSimilarity(item.name(), candidate.name()) >= NAME_MIN_SCORE)
+            .filter(candidate -> nameSimilarity(itemName, candidate.name()) >= NAME_MIN_SCORE)
             .sorted(Comparator.comparingDouble((ActivityCandidate candidate) ->
-                nameSimilarity(item.name(), candidate.name())).reversed())
+                nameSimilarity(itemName, candidate.name())).reversed())
             .limit(AMADEUS_CANDIDATE_LIMIT)
             .toList();
     }
@@ -160,36 +166,52 @@ public class ChatActivityResolver {
 
     private double scoreCandidate(ActivityCandidate candidate, Item item, ChatPreferences preferences) {
         double nameScore = nameSimilarity(item.name(), candidate.name());
-        double typeScore = 0.0;
+
+        double typeScore = calculateTypeScore(candidate, item, preferences);
+
+        double ratingScore = calculateRatingScore(candidate);
+
+        double score = (nameScore * NAME_WEIGHT)
+                    + (typeScore * TYPE_WEIGHT)
+                    + (ratingScore * RATING_WEIGHT);
+
+        score = applyFreePenalty(score, candidate, preferences);
+
+        return score;
+    }
+
+    private double calculateTypeScore(ActivityCandidate candidate, Item item, ChatPreferences preferences) {
         if (item.type() != null && candidate.type() != null) {
             String itemType = TextNormalizer.normalize(item.type());
             String candidateType = TextNormalizer.normalize(candidate.type());
             if (!itemType.isBlank() && candidateType.contains(itemType)) {
-                typeScore = 1.0;
+                return 1.0;
             }
         }
 
-        if (typeScore == 0.0 && preferences != null) {
-            if (preferences.matches(candidate.type())
-                || preferences.matches(candidate.description())
-                || preferences.matches(candidate.name())) {
-                typeScore = 0.8;
-            }
+        if (preferences != null && (
+                preferences.matches(candidate.type()) ||
+                preferences.matches(candidate.description()) ||
+                preferences.matches(candidate.name()))) {
+            return 0.8;
         }
 
-        double ratingScore = candidate.rating() == null ? 0.0 : Math.min(candidate.rating() / 5.0, 1.0);
-        double score = (nameScore * NAME_WEIGHT)
-            + (typeScore * TYPE_WEIGHT)
-            + (ratingScore * RATING_WEIGHT);
+        return 0.0;
+    }
 
-        if (preferences != null && preferences.freeOnly()) {
-            if (candidate.priceAmount() != null && candidate.priceAmount() > 0.01) {
-                score -= FREE_PENALTY;
-            }
+    private double calculateRatingScore(ActivityCandidate candidate) {
+        if (candidate.rating() == null) return 0.0;
+        return Math.min(candidate.rating() / 5.0, 1.0);
+    }
+
+    private double applyFreePenalty(double score, ActivityCandidate candidate, ChatPreferences preferences) {
+        if (preferences != null && preferences.freeOnly() &&
+            candidate.priceAmount() != null && candidate.priceAmount() > 0.01) {
+            return score - FREE_PENALTY;
         }
-
         return score;
     }
+
 
     private double nameSimilarity(String left, String right) {
         String a = TextNormalizer.normalize(left);
