@@ -83,7 +83,8 @@ const placeGroups = {
             "hospital",
             "city_hall",
             "university",
-            "consultant"
+            "consultant",
+            "insurance_agency"
         ]
     },
 
@@ -92,7 +93,8 @@ const placeGroups = {
         description: city => `Attend events and enjoy sports activities in ${city}.`,
         types: [
             "event_venue",
-            "stadium"
+            "stadium",
+            "sports_club"
         ]
     },
 

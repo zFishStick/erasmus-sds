@@ -101,8 +101,6 @@
         </div>
     </nav>
 
-    <!-- <p id="message" style="color: red;"></p> -->
-
     <form action="">
         <input type="hidden" name="city" th:value="${request.destination}" id="city"/>
         <input type="hidden" name="countryCode" th:value="${request.countryCode}" id="countryCode"/>
@@ -110,8 +108,9 @@
 
     <div class="header-section">
         <div style="display: flex; flex-direction: column;">
-            <h1 th:text="|Here's what you can see in ${request.destination}, ${request.countryCode}|" class="place-header">
-            Places to visit
+            <h1 th:if="${request != null}"
+                th:text="|Here's what you can see in ${request.destination}, ${request.countryCode}|">
+                What to see
             </h1>
             <p id="wpnt-message" class="alert-info" style="text-align:center; margin-top:12px;"></p>
         </div>  
@@ -126,7 +125,8 @@
         <div class="column">
             <h2 th:text="${place.name}">Place Name</h2>
             <div class="row">
-                <img th:if="${place.photoUrl[0] != null}" th:src="${place.photoUrl[0]}" alt="Placeholder"/>
+                <img th:if="${place.photoUrl != null and !#lists.isEmpty(place.photoUrl)}"
+                    th:src="${place.photoUrl[0]}" alt="placeholder" />
                 <div class="column">
                     <p><span class="main-text">Address:</span> <span th:text="${place.address}">Place Address</span></p>
                     
@@ -144,10 +144,11 @@
                     Website: <a th:href="${place.websiteUri}" th:text="${place.websiteUri}" style="color:#7fb2ff; font-weight:600;">Website Link</a>
                     </p>
                     <!-- Debug shows lat and lon -->
-                    <p th:if="${place.location != null}">
-                        <span class="main-text">Latitude:</span> <span th:text="${place.location.latitude}">Lat</span><br/>
-                        <span class="main-text">Longitude:</span> <span th:text="${place.location.longitude}">Lng</span>
-                    </p>
+                    <div th:if="${place.location != null}">
+                        <input type="hidden" name="latitude" th:value="${place.location.latitude}">
+                        <input type="hidden" name="longitude" th:value="${place.location.longitude}">
+                    </div>
+
                     <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
                         <a th:href="@{|/places/${place.name}|}" class="btn btn-primary" style="text-decoration:none;">See Details</a>
                         <a class="btn btn-ghost" th:if="${place.location != null}"

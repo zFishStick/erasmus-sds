@@ -31,7 +31,6 @@ class POIServiceTest {
     @Mock
     private AmadeusAuthService amadeusAuthService;
 
-    // --- Mocks per la catena WebClient (Tutti necessari) ---
     @Mock
     private WebClient.Builder webClientBuilder;
     @Mock
@@ -100,7 +99,6 @@ class POIServiceTest {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals("Eiffel Tower", result.get(0).name());
-        // Verifica che l'API non venga chiamata
         verify(webClientBuilder, never()).build();
     }
 

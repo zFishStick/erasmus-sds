@@ -90,7 +90,7 @@ public class RoutesService {
 
         routesRepository.save(route);
 
-        removeUserSavedWaypoints(user, intermediates);
+        removeUserSavedWaypoints(user, intermediates, origin, destination);
 
         return "Route saved successfully";
     }
@@ -107,7 +107,7 @@ public class RoutesService {
         return "Route deleted successfully";
     }
 
-    private void removeUserSavedWaypoints(User user, List<Waypoint> waypoints) {
+    private void removeUserSavedWaypoints(User user, List<Waypoint> waypoints, Waypoint ori, Waypoint dest) {
         Set<Long> waypointIds = waypoints.stream()
             .filter(Objects::nonNull)
             .map(Waypoint::getId)
@@ -118,6 +118,8 @@ public class RoutesService {
             .filter(wp -> waypointIds.contains(wp.getId()))
             .toList();
 
+        user.getSavedWaypoints().remove(ori);
+        user.getSavedWaypoints().remove(dest);
         user.getSavedWaypoints().removeAll(toRemove);
         userService.saveUser(user);
     }
