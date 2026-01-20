@@ -73,7 +73,7 @@ class PlaceResponseTest {
         com.sds2.classes.response.PlaceResponse.PlacesData pd = new com.sds2.classes.response.PlaceResponse.PlacesData();
         pd.setId("x");
         pd.setName("Y");
-        com.sds2.classes.response.PlaceResponse.DisplayName dn = new com.sds2.classes.response.PlaceResponse.DisplayName();
+        com.sds2.classes.response.PlaceResponse.DisplayName dn = new PlaceResponse.DisplayName();
         dn.setText("Display");
         pd.setDisplayName(dn);
 

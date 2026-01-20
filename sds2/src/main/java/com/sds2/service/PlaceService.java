@@ -207,10 +207,4 @@ public class PlaceService {
         }
     }
 
-    // DEBUG METHOD
-    public List<PlacesDTO> addRemainingNearbyPlaces(Location location, String city, String country) {
-        Map<String, Object> body = buildNearbyBody(location, 10000.0);
-        PlaceResponse response = callPlacesApi("https://places.googleapis.com/v1/places:searchNearby", body);
-        return mapPlacesToDTOs(response, city, country);
-    }
 }
