@@ -1,8 +1,11 @@
 package com.sds2.classes;
 
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
+import lombok.Setter;
 
 @Embeddable
+@Getter @Setter
 public class Price {
     private double amount;
     private String currencyCode;
@@ -11,22 +14,6 @@ public class Price {
 
     public Price(double amount, String currencyCode) {
         this.amount = amount;
-        this.currencyCode = currencyCode;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
-    public String getCurrencyCode() {
-        return currencyCode;
-    }
-
-    public void setCurrencyCode(String currencyCode) {
         this.currencyCode = currencyCode;
     }
     

@@ -101,21 +101,19 @@
         </div>
     </nav>
 
-    <p id="message" style="color: red;"></p>
-
     <form action="">
         <input type="hidden" name="city" th:value="${request.destination}" id="city"/>
         <input type="hidden" name="countryCode" th:value="${request.countryCode}" id="countryCode"/>
     </form>
 
     <div class="header-section">
-        <div style="display: flex; flex-direction: row; align-items: center; gap:12px;">
-            <h1 th:text="|Here's what you can see in ${request.destination}, ${request.countryCode}|" class="place-header">
-            Places to visit
+        <div style="display: flex; flex-direction: column;">
+            <h1 th:if="${request != null}"
+                th:text="|Here's what you can see in ${request.destination}, ${request.countryCode}|">
+                What to see
             </h1>
-        </div>
-
-        <p id="wpnt-message" style="text-align:center; margin-top:12px;"></p>
+            <p id="wpnt-message" class="alert-info" style="text-align:center; margin-top:12px;"></p>
+        </div>  
     </div>
 
 <div th:if="${places == null or #lists.isEmpty(places)}">
@@ -127,7 +125,8 @@
         <div class="column">
             <h2 th:text="${place.name}">Place Name</h2>
             <div class="row">
-                <img th:if="${place.photoUrl[0] != null}" th:src="${place.photoUrl[0]}" alt="Placeholder"/>
+                <img th:if="${place.photoUrl != null and !#lists.isEmpty(place.photoUrl)}"
+                    th:src="${place.photoUrl[0]}" alt="placeholder" />
                 <div class="column">
                     <p><span class="main-text">Address:</span> <span th:text="${place.address}">Place Address</span></p>
                     
@@ -145,16 +144,17 @@
                     Website: <a th:href="${place.websiteUri}" th:text="${place.websiteUri}" style="color:#7fb2ff; font-weight:600;">Website Link</a>
                     </p>
                     <!-- Debug shows lat and lon -->
-                    <p th:if="${place.location != null}">
-                        <span class="main-text">Latitude:</span> <span th:text="${place.location.latitude}">Lat</span><br/>
-                        <span class="main-text">Longitude:</span> <span th:text="${place.location.longitude}">Lng</span>
-                    </p>
+                    <div th:if="${place.location != null}">
+                        <input type="hidden" name="latitude" th:value="${place.location.latitude}">
+                        <input type="hidden" name="longitude" th:value="${place.location.longitude}">
+                    </div>
+
                     <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
                         <a th:href="@{|/places/${place.name}|}" class="btn btn-primary" style="text-decoration:none;">See Details</a>
                         <a class="btn btn-ghost" th:if="${place.location != null}"
                            th:href="${'https://www.google.com/maps/search/?api=1&query=' + place.location.latitude + ',' + place.location.longitude}"
                            target="_blank" rel="noopener">Open in Maps</a>                                      
-                           <form method="post" th:action="@{/routes/waypoint/add}" class="btn btn-ghost add-waypoint-form" style="padding: 0; display: flex;">
+                        <form method="post" th:action="@{/routes/waypoint/add}" class="btn btn-ghost add-waypoint-form" style="padding: 0; display: flex;">
                             <input type="hidden" name="destination" th:value="${request.destination}">
                             <input type="hidden" name="countryCode" th:value="${request.countryCode}">
                             <input type="hidden" name="id" th:value="${place.id}">
@@ -196,22 +196,24 @@
 <script>
 
 document.addEventListener("user-auth-ready", (e) => {
-    const messageElem = document.getElementById("wpnt-message");
     const user = e.detail.user;
     const userId = user ? user.id : null;
+    let messageElem = document.getElementById("wpnt-message");
+
+    if (messageElem.textContent.trim() !== "") {
+        messageElem.style.display = "block";
+    } else {
+        messageElem.style.display = "none";
+    }
 
     document.querySelectorAll(".add-waypoint-form").forEach(form => {
-
         form.addEventListener("submit", async (ev) => {
             ev.preventDefault();
 
-        if (!userId) {
-            alert("Please log in to save waypoints for your itinerary.");
-
-            window.location.href = `/user/login`
-
-            return;
-        }
+            if (!userId) {
+                window.location.href = `/user/login`;
+                return;
+            }
 
             const waypointRequest = {
                 name: form.querySelector("input[name='name']").value,
@@ -230,15 +232,18 @@ document.addEventListener("user-auth-ready", (e) => {
                     body: JSON.stringify(waypointRequest)
                 });
 
-                messageElem.textContent = await res.text();
+                const data = await res.json();
+                messageElem = document.getElementById("wpnt-message");
+                messageElem.style.display = "block";
+                messageElem.textContent = data.message;
 
             } catch (err) {
                 console.error(err);
-                messageElem.textContent = "Error adding waypoint.";
             }
         });
     });
 });
+
 </script>
 
 </html>

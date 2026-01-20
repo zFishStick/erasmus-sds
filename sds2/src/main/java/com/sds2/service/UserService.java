@@ -45,24 +45,6 @@ public class UserService {
 
     }
 
-    // public LoginResponse loginUser(String email, String password) {
-    //     User user = userRepository.findByEmail(email);
-
-    //     if (user == null) {
-    //         return new LoginResponse(false, "User not found", null);
-    //     }
-
-    //     if (!PasswordManager.verifyPassword(password, user.getPassword())) {
-    //         return new LoginResponse(false, "Invalid credentials", null);
-    //     }
-
-    //     return new LoginResponse(
-    //         true,
-    //         "Login successful",
-    //         "/user/" + user.getId()
-    //     );
-    // }
-
     public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {
@@ -101,6 +83,25 @@ public class UserService {
 
     public User findById(Long userId) {
         return userRepository.findById(userId).orElse(null);
+    }
+
+    public void saveUser(User user) {
+        userRepository.save(user);
+    }
+
+    public String removeWaypointFromUser(Long waypointId, Long userId) {
+        User user = findById(userId);
+        if (user == null) {
+            return "User not found";
+        }
+
+        boolean removed = user.getSavedWaypoints().removeIf(wp -> wp.getId().equals(waypointId));
+        if (removed) {
+            saveUser(user);
+            return "Waypoint removed from user successfully";
+        } else {
+            return "Waypoint not found for user";
+        }
     }
 
 }

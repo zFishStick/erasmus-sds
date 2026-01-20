@@ -11,10 +11,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 userAuthLink.textContent = data.user.username;
                 userAuthLink.href = "/user";
 
-                const userIdInput = document.getElementById("user-id");
-                if (userIdInput) {
-                    userIdInput.value = data.user.id;
-                }
                 document.dispatchEvent(new CustomEvent("user-auth-ready", {
                     detail: { user: data.user }
                 }));

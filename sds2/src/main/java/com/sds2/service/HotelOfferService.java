@@ -125,7 +125,7 @@ public class HotelOfferService {
         if (source.getTotal() != null) {
             try {
                 amount = Double.parseDouble(source.getTotal());
-            } catch (NumberFormatException ex) {
+            } catch (NumberFormatException _) {
                 Logger.getLogger(HotelOfferService.class.getName()).warning("Unable to parse price total: " + source.getTotal());
             }
         }

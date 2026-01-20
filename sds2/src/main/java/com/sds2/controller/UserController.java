@@ -2,8 +2,10 @@ package com.sds2.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,6 +31,7 @@ import com.sds2.util.PasswordManager;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @AllArgsConstructor
@@ -136,7 +139,16 @@ public class UserController {
         }
 
         
-        model.addAttribute("itineraries", routes);
+        Map<String, List<RouteDTO>> itinerariesByLocation =
+        routes.stream()
+                .collect(Collectors.groupingBy(
+                        r -> r.city() + ", " + r.country(),
+                        LinkedHashMap::new,
+                        Collectors.toList()
+                ));
+
+        model.addAttribute("itinerariesByLocation", itinerariesByLocation);
+
         model.addAttribute("user", user);
         return "user";
     }
@@ -151,12 +163,11 @@ public class UserController {
     @PostMapping("/itineraries")
     public String loadUserItineraries(
         @RequestParam String destination,
-        @RequestParam String country,
+        @RequestParam String countryCode,
         HttpSession session
     ) {
         session.setAttribute(DESTINATION, destination);
-        session.setAttribute(COUNTRY_CODE, country);
-
+        session.setAttribute(COUNTRY_CODE, countryCode);
         return "redirect:/user/itineraries";
     }
 
@@ -209,7 +220,7 @@ public class UserController {
 
         Route route = routesService.getRouteByRouteIdentifier(routeIdentifier);
 
-        System.out.println("Route found: " + route);
+        RouteDTO routeDTO = RouteDTO.fromEntity(route);
 
         List<WaypointDTO> waypoints = new ArrayList<>(
                 route.getIntermediates()
@@ -218,17 +229,50 @@ public class UserController {
                         .toList()
         );
 
-
-        System.out.println("Intermediates: " + waypoints);
-
         waypoints.add(0, WaypointDTO.fromEntity(route.getOrigin()));
         waypoints.add(WaypointDTO.fromEntity(route.getDestination()));
 
-        model.addAttribute("routeIdentifier", routeIdentifier);
+        model.addAttribute("route", routeDTO);
         model.addAttribute("waypoints", waypoints);
         model.addAttribute("user", user);
 
         return "itineraryDetails";
+    }
+
+
+    @GetMapping("/itinerary/delete/{routeIdentifier}")
+    public String deleteItineraryByRouteIdentifier(
+            @PathVariable String routeIdentifier,
+            HttpSession session, RedirectAttributes redirectAttributes) {
+
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        if (user == null) {
+            return REDIRECT;
+        }
+
+        String result = routesService.deleteRouteByRouteIdentifier(routeIdentifier);
+
+        redirectAttributes.addFlashAttribute("message", result);
+
+        return "redirect:/user";
+    }
+
+    @PostMapping("/waypoint/remove/{id}")
+    public String removeWaypoint(
+        @PathVariable Long id, 
+        HttpSession session, 
+        RedirectAttributes redirectAttributes
+    ) {
+        UserDTO userDTO = (UserDTO) session.getAttribute("user");
+        if (userDTO == null) {
+            return REDIRECT;
+        }
+
+        String result = userService.removeWaypointFromUser(id, userDTO.id());
+
+        redirectAttributes.addFlashAttribute("message", result);
+
+        return "redirect:/user/itineraries";
     }
 
     

@@ -39,6 +39,8 @@ public class PlaceResponse {
     }
 
     @Getter @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class DisplayName {
         private String text;
         private String languageCode;
