@@ -3,9 +3,9 @@
 import java.util.List;
 
 import com.sds2.classes.entity.Route;
+import com.sds2.classes.entity.Waypoint;
 
-
-<span class="nc" id="L8">public record RouteDTO(</span>
+<span class="fc" id="L8">public record RouteDTO(</span>
     String routeIdentifier,
     String city,
     String country,
@@ -15,16 +15,16 @@ import com.sds2.classes.entity.Route;
     String travelMode
 ) {
     public static RouteDTO fromEntity(Route route) {
-<span class="nc" id="L18">        return new RouteDTO(</span>
-<span class="nc" id="L19">            route.getRouteIdentifier(),</span>
-<span class="nc" id="L20">            route.getCity(),</span>
-<span class="nc" id="L21">            route.getCountry(),</span>
-<span class="nc" id="L22">            route.getOrigin().getName(),</span>
-<span class="nc" id="L23">            route.getDestination().getName(),</span>
-<span class="nc" id="L24">            route.getIntermediates().stream()</span>
-<span class="nc" id="L25">                .map(intermediate -&gt; intermediate.getName())</span>
-<span class="nc" id="L26">                .toList(),</span>
-<span class="nc" id="L27">            route.getTravelMode().toString()</span>
+<span class="fc" id="L18">        return new RouteDTO(</span>
+<span class="fc" id="L19">            route.getRouteIdentifier(),</span>
+<span class="fc" id="L20">            route.getCity(),</span>
+<span class="fc" id="L21">            route.getCountry(),</span>
+<span class="fc" id="L22">            route.getOrigin().getName(),</span>
+<span class="fc" id="L23">            route.getDestination().getName(),</span>
+<span class="fc" id="L24">            route.getIntermediates().stream()</span>
+<span class="fc" id="L25">                .map(Waypoint::getName)</span>
+<span class="fc" id="L26">                .toList(),</span>
+<span class="fc" id="L27">            route.getTravelMode().toString()</span>
         );
     }
 }

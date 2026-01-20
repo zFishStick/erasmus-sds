@@ -25,7 +25,7 @@ public class Server {
             }
         } catch (IOException e) {
             throw new IOException(e);
-        } catch (URISyntaxException e) {
+        } catch (URISyntaxException _) {
             throw new URISyntaxException(LOCALHOST, "Invalid URI syntax");
         }
         Logger.getLogger(Server.class.getName()).info("Server executing at " + LOCALHOST);

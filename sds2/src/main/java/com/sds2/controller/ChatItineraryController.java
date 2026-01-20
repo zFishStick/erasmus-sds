@@ -23,22 +23,22 @@ public class ChatItineraryController {
     private static final String ERROR = "error";
 
     @PostMapping("/itinerary")
-    public ResponseEntity<?> createItinerary(@RequestBody ChatItineraryRequest request) {
+    public ResponseEntity<Object> createItinerary(@RequestBody ChatItineraryRequest request) {
         try {
             ChatItineraryResponse response = chatItineraryService.generateItinerary(request);
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok().body((Object) response);
         } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body(Map.of(ERROR, ex.getMessage()));
+            return ResponseEntity.badRequest().body((Object) Map.of(ERROR, ex.getMessage()));
         } catch (IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of(ERROR, ex.getMessage()));
+                .body((Object) Map.of(ERROR, ex.getMessage()));
         } catch (Exception ex) {
             String message = ex.getMessage();
             if (message == null || message.isBlank()) {
                 message = "Failed to generate itinerary.";
             }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of(ERROR, message));
+                .body((Object) Map.of(ERROR, message));
         }
     }
 }

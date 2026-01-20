@@ -30,7 +30,6 @@ com\sds2\repository\CityRepository.class
 com\sds2\service\chat\ChatPreferenceExtractor.class
 com\sds2\service\WaypointService.class
 com\sds2\classes\response\CityResponse$CityData.class
-com\sds2\util\DataISOFormatter.class
 com\sds2\classes\CitySummary$CitySummaryBuilder.class
 com\sds2\classes\response\PlaceResponse$DisplayName.class
 com\sds2\classes\coordinates\Location.class
@@ -112,6 +111,7 @@ com\sds2\classes\request\HotelRequest.class
 com\sds2\classes\request\UserRequest.class
 com\sds2\classes\enums\GoogleBodyEnum.class
 com\sds2\classes\price\PriceRangeConverter.class
+com\sds2\classes\request\WaypointRequest$WaypointRequestBuilder.class
 com\sds2\classes\response\HotelOfferResponse$HotelOfferData.class
 com\sds2\classes\hotel\HotelAddress.class
 com\sds2\classes\entity\Route.class

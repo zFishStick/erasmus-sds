@@ -16,9 +16,9 @@ import com.sds2.classes.hotel.HotelAddress;
 ) implements Serializable {
     
     public HotelDTO withOffer(HotelOfferDTO offer) {
-<span class="nc" id="L19">        List&lt;HotelOfferDTO&gt; newList = new ArrayList&lt;&gt;(offers);</span>
-<span class="nc" id="L20">        newList.add(offer);</span>
-<span class="nc" id="L21">        return new HotelDTO(hotelId, name, coordinates, address, newList);</span>
+<span class="fc" id="L19">        List&lt;HotelOfferDTO&gt; newList = new ArrayList&lt;&gt;(offers);</span>
+<span class="fc" id="L20">        newList.add(offer);</span>
+<span class="fc" id="L21">        return new HotelDTO(hotelId, name, coordinates, address, newList);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

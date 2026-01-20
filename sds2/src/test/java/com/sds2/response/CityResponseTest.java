@@ -13,7 +13,7 @@ class CityResponseTest {
 
     @Test
     void testGettersAndSetters() {
-        CityResponse.Address address = new CityResponse.Address();
+        CityResponse.Address address = new CityResponse.Address("US");
         address.setCountryCode("US");
         assertEquals("US", address.getCountryCode());
 

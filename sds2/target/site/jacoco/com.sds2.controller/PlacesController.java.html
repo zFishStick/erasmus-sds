@@ -49,47 +49,47 @@ public class PlacesController {
         HttpSession session
     ) {
 
-<span class="nc" id="L52">        POIRequest req = (POIRequest) session.getAttribute(REQUEST);</span>
-<span class="nc" id="L53">        model.addAttribute(REQUEST, req);</span>
+<span class="fc" id="L52">        POIRequest req = (POIRequest) session.getAttribute(REQUEST);</span>
+<span class="fc" id="L53">        model.addAttribute(REQUEST, req);</span>
 
-<span class="nc" id="L55">        Object obj = session.getAttribute(PLACESDATA);</span>
+<span class="fc" id="L55">        Object obj = session.getAttribute(PLACESDATA);</span>
             List&lt;PlacesDTO&gt; places;
 
-<span class="nc bnc" id="L58" title="All 2 branches missed.">            if (obj instanceof List&lt;?&gt;) {</span>
-<span class="nc" id="L59">                places = ((List&lt;?&gt;) obj).stream()</span>
-<span class="nc" id="L60">                            .filter(PlacesDTO.class::isInstance)</span>
-<span class="nc" id="L61">                            .map(PlacesDTO.class::cast)</span>
-<span class="nc" id="L62">                            .toList();</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">            if (obj instanceof List&lt;?&gt;) {</span>
+<span class="fc" id="L59">                places = ((List&lt;?&gt;) obj).stream()</span>
+<span class="fc" id="L60">                            .filter(PlacesDTO.class::isInstance)</span>
+<span class="fc" id="L61">                            .map(PlacesDTO.class::cast)</span>
+<span class="fc" id="L62">                            .toList();</span>
             } else {
 <span class="nc" id="L64">                places = List.of();</span>
             }
 
-<span class="nc" id="L67">        model.addAttribute(PLACESDATA, places);</span>
-<span class="nc" id="L68">        int total = places.size();</span>
-<span class="nc" id="L69">        int fromIndex = page * size;</span>
-<span class="nc" id="L70">        int toIndex = Math.min(fromIndex + size, total);</span>
+<span class="fc" id="L67">        model.addAttribute(PLACESDATA, places);</span>
+<span class="fc" id="L68">        int total = places.size();</span>
+<span class="fc" id="L69">        int fromIndex = page * size;</span>
+<span class="fc" id="L70">        int toIndex = Math.min(fromIndex + size, total);</span>
         List&lt;PlacesDTO&gt; pagedActivities;
-<span class="nc bnc" id="L72" title="All 4 branches missed.">        if (fromIndex &lt; 0 || fromIndex &gt;= total) {</span>
+<span class="pc bpc" id="L72" title="2 of 4 branches missed.">        if (fromIndex &lt; 0 || fromIndex &gt;= total) {</span>
 <span class="nc" id="L73">            pagedActivities = List.of();</span>
         } else {
-<span class="nc" id="L75">            pagedActivities = places.subList(fromIndex, toIndex);</span>
+<span class="fc" id="L75">            pagedActivities = places.subList(fromIndex, toIndex);</span>
         }
 
-<span class="nc" id="L78">        model.addAttribute(PLACESDATA, pagedActivities);</span>
-<span class="nc bnc" id="L79" title="All 2 branches missed.">        int totalPages = size &gt; 0 ? (int) Math.ceil((double) total / size) : 0;</span>
-<span class="nc" id="L80">        model.addAttribute(&quot;totalPages&quot;, totalPages);</span>
-<span class="nc" id="L81">        model.addAttribute(&quot;currentPage&quot;, page);</span>
-<span class="nc" id="L82">        model.addAttribute(&quot;pageSize&quot;, size);</span>
+<span class="fc" id="L78">        model.addAttribute(PLACESDATA, pagedActivities);</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        int totalPages = size &gt; 0 ? (int) Math.ceil((double) total / size) : 0;</span>
+<span class="fc" id="L80">        model.addAttribute(&quot;totalPages&quot;, totalPages);</span>
+<span class="fc" id="L81">        model.addAttribute(&quot;currentPage&quot;, page);</span>
+<span class="fc" id="L82">        model.addAttribute(&quot;pageSize&quot;, size);</span>
 
-<span class="nc" id="L84">        return PLACESDATA;</span>
+<span class="fc" id="L84">        return PLACESDATA;</span>
     }
     
     @GetMapping(&quot;/{name}&quot;)
     public String getPlace(@PathVariable String name, Model model) {
-<span class="nc" id="L89">        Places place = placeService.findPlaceByName(name);</span>
-<span class="nc" id="L90">        PlacesDTO placeDTO = placeService.mapToDTO(place);</span>
-<span class="nc" id="L91">        model.addAttribute(&quot;place&quot;, placeDTO);</span>
-<span class="nc" id="L92">        return &quot;placeDetails&quot;;</span>
+<span class="fc" id="L89">        Places place = placeService.findPlaceByName(name);</span>
+<span class="fc" id="L90">        PlacesDTO placeDTO = placeService.mapToDTO(place);</span>
+<span class="fc" id="L91">        model.addAttribute(&quot;place&quot;, placeDTO);</span>
+<span class="fc" id="L92">        return &quot;placeDetails&quot;;</span>
     }
     
 }

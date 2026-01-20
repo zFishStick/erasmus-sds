@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.sds2.classes.coordinates.GeoCode;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,6 +23,7 @@ public class CityResponse {
     }
 
     @Getter @Setter
+    @AllArgsConstructor
     public static class Address {
         private String countryCode;
     }

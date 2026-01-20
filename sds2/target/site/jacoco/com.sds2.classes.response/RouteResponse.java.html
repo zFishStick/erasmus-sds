@@ -6,16 +6,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-<span class="nc" id="L9">public class RouteResponse {</span>
+<span class="fc" id="L9">public class RouteResponse {</span>
     private List&lt;Route&gt; routes;
 
     @Getter @Setter
-<span class="nc" id="L13">    public static class Route {</span>
+<span class="fc" id="L13">    public static class Route {</span>
         private RouteLeg[] legs;
     }
 
     @Getter @Setter
-<span class="nc" id="L18">    public static class RouteLeg {</span>
+<span class="fc" id="L18">    public static class RouteLeg {</span>
         private int distanceMeters;
         private String duration;
         private Polyline polyline;
@@ -24,7 +24,7 @@ import lombok.Setter;
     }
 
     @Getter @Setter
-<span class="nc" id="L27">    public static class Polyline {</span>
+<span class="fc" id="L27">    public static class Polyline {</span>
         private String encodedPolyline;
     }
 }

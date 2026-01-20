@@ -3,7 +3,7 @@
 import com.sds2.classes.coordinates.Location;
 import com.sds2.classes.entity.Waypoint;
 
-<span class="nc" id="L6">public record WaypointDTO(</span>
+<span class="fc" id="L6">public record WaypointDTO(</span>
     Long id, 
     boolean via, 
     String name, 
@@ -14,14 +14,14 @@ import com.sds2.classes.entity.Waypoint;
 ) {
 
     public static WaypointDTO fromEntity(Waypoint waypoint) {
-<span class="nc" id="L17">        return new WaypointDTO(</span>
-<span class="nc" id="L18">            waypoint.getId(),</span>
-<span class="nc" id="L19">            waypoint.isVia(),</span>
-<span class="nc" id="L20">            waypoint.getName(),</span>
-<span class="nc" id="L21">            waypoint.getLocation(),</span>
-<span class="nc" id="L22">            waypoint.getAddress(),</span>
-<span class="nc" id="L23">            waypoint.getDestination(),</span>
-<span class="nc" id="L24">            waypoint.getCountry()</span>
+<span class="fc" id="L17">        return new WaypointDTO(</span>
+<span class="fc" id="L18">            waypoint.getId(),</span>
+<span class="fc" id="L19">            waypoint.isVia(),</span>
+<span class="fc" id="L20">            waypoint.getName(),</span>
+<span class="fc" id="L21">            waypoint.getLocation(),</span>
+<span class="fc" id="L22">            waypoint.getAddress(),</span>
+<span class="fc" id="L23">            waypoint.getDestination(),</span>
+<span class="fc" id="L24">            waypoint.getCountry()</span>
         );
     }
 }

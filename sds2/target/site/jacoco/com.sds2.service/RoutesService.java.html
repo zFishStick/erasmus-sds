@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import com.sds2.classes.entity.Route;
 import com.sds2.classes.entity.User;
@@ -21,109 +20,107 @@ import lombok.AllArgsConstructor;
 @Service
 public class RoutesService {
 
-    private final GoogleAuthService googleAuthService;
     private final RoutesRepository routesRepository;
-    private final WebClient.Builder webClientBuilder;
     private final WaypointService waypointsService;
     private final UserService userService;
 
     public String saveRoute(RouteRequest req, Long userId) {
 
-<span class="nc" id="L32">        Double oriLat = req.getOrigin().getLatitude();</span>
-<span class="nc" id="L33">        Double oriLng = req.getOrigin().getLongitude();</span>
+<span class="fc" id="L29">        Double oriLat = req.getOrigin().getLatitude();</span>
+<span class="fc" id="L30">        Double oriLng = req.getOrigin().getLongitude();</span>
 
-<span class="nc" id="L35">        Double destLat = req.getDestination().getLatitude();</span>
-<span class="nc" id="L36">        Double destLng = req.getDestination().getLongitude();</span>
+<span class="fc" id="L32">        Double destLat = req.getDestination().getLatitude();</span>
+<span class="fc" id="L33">        Double destLng = req.getDestination().getLongitude();</span>
 
-<span class="nc" id="L38">        Route existing = routesRepository.findByRouteIdentifier(req.getRouteIdentifier());</span>
-<span class="nc bnc" id="L39" title="All 2 branches missed.">        if (existing != null) {</span>
-<span class="nc" id="L40">            return &quot;Route identifier already exists&quot;;</span>
+<span class="fc" id="L35">        Route existing = routesRepository.findByRouteIdentifier(req.getRouteIdentifier());</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        if (existing != null) {</span>
+<span class="fc" id="L37">            return &quot;Route identifier already exists&quot;;</span>
         }
 
-<span class="nc" id="L43">        Waypoint origin = waypointsService.findWaypointByCoordinates(</span>
-<span class="nc" id="L44">            oriLat,</span>
-<span class="nc" id="L45">            oriLng</span>
+<span class="fc" id="L40">        Waypoint origin = waypointsService.findWaypointByCoordinates(</span>
+<span class="fc" id="L41">            oriLat,</span>
+<span class="fc" id="L42">            oriLng</span>
         );
 
-<span class="nc bnc" id="L48" title="All 2 branches missed.">        if (origin == null) {</span>
-<span class="nc" id="L49">            waypointsService.addWaypointForUser(req.getOrigin(), userId);</span>
-<span class="nc" id="L50">            origin = waypointsService.findWaypointByCoordinates(</span>
-<span class="nc" id="L51">                oriLat,</span>
-<span class="nc" id="L52">                oriLng</span>
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">        if (origin == null) {</span>
+<span class="fc" id="L46">            waypointsService.addWaypointForUser(req.getOrigin(), userId);</span>
+<span class="fc" id="L47">            origin = waypointsService.findWaypointByCoordinates(</span>
+<span class="fc" id="L48">                oriLat,</span>
+<span class="fc" id="L49">                oriLng</span>
             );
         }
 
-<span class="nc" id="L56">        Waypoint destination = waypointsService.findWaypointByCoordinates(</span>
-<span class="nc" id="L57">            destLat,</span>
-<span class="nc" id="L58">            destLng</span>
+<span class="fc" id="L53">        Waypoint destination = waypointsService.findWaypointByCoordinates(</span>
+<span class="fc" id="L54">            destLat,</span>
+<span class="fc" id="L55">            destLng</span>
         );
 
-<span class="nc bnc" id="L61" title="All 2 branches missed.">        if (destination == null) {</span>
-<span class="nc" id="L62">            waypointsService.addWaypointForUser(req.getDestination(), userId);</span>
-<span class="nc" id="L63">            destination = waypointsService.findWaypointByCoordinates(</span>
-<span class="nc" id="L64">                destLat,</span>
-<span class="nc" id="L65">                destLng</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        if (destination == null) {</span>
+<span class="fc" id="L59">            waypointsService.addWaypointForUser(req.getDestination(), userId);</span>
+<span class="fc" id="L60">            destination = waypointsService.findWaypointByCoordinates(</span>
+<span class="fc" id="L61">                destLat,</span>
+<span class="fc" id="L62">                destLng</span>
             );
         }
 
-<span class="nc" id="L69">        List&lt;Waypoint&gt; intermediates = Arrays.stream(req.getIntermediates())</span>
-<span class="nc" id="L70">            .map(i -&gt; {</span>
-<span class="nc" id="L71">                Waypoint wp = waypointsService.findWaypointByCoordinates(i.getLatitude(), i.getLongitude());</span>
-<span class="nc bnc" id="L72" title="All 2 branches missed.">                if (wp == null) {</span>
-<span class="nc" id="L73">                    waypointsService.addWaypointForUser(i, userId);</span>
-<span class="nc" id="L74">                    wp = waypointsService.findWaypointByCoordinates(i.getLatitude(), i.getLongitude());</span>
+<span class="fc" id="L66">        List&lt;Waypoint&gt; intermediates = Arrays.stream(req.getIntermediates())</span>
+<span class="fc" id="L67">            .map(i -&gt; {</span>
+<span class="nc" id="L68">                Waypoint wp = waypointsService.findWaypointByCoordinates(i.getLatitude(), i.getLongitude());</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">                if (wp == null) {</span>
+<span class="nc" id="L70">                    waypointsService.addWaypointForUser(i, userId);</span>
+<span class="nc" id="L71">                    wp = waypointsService.findWaypointByCoordinates(i.getLatitude(), i.getLongitude());</span>
                 }
-<span class="nc" id="L76">                return wp;</span>
+<span class="nc" id="L73">                return wp;</span>
             })
-<span class="nc" id="L78">            .toList();</span>
+<span class="fc" id="L75">            .toList();</span>
 
-<span class="nc" id="L80">        User user = userService.findById(userId);</span>
+<span class="fc" id="L77">        User user = userService.findById(userId);</span>
 
-<span class="nc" id="L82">        Route route = Route.builder()</span>
-<span class="nc" id="L83">                .routeIdentifier(req.getRouteIdentifier())</span>
-<span class="nc" id="L84">                .city(req.getCity())</span>
-<span class="nc" id="L85">                .country(req.getCountry())</span>
-<span class="nc" id="L86">                .departureTime(req.getDepartureTime())</span>
-<span class="nc" id="L87">                .origin(origin)</span>
-<span class="nc" id="L88">                .destination(destination)</span>
-<span class="nc" id="L89">                .intermediates(intermediates)</span>
-<span class="nc" id="L90">                .travelMode(req.getTravelMode())</span>
-<span class="nc" id="L91">                .user(user)</span>
-<span class="nc" id="L92">                .build();</span>
+<span class="fc" id="L79">        Route route = Route.builder()</span>
+<span class="fc" id="L80">                .routeIdentifier(req.getRouteIdentifier())</span>
+<span class="fc" id="L81">                .city(req.getCity())</span>
+<span class="fc" id="L82">                .country(req.getCountry())</span>
+<span class="fc" id="L83">                .departureTime(req.getDepartureTime())</span>
+<span class="fc" id="L84">                .origin(origin)</span>
+<span class="fc" id="L85">                .destination(destination)</span>
+<span class="fc" id="L86">                .intermediates(intermediates)</span>
+<span class="fc" id="L87">                .travelMode(req.getTravelMode())</span>
+<span class="fc" id="L88">                .user(user)</span>
+<span class="fc" id="L89">                .build();</span>
 
-<span class="nc" id="L94">        routesRepository.save(route);</span>
+<span class="fc" id="L91">        routesRepository.save(route);</span>
 
-<span class="nc" id="L96">        removeUserSavedWaypoints(user, intermediates);</span>
+<span class="fc" id="L93">        removeUserSavedWaypoints(user, intermediates);</span>
 
-<span class="nc" id="L98">        return &quot;Route saved successfully&quot;;</span>
+<span class="fc" id="L95">        return &quot;Route saved successfully&quot;;</span>
     }
 
     public Route getRouteByRouteIdentifier(String routeIdentifier) {
-<span class="nc" id="L102">        return routesRepository.findByRouteIdentifier(routeIdentifier);</span>
+<span class="fc" id="L99">        return routesRepository.findByRouteIdentifier(routeIdentifier);</span>
     }
     
     public String deleteRouteByRouteIdentifier(String routeIdentifier) {
-<span class="nc" id="L106">        Route route = routesRepository.findByRouteIdentifier(routeIdentifier);</span>
-<span class="nc bnc" id="L107" title="All 2 branches missed.">        if (route != null) {</span>
-<span class="nc" id="L108">            routesRepository.delete(route);</span>
+<span class="fc" id="L103">        Route route = routesRepository.findByRouteIdentifier(routeIdentifier);</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        if (route != null) {</span>
+<span class="fc" id="L105">            routesRepository.delete(route);</span>
         }
-<span class="nc" id="L110">        return &quot;Route deleted successfully&quot;;</span>
+<span class="fc" id="L107">        return &quot;Route deleted successfully&quot;;</span>
     }
 
     private void removeUserSavedWaypoints(User user, List&lt;Waypoint&gt; waypoints) {
-<span class="nc" id="L114">        Set&lt;Long&gt; waypointIds = waypoints.stream()</span>
-<span class="nc" id="L115">            .filter(Objects::nonNull)</span>
-<span class="nc" id="L116">            .map(Waypoint::getId)</span>
-<span class="nc" id="L117">            .collect(Collectors.toSet());</span>
+<span class="fc" id="L111">        Set&lt;Long&gt; waypointIds = waypoints.stream()</span>
+<span class="fc" id="L112">            .filter(Objects::nonNull)</span>
+<span class="fc" id="L113">            .map(Waypoint::getId)</span>
+<span class="fc" id="L114">            .collect(Collectors.toSet());</span>
 
-<span class="nc" id="L119">        List&lt;Waypoint&gt; toRemove = user.getSavedWaypoints()</span>
-<span class="nc" id="L120">            .stream()</span>
-<span class="nc" id="L121">            .filter(wp -&gt; waypointIds.contains(wp.getId()))</span>
-<span class="nc" id="L122">            .toList();</span>
+<span class="fc" id="L116">        List&lt;Waypoint&gt; toRemove = user.getSavedWaypoints()</span>
+<span class="fc" id="L117">            .stream()</span>
+<span class="fc" id="L118">            .filter(wp -&gt; waypointIds.contains(wp.getId()))</span>
+<span class="fc" id="L119">            .toList();</span>
 
-<span class="nc" id="L124">        user.getSavedWaypoints().removeAll(toRemove);</span>
-<span class="nc" id="L125">        userService.saveUser(user);</span>
-<span class="nc" id="L126">    }</span>
+<span class="fc" id="L121">        user.getSavedWaypoints().removeAll(toRemove);</span>
+<span class="fc" id="L122">        userService.saveUser(user);</span>
+<span class="fc" id="L123">    }</span>
 
 }
 

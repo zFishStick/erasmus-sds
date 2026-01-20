@@ -4,6 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
@@ -39,30 +40,28 @@ public class ChatPreferenceExtractor {
 
     public ChatPreferences extract(ChatItineraryRequest request) {
         Set<String> keywords = new LinkedHashSet<>();
-        List<String> filters = request.filters();
-        if (filters != null) {
-            for (String filter : filters) {
-                List<String> mapped = FILTER_KEYWORDS.get(filter);
-                if (mapped != null) {
-                    keywords.addAll(mapped);
-                }
-            }
+
+        if (request.filters() != null) {
+            request.filters().stream()
+                .map(FILTER_KEYWORDS::get)
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .forEach(keywords::add);
         }
 
         String prompt = request.prompt();
         if (prompt != null && !prompt.isBlank()) {
             String lower = prompt.toLowerCase(Locale.ROOT);
-            for (List<String> values : PROMPT_KEYWORDS.values()) {
-                for (String token : values) {
-                    if (lower.contains(token)) {
-                        keywords.add(token);
-                    }
-                }
-            }
+
+            PROMPT_KEYWORDS.values().stream()
+                .flatMap(List::stream)
+                .filter(lower::contains)
+                .forEach(keywords::add);
         }
 
         return new ChatPreferences(keywords, isFreeOnly(prompt));
     }
+
 
     private boolean isFreeOnly(String prompt) {
         if (prompt == null) return false;

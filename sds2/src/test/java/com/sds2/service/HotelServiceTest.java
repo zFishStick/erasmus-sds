@@ -151,6 +151,7 @@ class HotelServiceTest {
         verify(webClientBuilder, never()).build();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     void getHotelsByCoordinates_notInDb_callsApi() {
         when(hotelRepository.findByAddress_CityNameIgnoreCaseAndAddress_CountryCodeIgnoreCase(any(), any()))

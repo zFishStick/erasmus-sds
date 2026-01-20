@@ -4,36 +4,26 @@ import java.util.List;
 
 import com.sds2.classes.coordinates.GeoCode;
 
-<span class="nc" id="L7">public class CityResponse {</span>
+import lombok.Getter;
+import lombok.Setter;
+
+<span class="fc" id="L10">public class CityResponse {</span>
     private List&lt;CityData&gt; data;
 
-<span class="nc" id="L10">    public List&lt;CityData&gt; getData() { return data; }</span>
-<span class="nc" id="L11">    public void setData(List&lt;CityData&gt; data) { this.data = data; }</span>
+<span class="fc" id="L13">    public List&lt;CityData&gt; getData() { return data; }</span>
+<span class="fc" id="L14">    public void setData(List&lt;CityData&gt; data) { this.data = data; }</span>
 
-<span class="nc" id="L13">    public static class CityData {</span>
+    @Getter @Setter
+<span class="fc" id="L17">    public static class CityData {</span>
         private String name;
         private Address address;
         private GeoCode geoCode;
         private String iataCode;
-
-<span class="nc" id="L19">        public String getName() { return name; }</span>
-<span class="nc" id="L20">        public void setName(String name) { this.name = name; }</span>
-
-<span class="nc" id="L22">        public Address getAddress() { return address; }</span>
-<span class="nc" id="L23">        public void setAddress(Address address) { this.address = address; }</span>
-
-<span class="nc" id="L25">        public GeoCode getGeoCode() { return geoCode; }</span>
-<span class="nc" id="L26">        public void setGeoCode(GeoCode geoCode) { this.geoCode = geoCode; }</span>
-
-<span class="nc" id="L28">        public String getIataCode() { return iataCode; }</span>
-<span class="nc" id="L29">        public void setIataCode(String iataCode) { this.iataCode = iataCode; }</span>
     }
 
-<span class="nc" id="L32">    public static class Address {</span>
+    @Getter @Setter
+<span class="fc" id="L25">    public static class Address {</span>
         private String countryCode;
-
-<span class="nc" id="L35">        public String getCountryCode() { return countryCode; }</span>
-<span class="nc" id="L36">        public void setCountryCode(String countryCode) { this.countryCode = countryCode; }</span>
     }
 
 }

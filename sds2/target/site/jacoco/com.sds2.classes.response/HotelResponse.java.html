@@ -5,52 +5,33 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sds2.classes.coordinates.GeoCode;
 
-<span class="nc" id="L8">public class HotelResponse {</span>
+import lombok.Getter;
+import lombok.Setter;
+
+<span class="fc" id="L11">public class HotelResponse {</span>
 
     private List&lt;HotelData&gt; data;
 
-<span class="nc" id="L12">    public List&lt;HotelData&gt; getData() { return data; }</span>
+<span class="fc" id="L15">    public List&lt;HotelData&gt; getData() { return data; }</span>
 
-<span class="nc" id="L14">    public void setData(List&lt;HotelData&gt; data) { this.data = data; }</span>
+<span class="fc" id="L17">    public void setData(List&lt;HotelData&gt; data) { this.data = data; }</span>
 
-<span class="nc" id="L16">    public static class HotelData {</span>
+    @Getter @Setter
+<span class="fc" id="L20">    public static class HotelData {</span>
         private String name;
         private String hotelId;
         private String iataCode;
         @JsonProperty(&quot;geoCode&quot;)
         private GeoCode geoCode;
         private Address address;
-        
-<span class="nc" id="L24">        public String getHotelId() { return hotelId; }</span>
-<span class="nc" id="L25">        public void setHotelId(String hotelId) { this.hotelId = hotelId; }</span>
-
-<span class="nc" id="L27">        public String getIataCode() { return iataCode; }</span>
-<span class="nc" id="L28">        public void setIataCode(String iataCode) { this.iataCode = iataCode; }</span>
-
-<span class="nc" id="L30">        public String getName() { return name; }</span>
-<span class="nc" id="L31">        public void setName(String name) { this.name = name; }</span>
-
-<span class="nc" id="L33">        public GeoCode getGeoCode() { return geoCode; }</span>
-<span class="nc" id="L34">        public void setGeoCode(GeoCode geoCode) { this.geoCode = geoCode; }</span>
-
-<span class="nc" id="L36">        public Address getAddress() { return address; }</span>
-<span class="nc" id="L37">        public void setAddress(Address address) { this.address = address; }</span>
 
     }
 
-<span class="nc" id="L41">    public static class Address {</span>
+    @Getter @Setter
+<span class="fc" id="L31">    public static class Address {</span>
         private String countryCode;
         private String cityName;
         private List&lt;String&gt; lines;
-
-<span class="nc" id="L46">        public String getCountryCode() { return countryCode; }</span>
-<span class="nc" id="L47">        public void setCountryCode(String countryCode) { this.countryCode = countryCode; }</span>
-
-<span class="nc" id="L49">        public String getCityName() { return cityName; }</span>
-<span class="nc" id="L50">        public void setCityName(String cityName) { this.cityName = cityName; }</span>
-
-<span class="nc" id="L52">        public List&lt;String&gt; getLines() { return lines; }</span>
-<span class="nc" id="L53">        public void setLines(List&lt;String&gt; lines) { this.lines = lines; }</span>
     }
     
 }

@@ -5,9 +5,8 @@ import com.sds2.classes.price.PriceRange;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 
-<span class="fc" id="L10">public record PlacesDTO(</span>
+<span class="fc" id="L9">public record PlacesDTO(</span>
     Long id,
     String name,
     List&lt;String&gt; photoUrl,
@@ -17,38 +16,5 @@ import java.util.Objects;
     Double rating,
     PriceRange priceRange,
     String websiteUri
-) implements Serializable {
-    @Override
-    public boolean equals(Object o) {
-<span class="nc bnc" id="L23" title="All 2 branches missed.">        if (this == o) return true;</span>
-<span class="nc bnc" id="L24" title="All 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
-<span class="nc" id="L25">        PlacesDTO that = (PlacesDTO) o;</span>
-<span class="nc bnc" id="L26" title="All 2 branches missed.">        return Objects.equals(name, that.name) &amp;&amp;</span>
-<span class="nc bnc" id="L27" title="All 2 branches missed.">               Objects.equals(photoUrl, that.photoUrl) &amp;&amp;</span>
-<span class="nc bnc" id="L28" title="All 2 branches missed.">               Objects.equals(type, that.type) &amp;&amp;</span>
-<span class="nc bnc" id="L29" title="All 2 branches missed.">               Objects.equals(address, that.address) &amp;&amp;</span>
-<span class="nc bnc" id="L30" title="All 2 branches missed.">               Objects.equals(location, that.location) &amp;&amp;</span>
-<span class="nc bnc" id="L31" title="All 2 branches missed.">               Objects.equals(rating, that.rating) &amp;&amp;</span>
-<span class="nc bnc" id="L32" title="All 2 branches missed.">               Objects.equals(priceRange, that.priceRange) &amp;&amp;</span>
-<span class="nc bnc" id="L33" title="All 2 branches missed.">               Objects.equals(websiteUri, that.websiteUri);</span>
-    }
-
-    @Override
-    public int hashCode() {
-<span class="nc" id="L38">        return Objects.hash(name, photoUrl, type, address, location, rating, priceRange, websiteUri);</span>
-    }
-
-    @Override
-    public String toString() {
-<span class="fc" id="L43">        return &quot;PlacesDTO[name=&quot; + name +</span>
-               &quot;, photoUrl=&quot; + photoUrl +
-               &quot;, type=&quot; + type +
-               &quot;, address=&quot; + address +
-               &quot;, location=&quot; + location +
-               &quot;, rating=&quot; + rating +
-               &quot;, priceRange=&quot; + priceRange +
-                &quot;, websiteUri=&quot; + websiteUri +
-               &quot;]&quot;;
-    }
-}
+) implements Serializable {}
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
