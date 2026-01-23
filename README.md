@@ -1,6 +1,6 @@
 # Travel Planner ✈️
 
-Travel Planner is a comprehensive web application designed to help users organize their next trip abroad seamlessly. Whether you are looking for accommodation, guided tours, or just inspiration, Travel Planner simplifies the entire process.
+Travel Planner is a comprehensive web application designed to help users organize their next trip around the world. Whether you are looking for accommodation, guided tours, or just inspiration, Travel Planner simplifies the entire process.
 
 ## 🌍 Key Features
 
