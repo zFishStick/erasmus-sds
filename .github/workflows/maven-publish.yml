@@ -10,8 +10,6 @@ on:
       - develop/*
       - feature/*
   workflow_dispatch:
-  schedule:
-    - cron: "0 20 * * *" 
 
 jobs:
   build:
